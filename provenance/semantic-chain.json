@@ -1,0 +1,230 @@
+{
+  "schema": "nilo.semantic-provenance-chain/1",
+  "version": 1,
+  "description": "Typed semantic-to-physical dependency map; software SBOM is a different standards-based document.",
+  "source_authority": "CANDIDATE_DECLARATION",
+  "binding_rules": {
+    "git": "git SHA must come from actual commit readback",
+    "file": "SHA-256 only after bytes exist",
+    "artifact": "SHA-256 only after build and actual readback",
+    "dependency": "resolved version+digest, not just manifest name",
+    "host": "capture observed runtime/platform identity, not imagined hardware SHA",
+    "standard": "pin official edition/URI; optional SHA only for exact, lawfully acquired text"
+  },
+  "layers": [
+    {
+      "id": "L00",
+      "name": "human intent",
+      "instance": "CORA LEVEL brief",
+      "evidence": "contracts/nilo-semantic-v1.json",
+      "sha256": null,
+      "state": "DECLARED"
+    },
+    {
+      "id": "L01",
+      "name": "narrative meaning",
+      "instance": "story/world/theme/character motivations",
+      "evidence": "contracts/nilo-semantic-v1.json",
+      "sha256": null,
+      "state": "DRAFT"
+    },
+    {
+      "id": "L02",
+      "name": "narrative structure",
+      "instance": "six story acts, three bosses, character arcs",
+      "evidence": "contracts/nilo-semantic-v1.json",
+      "sha256": null,
+      "state": "DRAFT"
+    },
+    {
+      "id": "L03",
+      "name": "interaction and UX",
+      "instance": "control grammar, accessibility, UI meanings",
+      "evidence": "contracts/nilo-semantic-v1.json",
+      "sha256": null,
+      "state": "SPECIFIED"
+    },
+    {
+      "id": "L04",
+      "name": "game rules",
+      "instance": "collision, camera, checkpoint, pause",
+      "evidence": "web/core.mjs",
+      "sha256": null,
+      "state": "SOURCE_PLANNED"
+    },
+    {
+      "id": "L05",
+      "name": "art and licensed content",
+      "instance": "vector placeholder art and authored assets",
+      "evidence": "docs/PRODUCT_CONTRACT.md",
+      "sha256": null,
+      "state": "RIGHTS_REVIEW"
+    },
+    {
+      "id": "L06",
+      "name": "application source",
+      "instance": "first-party ES modules/HTML/CSS",
+      "evidence": "web/",
+      "sha256": null,
+      "state": "SOURCE_PLANNED"
+    },
+    {
+      "id": "L07",
+      "name": "tests and falsifiers",
+      "instance": "positive/negative and real-source mutants",
+      "evidence": "tests/",
+      "sha256": null,
+      "state": "TEST_PLANNED"
+    },
+    {
+      "id": "L08",
+      "name": "build/distribution",
+      "instance": "source-served web bundle; build output future",
+      "evidence": "scripts/verify.mjs",
+      "sha256": null,
+      "state": "NOT_BUILT"
+    },
+    {
+      "id": "L09",
+      "name": "software dependencies",
+      "instance": "CycloneDX design snapshot; browser is external",
+      "evidence": "bom/nilo.cdx.json",
+      "sha256": null,
+      "state": "DESIGN_ONLY"
+    },
+    {
+      "id": "L10",
+      "name": "Git and CI provenance",
+      "instance": "exact commit/tree/blob, command and tool version",
+      "evidence": ".github/workflows/seed.yml",
+      "sha256": null,
+      "state": "NOT_ATTESTED"
+    },
+    {
+      "id": "L11",
+      "name": "runtime browser API",
+      "instance": "DOM, Canvas2D, localStorage, event loop",
+      "evidence": null,
+      "sha256": null,
+      "state": "UNOBSERVED"
+    },
+    {
+      "id": "L12",
+      "name": "operating system and graphics",
+      "instance": "browser engine, OS, GPU driver, rendering stack",
+      "evidence": null,
+      "sha256": null,
+      "state": "UNOBSERVED"
+    },
+    {
+      "id": "L13",
+      "name": "physical compute",
+      "instance": "CPU/GPU/device/firmware IDs when observed; no meaningful SHA of physical metal",
+      "evidence": null,
+      "sha256": null,
+      "state": "UNOBSERVED"
+    },
+    {
+      "id": "L14",
+      "name": "normative and legal references",
+      "instance": "SPDX/CycloneDX/SLSA/WCAG/EU applicability register",
+      "evidence": "standards/references.json",
+      "sha256": null,
+      "state": "REFERENCES_ONLY"
+    }
+  ],
+  "links": [
+    {
+      "from": "L00",
+      "to": "L01",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L01",
+      "to": "L02",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L02",
+      "to": "L03",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L03",
+      "to": "L04",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L04",
+      "to": "L05",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L05",
+      "to": "L06",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L06",
+      "to": "L07",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L07",
+      "to": "L08",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L08",
+      "to": "L09",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L09",
+      "to": "L10",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L10",
+      "to": "L11",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L11",
+      "to": "L12",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L12",
+      "to": "L13",
+      "relation": "requires_downstream_evidence_not_proof"
+    },
+    {
+      "from": "L14",
+      "to": "L03",
+      "relation": "constrains_if_applicable"
+    },
+    {
+      "from": "L14",
+      "to": "L08",
+      "relation": "constrains_if_applicable"
+    },
+    {
+      "from": "L07",
+      "to": "L10",
+      "relation": "tests_require_exact_git_revision_and_ci_lineage"
+    }
+  ],
+  "claims": [
+    {
+      "id": "CLAIM-SEED",
+      "from": "G_SEED_SOURCE",
+      "status": "REQUIRES_ACTUAL_CI_ON_EXACT_SHA"
+    },
+    {
+      "id": "CLAIM-GAME",
+      "from": "G_CONTRACT_DEMONSTRATED",
+      "status": "BLOCKED_EXTERNAL"
+    }
+  ]
+}

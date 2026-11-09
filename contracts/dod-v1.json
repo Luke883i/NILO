@@ -1,0 +1,342 @@
+{
+  "schema": "nilo.reticular-dod/1",
+  "version": 1,
+  "root": "G_CONTRACT_DEMONSTRATED",
+  "seed_goal": "G_SEED_SOURCE",
+  "qualification": "ALL_GATES_NONCOMPENSATORY",
+  "authority": "NONE",
+  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt.",
+  "nodes": [
+    {
+      "id": "I01",
+      "kind": "LEAF",
+      "plane": "DESIGN",
+      "claim": "human baseline and owner review",
+      "baseline_status": "SOURCE_DECLARED",
+      "oracle": "named author accepts proposed narrative and constraints",
+      "witness": null
+    },
+    {
+      "id": "N01",
+      "kind": "LEAF",
+      "plane": "NARRATIVE",
+      "claim": "original world, conflict, theme and ending",
+      "baseline_status": "DESIGN_CANDIDATE",
+      "oracle": "story fields nonempty and traceable to author approval",
+      "witness": null
+    },
+    {
+      "id": "N02",
+      "kind": "LEAF",
+      "plane": "NARRATIVE",
+      "claim": "six named characters with playable or antagonist roles",
+      "baseline_status": "DESIGN_CANDIDATE",
+      "oracle": "characters unique IDs roles and motivations",
+      "witness": null
+    },
+    {
+      "id": "N03",
+      "kind": "LEAF",
+      "plane": "NARRATIVE",
+      "claim": "six levels and three distinct bosses mapped to a story arc",
+      "baseline_status": "DESIGN_CANDIDATE",
+      "oracle": "six levels and boss mapping with unique IDs",
+      "witness": null
+    },
+    {
+      "id": "D01",
+      "kind": "LEAF",
+      "plane": "DESIGN",
+      "claim": "keyboard states, physics, collision and camera acceptance",
+      "baseline_status": "SOURCE_DECLARED",
+      "oracle": "unit physics invariants and browser input readback",
+      "witness": null
+    },
+    {
+      "id": "D02",
+      "kind": "LEAF",
+      "plane": "DESIGN",
+      "claim": "checkpoint persistent versioned state with rejection of forged data",
+      "baseline_status": "SOURCE_DECLARED",
+      "oracle": "invalid version/level/checkpoint never accepted",
+      "witness": null
+    },
+    {
+      "id": "D03",
+      "kind": "LEAF",
+      "plane": "DESIGN",
+      "claim": "accessibility and user comprehension criteria",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "manual keyboard/screenreader/contrast exploration by external user",
+      "witness": null
+    },
+    {
+      "id": "A01",
+      "kind": "LEAF",
+      "plane": "ASSET",
+      "claim": "visual and audio asset source/license clearance",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "original/third-party asset register with actual rights evidence",
+      "witness": null
+    },
+    {
+      "id": "S01",
+      "kind": "LEAF",
+      "plane": "SOURCE",
+      "claim": "actual LV-01 core source and UI wired to contract",
+      "baseline_status": "NOT_VERIFIED",
+      "oracle": "modules exist and match declared controls",
+      "witness": null
+    },
+    {
+      "id": "S02",
+      "kind": "LEAF",
+      "plane": "SOURCE",
+      "claim": "automated positive/negative deterministic logic tests",
+      "baseline_status": "NOT_VERIFIED",
+      "oracle": "node test returns zero with negatives",
+      "witness": null
+    },
+    {
+      "id": "S03",
+      "kind": "LEAF",
+      "plane": "SOURCE",
+      "claim": "actual real-source mutant killed by a separate oracle",
+      "baseline_status": "NOT_VERIFIED",
+      "oracle": "physical mutant produces nonzero exit after baseline PASS",
+      "witness": null
+    },
+    {
+      "id": "B01",
+      "kind": "LEAF",
+      "plane": "BEHAVIOR",
+      "claim": "full browser Playwright or equivalent observable game replay",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "captured browser run for camera/collisions/goal",
+      "witness": null
+    },
+    {
+      "id": "B02",
+      "kind": "LEAF",
+      "plane": "BEHAVIOR",
+      "claim": "checkpoint reload and failure replay observed in browser",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "reload real page after checkpoint and after forged store",
+      "witness": null
+    },
+    {
+      "id": "B03",
+      "kind": "LEAF",
+      "plane": "BEHAVIOR",
+      "claim": "new human player reaches LV-01 exit and can explain HUD",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "independent user video or signed session receipt with task",
+      "witness": null
+    },
+    {
+      "id": "F01",
+      "kind": "LEAF",
+      "plane": "FULL_GAME",
+      "claim": "all six levels implemented and finishable",
+      "baseline_status": "NOT_IMPLEMENTED",
+      "oracle": "real new user completes all 6 levels",
+      "witness": null
+    },
+    {
+      "id": "F02",
+      "kind": "LEAF",
+      "plane": "FULL_GAME",
+      "claim": "three bosses implemented with fairness cues",
+      "baseline_status": "NOT_IMPLEMENTED",
+      "oracle": "real user defeats each of 3 bosses",
+      "witness": null
+    },
+    {
+      "id": "F03",
+      "kind": "LEAF",
+      "plane": "FULL_GAME",
+      "claim": "narrative ending and artwork accepted by author",
+      "baseline_status": "NOT_IMPLEMENTED",
+      "oracle": "human signs off story/art assets",
+      "witness": null
+    },
+    {
+      "id": "P01",
+      "kind": "LEAF",
+      "plane": "PROVENANCE",
+      "claim": "semantic assets/requirements lineage checked",
+      "baseline_status": "NOT_VERIFIED",
+      "oracle": "typed trace graph and no orphan implemented objects",
+      "witness": null
+    },
+    {
+      "id": "P02",
+      "kind": "LEAF",
+      "plane": "PROVENANCE",
+      "claim": "software dependencies recorded as CycloneDX design phase",
+      "baseline_status": "NOT_VERIFIED",
+      "oracle": "CycloneDX design inventory schema-valid and dependency inventory verified",
+      "witness": null
+    },
+    {
+      "id": "P03",
+      "kind": "LEAF",
+      "plane": "PROVENANCE",
+      "claim": "toolchain, build artifacts and SHA-256 captured after actual build",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "artifact SHA256+build recipe+observed toolchain+Git commit",
+      "witness": null
+    },
+    {
+      "id": "P04",
+      "kind": "LEAF",
+      "plane": "PROVENANCE",
+      "claim": "browser, OS, GPU and device observed on real host",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "actual runtime browser/OS/driver device identification captured",
+      "witness": null
+    },
+    {
+      "id": "P05",
+      "kind": "LEAF",
+      "plane": "PROVENANCE",
+      "claim": "standards and legal applicability reviewed by accountable owner",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "named reviewer classifies each standard/law scope and test evidence",
+      "witness": null
+    },
+    {
+      "id": "R01",
+      "kind": "LEAF",
+      "plane": "GOVERNANCE",
+      "claim": "source repository exact SHA and CI test receipts",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "exact HEAD CI checks executed; no stale receipts",
+      "witness": null
+    },
+    {
+      "id": "R02",
+      "kind": "LEAF",
+      "plane": "GOVERNANCE",
+      "claim": "non-author independent review and enforceable merge rules",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "branch protection and independent reviewer attested",
+      "witness": null
+    },
+    {
+      "id": "R03",
+      "kind": "LEAF",
+      "plane": "GOVERNANCE",
+      "claim": "release package, licensing, rollback and distribution approval",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "release owner approves artifact/rollback/license",
+      "witness": null
+    },
+    {
+      "id": "G_SEED_STORY",
+      "kind": "AND",
+      "depends_on": [
+        "I01",
+        "N01",
+        "N02",
+        "N03"
+      ],
+      "claim": "accepted original creative brief",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "G_SEED_DESIGN",
+      "kind": "AND",
+      "depends_on": [
+        "D01",
+        "D02",
+        "D03"
+      ],
+      "claim": "specified falsifiable interactions",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "G_SEED_SOURCE",
+      "kind": "AND",
+      "depends_on": [
+        "S01",
+        "S02",
+        "S03",
+        "P01",
+        "P02"
+      ],
+      "claim": "initial authored, tested and traceable implementation",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "G_VERTICAL_SLICE",
+      "kind": "AND",
+      "depends_on": [
+        "G_SEED_STORY",
+        "G_SEED_DESIGN",
+        "G_SEED_SOURCE",
+        "B01",
+        "B02",
+        "B03"
+      ],
+      "claim": "one independent user completes seeded gameplay",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "G_FULL_GAME",
+      "kind": "AND",
+      "depends_on": [
+        "G_VERTICAL_SLICE",
+        "F01",
+        "F02",
+        "F03",
+        "A01"
+      ],
+      "claim": "accepted six-level / three-boss game",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "G_SUPPLY_CHAIN",
+      "kind": "AND",
+      "depends_on": [
+        "P01",
+        "P02",
+        "P03",
+        "P04",
+        "P05"
+      ],
+      "claim": "complete observed software and hardware provenance and lawful delivery",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "G_RELEASE",
+      "kind": "AND",
+      "depends_on": [
+        "R01",
+        "R02",
+        "R03"
+      ],
+      "claim": "controlled independent release",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "G_CONTRACT_DEMONSTRATED",
+      "kind": "AND",
+      "depends_on": [
+        "G_FULL_GAME",
+        "G_SUPPLY_CHAIN",
+        "G_RELEASE"
+      ],
+      "claim": "initial six-level semantic game contract demonstrated end-to-end",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    }
+  ]
+}

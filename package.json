@@ -1,0 +1,16 @@
+{
+  "name": "nilo-la-fabbrica-delle-ore",
+  "private": true,
+  "version": "0.1.0-seed",
+  "type": "module",
+  "license": "UNLICENSED",
+  "description": "Source-only experimental NILO game seed",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "verify": "node scripts/verify.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "evidence": "node scripts/evidence.mjs"
+  }
+}

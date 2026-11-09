@@ -1,0 +1,52 @@
+name: NILO PR1 seed - source assurance only
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  seed-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Bind exact source revision
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          node --version
+      - name: Verify narrative, requirements, DoD, BOM and source boundaries
+        run: node scripts/verify.mjs
+      - name: Test deterministic playable physics and checkpoint
+        run: node --test tests/core.test.mjs
+      - name: Test contract, reticular DoD and S-BOM negative cases
+        run: node --test tests/contracts.test.mjs
+      - name: Kill checkpoint-forgery source mutant
+        env:
+          NILO_MUTANT: forged-checkpoint
+        run: node --test tests/mutation.test.mjs
+      - name: Kill broken-pause source mutant
+        env:
+          NILO_MUTANT: broken-pause
+        run: node --test tests/mutation.test.mjs
+      - name: Kill platform-tunneling source mutant
+        env:
+          NILO_MUTANT: platform-tunneling
+        run: node --test tests/mutation.test.mjs
+      - name: Capture process-reported source hashes and SHA without self-approval
+        run: |
+          node scripts/evidence.mjs --out /tmp/nilo-seed-evidence.json
+          node -e 'const a=require("/tmp/nilo-seed-evidence.json"); if(a.contracts.source_status!=="PASS_SCOPED_SOURCE" || a.source_commit_sha!==require("child_process").execFileSync("git",["rev-parse","HEAD"],{encoding:"utf8"}).trim() || a.release_authorized || a.browser!=="NOT_RUN_BY_THIS_COMMAND") process.exit(2);'
+      - name: Upload source-only evidence for independent examination
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nilo-source-receipt-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/nilo-seed-evidence.json
+          if-no-files-found: warn
+          retention-days: 14

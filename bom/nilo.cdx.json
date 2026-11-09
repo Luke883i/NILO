@@ -1,0 +1,34 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.7",
+  "version": 1,
+  "metadata": {
+    "lifecycles": [
+      {
+        "phase": "design"
+      }
+    ],
+    "component": {
+      "bom-ref": "nilo-game",
+      "type": "application",
+      "name": "NILO",
+      "version": "0.1.0-seed",
+      "description": "Design-phase inventory only; not a complete resolved runtime SBOM."
+    }
+  },
+  "components": [],
+  "dependencies": [
+    {
+      "ref": "nilo-game",
+      "dependsOn": []
+    }
+  ],
+  "compositions": [
+    {
+      "aggregate": "incomplete",
+      "assemblies": [
+        "nilo-game"
+      ]
+    }
+  ]
+}
