@@ -148,8 +148,19 @@ export const LV02_CUES=Object.freeze([
 ]);
 export function sceneCue(state) {
   if(state.level==='LV-02'){
-    if(state.phase==='COMPLETED')return {id:'CANAL-END',role:'CH-TICA',
-      title:'CANALE ATTRAVERSATO',hint:'La seconda ora resta sigillata: il Custode sarà disponibile in una versione successiva.'};
+    if(state.phase==='COMPLETED')return {id:'CANAL-VICTORY',role:'CH-NILO',
+      title:'SECONDA ORA RESTITUITA',hint:'Il Custode è fermo. Hai riparato il pendolo. LV-03 è in sviluppo.'};
+    if(state.phase==='DEFEATED')return {id:'CANAL-DEFEAT',role:'CH-TICA',
+      title:'PENDOLO IN BLOCCO',hint:'Sei stato sconfitto. Premi R per ripartire da CP-02.'};
+    if(state.boss&&state.boss.phase!=='LOCKED'){
+      const b=state.boss;
+      const messages={TELEGRAPH:['CUSTODE · AVVISO','Il pendolo sta caricando il colpo: evita la zona segnalata.'],
+        STRIKE:['CUSTODE · COLPO','Salta o esci dalla zona del pendolo.'],
+        RECOVERY:['CUSTODE · RIPARA','Avvicinati al meccanismo e premi E durante la finestra sicura.']};
+      const msg=messages[b.phase]||['CUSTODE','Raggiungi il meccanismo.'];
+      return {id:'BOSS-'+b.phase+'-'+b.repairs+'-'+b.hits,role:'CH-CUSTODE',
+        title:msg[0],hint:msg[1]+' Riparazioni: '+b.repairs+'/2.'};
+    }
     if(state.phase==='PAUSED')return {id:'CANAL-PAUSE',role:'CH-NILO',
       title:'CANALE IN PAUSA',hint:'Premi P per riprendere o R per il checkpoint di questo livello.'};
     if(state.checkpointActive&&state.x>=1330&&state.x<1820)return {...LV02_CUES[2],
@@ -200,7 +211,8 @@ function timeLanterns(c,state){
   c.fillStyle=ART.cream;c.font='bold 13px monospace';
   c.fillText(state.level==='LV-02'?'LE SEI ORE · LV-02':'LE SEI ORE · LV-01',689,38);
   for(let j=0;j<6;j++){
-    const x=699+j*38,active=j===0&&(state.level==='LV-02'||state.phase==='COMPLETED');
+    const x=699+j*38,active=(j===0&&(state.level==='LV-02'||state.phase==='COMPLETED'))||
+      (j===1&&state.level==='LV-02'&&state.boss?.phase==='VICTORY');
     px(c,x,47,23,13,ART.ink);px(c,x+3,49,17,9,active?ART.teal:ART.brick);
     if(j>0)px(c,x+10,50,3,6,ART.ink);
   }
@@ -247,6 +259,21 @@ function canalDetails(c,state){
   px(c,gate,340,70,120,ART.brass);px(c,gate+8,355,54,104,ART.ink);
   px(c,gate+18,375,34,7,ART.coral);
   c.fillStyle=ART.cream;c.font='bold 13px monospace';c.fillText('CUSTODE',gate-4,328);
+  const b=state.boss;
+  if(b&&b.phase!=='LOCKED'){
+    // Shape, text and motion accompany color to signal danger.
+    const active=b.phase==='STRIKE',warning=b.phase==='TELEGRAPH';
+    const swing=(warning||active)?Math.round(Math.sin(state.ticks*.24)*46):0;
+    px(c,gate+31,304,6,52,ART.brass);
+    px(c,gate+20+swing,354,28,35,active?ART.coral:warning?ART.brass:ART.teal);
+    if(warning||active){
+      for(let k=0;k<3;k++)px(c,2160+k*53,407,30,7,active?ART.coral:ART.cream);
+      c.fillStyle=ART.cream;c.font='bold 12px monospace';
+      c.fillText(active?'COLPO!':'ATTENZIONE',2160,393);
+    }
+    c.fillStyle=ART.cream;c.font='bold 13px monospace';
+    c.fillText('RIPARA '+b.repairs+'/2',2154,315);
+  }
 }
 export function renderPixelWorld(c,state,cfg,platforms){
   c.clearRect(0,0,cfg.viewport,cfg.height);
@@ -272,12 +299,12 @@ export function renderPixelWorld(c,state,cfg,platforms){
   c.fillText(second?'CANALE · ORA 2':'PROLOGO · ORA 1',28,39);
   c.fillStyle=ART.teal;c.font='14px system-ui';
   c.fillText(second?(state.checkpointActive?'MOLO SALVATO':'SEGUI LE CORRENTI'):(state.checkpointActive?'TEMPO SALVATO':'CERCATE IL SEGNATEMPO'),28,60);
-  if(state.phase==='PAUSED'||state.phase==='COMPLETED'){
+  if(state.phase==='PAUSED'||state.phase==='COMPLETED'||state.phase==='DEFEATED'){
     px(c,209,184,544,158,ART.ink);px(c,216,192,528,142,'#24465c');
     c.fillStyle=ART.brass;c.font='bold 29px system-ui';
-    c.fillText(state.phase==='PAUSED'?'TEMPO IN PAUSA':second?'CANALE ATTRAVERSATO':'PRIMA ORA RESTITUITA',245,247);
+    c.fillText(state.phase==='PAUSED'?'TEMPO IN PAUSA':state.phase==='DEFEATED'?'CUSTODE · SCONFITTA':second?'SECONDA ORA RESTITUITA':'PRIMA ORA RESTITUITA',245,247);
     c.fillStyle=ART.ivory;c.font='16px system-ui';
-    c.fillText(state.phase==='PAUSED'?'Premi P per continuare':second?'Custode e seconda ora ancora sigillati':'Premi N per il secondo livello',245,280);
+    c.fillText(state.phase==='PAUSED'?'Premi P per continuare':state.phase==='DEFEATED'?'Premi R per riprovare':second?'Custode sconfitto; LV-03 in sviluppo':'Premi N per il secondo livello',245,280);
     c.fillText('Premi R per ricominciare',245,307);
   }
 }
