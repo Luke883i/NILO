@@ -11,6 +11,9 @@ const listing=spawnSync("git",["ls-files","--cached","--full-name"],{cwd:root,en
 if(listing.status!==0) throw new Error("full Git source inventory required for evidence");
 const list=listing.stdout.split("\n").filter(Boolean).filter(p=>existsSync(resolve(root,p)));
 if(!list.length) throw new Error("empty Git inventory cannot prove source completeness");
+// A file digest from a dirty checkout must not be promoted to the named HEAD.
+const clean=spawnSync("git",["diff","--quiet","HEAD","--"],{cwd:root});
+if(clean.status!==0) throw new Error("dirty tracked files do not represent exact source commit");
 const head=spawnSync("git",["rev-parse","HEAD"],{cwd:root,encoding:"utf8"});
 const sha=head.status===0?head.stdout.trim():null;
 const files=list.map(path=>({path,sha256:createHash("sha256").update(readFileSync(resolve(root,path))).digest("hex")}));

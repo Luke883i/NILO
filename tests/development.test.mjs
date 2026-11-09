@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {readFileSync} from "node:fs";
+import {readFileSync,writeFileSync,mkdirSync,mkdtempSync,cpSync,rmSync} from "node:fs";
+import {tmpdir} from "node:os";
+import {join} from "node:path";
+import {fileURLToPath} from "node:url";
 import {validateBridge} from "../scripts/verify-development.mjs";
 const read=p=>JSON.parse(readFileSync(new URL("../"+p,import.meta.url),"utf8"));
 const base=()=>({bridge:read("contracts/development-map.json"),contract:read("contracts/nilo-semantic-v1.json"),dod:read("contracts/dod-v1.json")});
@@ -36,4 +39,23 @@ test("removing a source owner or mutation witness is rejected",()=>{
   assert(validateBridge(d).includes("bridge-oracles"));
   d=base();d.bridge.requirements.find(x=>x.id==="OR-06").tests=["tests/core.test.mjs"];
   assert(validateBridge(d).includes("bridge-model-witness"));
+});
+
+test("an unowned nested web file physically added to a disposable repository fails",()=>{
+  const root=fileURLToPath(new URL("../",import.meta.url));
+  const tmp=mkdtempSync(join(tmpdir(),"nilo-orphan-source-"));
+  try {
+    for(const f of ["web/core.mjs","web/main.mjs","web/index.html","web/style.css",
+      "tests/core.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
+      "tests/development.test.mjs",".github/workflows/seed.yml"]){
+      const dest=join(tmp,f);mkdirSync(join(dest,".."),{recursive:true});
+      cpSync(join(root,f),dest);
+    }
+    const d=base();
+    assert.deepEqual(validateBridge(d,tmp),[],"original mapped source fixture must pass");
+    mkdirSync(join(tmp,"web","levels"),{recursive:true});
+    writeFileSync(join(tmp,"web","levels","lv02.mjs"),"export const level='unowned';\n");
+    assert(validateBridge(d,tmp).includes("bridge-source-coverage"),
+      "new nested product code must have an OR owner in the same PR");
+  }finally{rmSync(tmp,{recursive:true,force:true});}
 });

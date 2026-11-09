@@ -41,3 +41,11 @@ test("no dependency laundering or false standards completeness",()=>{
  d=fresh();d.refs.references.find(n=>n.id==="STD-SLSA").text_sha256="f".repeat(64);
  assert(audit(d).includes("normative-register"));
 });
+
+test("dropping a beta prerequisite cannot be laundered as full-contract acceptance",()=>{
+ const d=fresh(),beta=d.dod.nodes.find(x=>x.id==="G_BETA_RELEASE");
+ assert.equal(d.dod.beta_goal,"G_BETA_RELEASE");
+ assert.equal(beta.depends_on.length,7);
+ beta.depends_on=beta.depends_on.filter(x=>x!=="Q03");
+ assert(audit(d).includes("dod-AND"));
+});
