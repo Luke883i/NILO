@@ -85,3 +85,13 @@ test("PR10 declared input/states cannot drift from runtime or invent playable TI
  const another=load();another.contract.gameplay.game_state=another.contract.gameplay.game_state.filter(x=>x!=="DEFEATED");
  assert(audit(another).includes("runtime-controls-and-states"));
 });
+
+test("PR11 release gate cannot bypass remote Render and actual Codespace witness",()=>{
+ const mutate=(fn,expected)=>{
+   const d=fresh();fn(d);assert(audit(d).includes(expected),expected);
+ };
+ mutate(d=>{d.dod.nodes.find(n=>n.id==="G_RELEASE").depends_on=["R01","R02","R03"]},"dod-AND");
+ mutate(d=>{d.dod.nodes.find(n=>n.id==="G_RENDER_P1").depends_on=["DL05","DL06","DL07"]},"dod-AND");
+ mutate(d=>{d.dod.nodes.find(n=>n.id==="DL08").baseline_status="PASS"},"delivery-no-external-laundering");
+ mutate(d=>{d.contract.delivery.render.remote_deployment="PASS"},"delivery-source-truth");
+});

@@ -552,5 +552,34 @@
       }
     ],
     "beta_boundary": "Six actual playable levels and three bosses plus G_BETA_RELEASE independent evidence; current LV-01 pixel-art proposal does not satisfy the commercial vision."
+  },
+  "delivery": {
+    "id": "I07-D",
+    "priority": "P0_CODESPACES_P1_RENDER",
+    "scope": "TWO_LEVEL_FIRST_BOSS_CANDIDATE_NOT_BETA",
+    "codespaces": {
+      "port": 8000,
+      "host": "0.0.0.0",
+      "command": "npm start",
+      "config": ".devcontainer/devcontainer.json",
+      "visibility": "private",
+      "source_oracle": "tests/delivery.test.mjs",
+      "user_forwarded_connection": "NOT_OBSERVED"
+    },
+    "render": {
+      "kind": "STATIC_SITE",
+      "config": "render.yaml",
+      "build_command": "npm run build:static",
+      "publish_dir": "dist",
+      "manifest": "nilo-deploy.json",
+      "deploy_trigger": "checksPass",
+      "browser_oracle": "tests/browser-delivery.py",
+      "live_workflow": ".github/workflows/render-live.yml",
+      "remote_deployment": "BLOCKED_EXTERNAL",
+      "live_origin": "NOT_CONFIGURED"
+    },
+    "beta_authorized": false,
+    "release_authorized": false,
+    "notes": "Source CI may prove build, local HTTP and Chrome static artifact parity; actual Codespaces forwarded access and remote Render deploy remain independent external witnesses."
   }
 }

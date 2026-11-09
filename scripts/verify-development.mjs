@@ -66,8 +66,19 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
       .every(t=>lv02?.tests?.includes(t)&&bossOracle?.tests?.includes(t))&&
     bossOracle?.sources?.includes("web/levels/custode.mjs")&&
     bossOracle?.authority==="HUMAN_AND_BROWSER_REQUIRED"&&bossOracle?.browser==="NOT_ATTESTED");
+  const delivery=bridge?.delivery,prodDelivery=contract?.delivery;
+  bad("bridge-delivery",delivery?.id==="I07-D"&&delivery?.id===prodDelivery?.id&&
+    delivery?.authority==="SOURCE_AND_BROWSER_TESTS_NOT_EXTERNAL_ATTESTATION"&&
+    delivery?.codespaces_port===8000&&delivery?.render_publish_dir==="dist"&&
+    delivery?.user_codespace_forwarding==="NOT_OBSERVED"&&
+    delivery?.render_live==="BLOCKED_EXTERNAL"&&delivery?.beta_authorized===false&&
+    [".devcontainer/devcontainer.json","package.json","scripts/serve.mjs","scripts/build-static.mjs",
+      "render.yaml",".github/workflows/seed.yml",".github/workflows/render-live.yml"].every(p=>
+      delivery?.source_paths?.includes(p)&&existsSync(resolve(root,p)))&&
+    ["tests/delivery.test.mjs","tests/browser-delivery.py","tests/browser-custode.py"].every(p=>
+      delivery?.tests?.includes(p)&&existsSync(resolve(root,p))));
   bad("bridge-narrative",bridge?.narrative_state==="DRAFT_AUTHOR_UNAPPROVED"&&contract?.goal?.human_approved===false);
-  const rootAllowed=new Set([".git",".github",".gitignore","README.md","package.json","bom","contracts","docs","provenance","scripts","standards","tests","web","node_modules","artifacts","coverage",".DS_Store"]);
+  const rootAllowed=new Set([".git",".github",".gitignore","README.md","package.json","bom","contracts","docs","provenance","scripts","standards","tests","web","node_modules","artifacts","coverage",".DS_Store",".devcontainer","dist","render.yaml"]);
   bad("bridge-root-minimal",readdirSync(root).every(x=>rootAllowed.has(x)));
   bad("bridge-core-oracle",existsSync(resolve(root,".github/workflows/seed.yml"))&&
     bridge?.repo_tests?.includes("tests/development.test.mjs"));
