@@ -22,8 +22,12 @@ jobs:
           node --version
       - name: Verify narrative, requirements, DoD, BOM and source boundaries
         run: node scripts/verify.mjs
-      - name: Execute deterministic source tests and three real-source mutants
-        run: node --test tests/core.test.mjs tests/contracts.test.mjs tests/mutation.test.mjs
+      - name: Test deterministic playable physics and checkpoint
+        run: node --test tests/core.test.mjs
+      - name: Test contract, reticular DoD and S-BOM negative cases
+        run: node --test tests/contracts.test.mjs
+      - name: Kill real original-game-source mutants in isolated copies
+        run: node --test tests/mutation.test.mjs
       - name: Capture process-reported source hashes and SHA without self-approval
         run: |
           node scripts/evidence.mjs --out /tmp/nilo-seed-evidence.json
