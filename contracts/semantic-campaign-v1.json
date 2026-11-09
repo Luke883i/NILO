@@ -1,0 +1,459 @@
+{
+  "schema": "nilo.semantic-campaign-contract/1",
+  "version": 1,
+  "seed": 20261109,
+  "axes": [
+    {
+      "id": "scene",
+      "values": [
+        {
+          "id": "lv01-opening",
+          "implemented": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "lv01-jump",
+          "implemented": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "lv01-checkpoint",
+          "implemented": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "lv01-goal",
+          "implemented": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "lv02-canal",
+          "implemented": false,
+          "expected_blocker": 1
+        },
+        {
+          "id": "lv03-archive",
+          "implemented": false,
+          "expected_blocker": 1
+        },
+        {
+          "id": "lv04-forge",
+          "implemented": false,
+          "expected_blocker": 1
+        },
+        {
+          "id": "lv05-forest",
+          "implemented": false,
+          "expected_blocker": 1
+        },
+        {
+          "id": "lv06-director",
+          "implemented": false,
+          "expected_blocker": 1
+        },
+        {
+          "id": "credits-ending",
+          "implemented": false,
+          "expected_blocker": 1
+        }
+      ]
+    },
+    {
+      "id": "input",
+      "values": [
+        {
+          "id": "arrow-keys",
+          "supported": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "ad-keys",
+          "supported": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "space-jump",
+          "supported": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "p-pause",
+          "supported": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "gamepad",
+          "supported": false,
+          "expected_blocker": 2
+        },
+        {
+          "id": "touch",
+          "supported": false,
+          "expected_blocker": 2
+        },
+        {
+          "id": "one-hand-mode",
+          "supported": false,
+          "expected_blocker": 2
+        },
+        {
+          "id": "remapped-controls",
+          "supported": false,
+          "expected_blocker": 2
+        },
+        {
+          "id": "screen-reader-alternative",
+          "supported": false,
+          "expected_blocker": 2
+        },
+        {
+          "id": "input-lost-focus",
+          "supported": false,
+          "expected_blocker": 2
+        }
+      ]
+    },
+    {
+      "id": "viewport",
+      "values": [
+        {
+          "id": "desktop-960",
+          "supported": true,
+          "min_glyph_px": 16,
+          "expected_blocker": 0
+        },
+        {
+          "id": "desktop-1280",
+          "supported": true,
+          "min_glyph_px": 16,
+          "expected_blocker": 0
+        },
+        {
+          "id": "desktop-1440",
+          "supported": true,
+          "min_glyph_px": 16,
+          "expected_blocker": 0
+        },
+        {
+          "id": "ultrawide-1920",
+          "supported": true,
+          "min_glyph_px": 16,
+          "expected_blocker": 0
+        },
+        {
+          "id": "desktop-reduced-motion",
+          "supported": true,
+          "min_glyph_px": 16,
+          "expected_blocker": 0
+        },
+        {
+          "id": "desktop-high-contrast",
+          "supported": true,
+          "min_glyph_px": 16,
+          "expected_blocker": 0
+        },
+        {
+          "id": "tablet-768",
+          "supported": true,
+          "min_glyph_px": 16,
+          "expected_blocker": 0
+        },
+        {
+          "id": "tablet-600",
+          "supported": false,
+          "min_glyph_px": 9,
+          "expected_blocker": 4
+        },
+        {
+          "id": "phone-430",
+          "supported": false,
+          "min_glyph_px": 6,
+          "expected_blocker": 4
+        },
+        {
+          "id": "phone-390",
+          "supported": false,
+          "min_glyph_px": 6,
+          "expected_blocker": 4
+        }
+      ]
+    },
+    {
+      "id": "checkpoint",
+      "values": [
+        {
+          "id": "fresh-memory",
+          "demonstrated": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "valid-decoder",
+          "demonstrated": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "restart-model",
+          "demonstrated": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "http-reload",
+          "demonstrated": false,
+          "expected_blocker": 8
+        },
+        {
+          "id": "new-tab",
+          "demonstrated": false,
+          "expected_blocker": 8
+        },
+        {
+          "id": "forged-version",
+          "demonstrated": false,
+          "expected_blocker": 8
+        },
+        {
+          "id": "storage-denied",
+          "demonstrated": false,
+          "expected_blocker": 8
+        },
+        {
+          "id": "interrupted-write",
+          "demonstrated": false,
+          "expected_blocker": 8
+        },
+        {
+          "id": "migration",
+          "demonstrated": false,
+          "expected_blocker": 8
+        },
+        {
+          "id": "corrupted-json",
+          "demonstrated": false,
+          "expected_blocker": 8
+        }
+      ]
+    },
+    {
+      "id": "visual-semantics",
+      "values": [
+        {
+          "id": "nilo-high-contrast",
+          "silhouette": true,
+          "contrast": true,
+          "hud": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "tica-identifiable",
+          "silhouette": true,
+          "contrast": true,
+          "hud": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "clear-exit-marker",
+          "silhouette": true,
+          "contrast": true,
+          "hud": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "avatar-hidden",
+          "silhouette": false,
+          "contrast": false,
+          "hud": false,
+          "expected_blocker": 16
+        },
+        {
+          "id": "low-contrast-platform",
+          "silhouette": false,
+          "contrast": false,
+          "hud": false,
+          "expected_blocker": 16
+        },
+        {
+          "id": "tiny-mobile-hud",
+          "silhouette": false,
+          "contrast": false,
+          "hud": false,
+          "expected_blocker": 16
+        },
+        {
+          "id": "wrong-boss-silhouette",
+          "silhouette": false,
+          "contrast": false,
+          "hud": false,
+          "expected_blocker": 16
+        },
+        {
+          "id": "checkpoint-occluded",
+          "silhouette": false,
+          "contrast": false,
+          "hud": false,
+          "expected_blocker": 16
+        },
+        {
+          "id": "foreground-obscures-jump",
+          "silhouette": false,
+          "contrast": false,
+          "hud": false,
+          "expected_blocker": 16
+        },
+        {
+          "id": "missing-character-expression",
+          "silhouette": false,
+          "contrast": false,
+          "hud": false,
+          "expected_blocker": 16
+        }
+      ]
+    },
+    {
+      "id": "story",
+      "values": [
+        {
+          "id": "approved-lv01-storyboard",
+          "integrity": true,
+          "author_approved": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "approved-pilot-identity",
+          "integrity": true,
+          "author_approved": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "unapproved-name-change",
+          "integrity": false,
+          "author_approved": false,
+          "expected_blocker": 32
+        },
+        {
+          "id": "missing-tica-role",
+          "integrity": false,
+          "author_approved": false,
+          "expected_blocker": 32
+        },
+        {
+          "id": "wrong-boss-order",
+          "integrity": false,
+          "author_approved": false,
+          "expected_blocker": 32
+        },
+        {
+          "id": "time-theme-inverted",
+          "integrity": false,
+          "author_approved": false,
+          "expected_blocker": 32
+        },
+        {
+          "id": "untranslated-dialogue",
+          "integrity": false,
+          "author_approved": false,
+          "expected_blocker": 32
+        },
+        {
+          "id": "nonconsensual-time-power",
+          "integrity": false,
+          "author_approved": false,
+          "expected_blocker": 32
+        },
+        {
+          "id": "ending-contradiction",
+          "integrity": false,
+          "author_approved": false,
+          "expected_blocker": 32
+        },
+        {
+          "id": "rights-unknown-character",
+          "integrity": false,
+          "author_approved": false,
+          "expected_blocker": 32
+        }
+      ]
+    },
+    {
+      "id": "evidence",
+      "values": [
+        {
+          "id": "real-origin-pinned-signed-review",
+          "runtime_verified": true,
+          "trusted_revision": true,
+          "license_reviewed": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "independent-art-approval",
+          "runtime_verified": true,
+          "trusted_revision": true,
+          "license_reviewed": true,
+          "expected_blocker": 0
+        },
+        {
+          "id": "stale-git-sha",
+          "runtime_verified": false,
+          "trusted_revision": false,
+          "license_reviewed": false,
+          "expected_blocker": 64
+        },
+        {
+          "id": "synthetic-test-promoted",
+          "runtime_verified": false,
+          "trusted_revision": false,
+          "license_reviewed": false,
+          "expected_blocker": 64
+        },
+        {
+          "id": "self-issued-approval",
+          "runtime_verified": false,
+          "trusted_revision": false,
+          "license_reviewed": false,
+          "expected_blocker": 64
+        },
+        {
+          "id": "unknown-browser-host",
+          "runtime_verified": false,
+          "trusted_revision": false,
+          "license_reviewed": false,
+          "expected_blocker": 64
+        },
+        {
+          "id": "missing-cdn-integrity",
+          "runtime_verified": false,
+          "trusted_revision": false,
+          "license_reviewed": false,
+          "expected_blocker": 64
+        },
+        {
+          "id": "unlicensed-art",
+          "runtime_verified": false,
+          "trusted_revision": false,
+          "license_reviewed": false,
+          "expected_blocker": 64
+        },
+        {
+          "id": "no-replay-receipt",
+          "runtime_verified": false,
+          "trusted_revision": false,
+          "license_reviewed": false,
+          "expected_blocker": 64
+        },
+        {
+          "id": "unprotected-merge",
+          "runtime_verified": false,
+          "trusted_revision": false,
+          "license_reviewed": false,
+          "expected_blocker": 64
+        }
+      ]
+    }
+  ],
+  "oracle": "two independent implementations: expected_blocker masks in this pre-seeded catalog vs source-based classifier properties",
+  "caveats": [
+    "10,000,000 full-cartesian vectors, not 10,000,000 executed product tests",
+    "Not every cross-product combination is a feasible single real play session; it is a conceptual design challenge",
+    "No semantic model can prove user satisfaction or software runtime correctness",
+    "Saturation refers only to normalized flags in this finite catalog"
+  ]
+}
