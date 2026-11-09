@@ -201,3 +201,22 @@ DPR without treating similarity as beauty; test beginner comprehension,
 narrative prompts and accessible cues with external reviewers. Extend
 `docs/PLAYTEST_PROTOCOL.md` and existing art/experience tests.
 No third-party art or duplicate renderer.
+
+
+## PR8 — vertical slice di identità artistica e comprensione LV-01
+
+La baseline di questa PR è `main@a7d9aa50e9c8d8cabca00968fad6ac145d8cb6c3` (PR7 merged).
+**DoD V1–V7:** V1 pixel grid verificata su canvas 480×270 e output 960×540 in Chrome HTTP; V2 Nilo/Tica/Perno identificabili attraverso forme, icone ed etichette; V3 lip delle piattaforme e vuoti contrassegnati distintamente dai palazzi; V4 cue checkpoint, portale e completamento coerenti con lo stato; V5 testo di scena DOM accessibile e allineato alla singola ora giocabile; V6 screenshot reali con SHA, controllo del 2× nearest-neighbor e mutante fisico che riabilita lo smoothing; V7 comprensione indipendente **non osservata**. I gate tecnici V1–V6 possono passare in CI, V7 non è compensabile.
+
+**Catena owner:** `contracts/nilo-semantic-v1.json` definisce l'esperienza desiderata; `web/art.mjs` e `web/main.mjs` realizzano grafica e cue, senza asset remoti; `tests/art.test.mjs`, `tests/art-mutation.test.mjs`, `tests/browser-e2e.py` forniscono falsificatori; lo stesso CI PR5/PR7 conserva SHA e PNG; il playtest umano è regolato da `docs/PLAYTEST_PROTOCOL.md`.
+
+**Sperimentazioni di compressione della roadmap:** 
+- Accorpare LV-02 e primo boss: **respinto**, diversi stati di vittoria, fallimento e telegraph e regressioni indipendenti.
+- Accorpare LV-03 e LV-04: **respinto**, meccaniche luce/ombra e tempi della fonderia differenti; aumenterebbe la complessità d'isolamento.
+- Accorpare ultimo boss e scena finale: **ammissibile solo condizionalmente**, se la narrazione dipende da un evento di vittoria verificato e gli oracoli boss/narrativa restano indipendenti.
+- Accorpare regressione integrata e build/SBOM: **condizionato** a un identico artifact digest con controlli e proprietari distinti.
+- Accorpare decisione release e CI: **respinto**, approvazione umana e protezioni host sono distinte.
+
+**Sequenza candidata dopo PR8:** PR9 LV-02; PR10 boss Custode; PR11 LV-03; PR12 LV-04; PR13 boss Archivista; PR14 LV-05; PR15 LV-06; PR16 boss Direttore + finale *soltanto se* i rispettivi DoD sono separabili; PR17 chiusura audio, lingua e accessibilità; PR18 regressioni full-game + build/SBOM/provenienza *soltanto se* entrambe le evidenze sono autonome; PR19 decisione beta indipendente. Se una delle due compressioni fallisce, ritornare alla sequenza PR20 o oltre, senza diminuire gli obblighi.
+
+**PR9 candidata:** realizzare `LV-02 — Canali dei Minuti` sfruttando `web/core.mjs` e `web/art.mjs` come owners, un descrittore di scena minimo nella stessa struttura di prodotto, senza duplicare il motore. Il test E2E deve attraversare LV-02, osservare piattaforme mobili e correnti, rifiutare checkpoint di livello scorretto e verificare regressioni LV-01. Il Custode resta una PR separata. Nessun nuovo livello è dichiarato attivo finché questo passaggio non è eseguito nel browser.

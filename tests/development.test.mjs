@@ -99,3 +99,11 @@ test("PR7 browser input witness may not be silently removed from pause/restart o
  or.tests=or.tests.filter(t=>t!=="tests/browser-e2e.py");
  assert(validateBridge(x).includes("bridge-model-witness"));
 });
+
+test("PR8 original visual and physical art witnesses remain linked to OR-05",()=>{
+ for(const file of ["tests/art.test.mjs","tests/art-mutation.test.mjs"]){
+   const d=base(),o=d.bridge.requirements.find(x=>x.id==="OR-05");
+   o.tests=o.tests.filter(x=>x!==file);
+   assert(validateBridge(d).includes("bridge-model-witness"),file);
+ }
+});

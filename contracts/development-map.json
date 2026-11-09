@@ -127,7 +127,9 @@
         "web/art.mjs"
       ],
       "tests": [
-        "tests/browser-e2e.py"
+        "tests/browser-e2e.py",
+        "tests/art.test.mjs",
+        "tests/art-mutation.test.mjs"
       ],
       "authority": "HUMAN_AND_BROWSER_REQUIRED",
       "browser": "TEST_DECLARED_NOT_ATTESTED"
