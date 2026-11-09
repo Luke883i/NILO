@@ -38,8 +38,8 @@ test('PR8 original renderer negative controls kill removed character labels, led
       {cwd:dir,encoding:'utf8',timeout:12000,env});
    assert.equal(run().status,0,'original independent art oracle must pass first');
    const mutants=[
-     ['missing-roles','  nameplates(c,state);','  void state;'],
-     ['invisible-ledge','  ledgeCues(c,platforms,state);','  void platforms;'],
+     ['missing-roles','else nameplates(c,state);','  void state;'],
+     ['invisible-ledge','  ledgeCues(c,surfaces,state);','  void platforms;'],
      ['missing-hours','  timeLanterns(c,state);','  void state;'],
      ['wrong-story-ending',"id:'CUE-END'","id:'CUE-FAKE'"],
      ['premature-hour-award',"const x=699+j*38,active=j===0&&(state.level==='LV-02'||state.phase==='COMPLETED');",
