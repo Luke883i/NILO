@@ -282,8 +282,16 @@ def run(args):
             if args.stage=="no-requestfailures":
                 report["status"]="PASS_SCOPED_NO_REQUEST_FAILURES"
                 return
-            assert all(x["status"]==200 for x in report["requests"] if x["resource"] in
-                 ("index.html","core.mjs","art.mjs","main.mjs","style.css"))
+            required=("index.html","core.mjs","art.mjs","main.mjs","style.css")
+            report["resource_http_statuses"]={
+                name:[r["status"] for r in report["requests"] if r["resource"]==name]
+                for name in required}
+            for name,statuses in report["resource_http_statuses"].items():
+                assert 200 in statuses,"initial HTTP 200 required for "+name+": "+repr(statuses)
+                # After a real reload, a conditional HTTP 304 is a valid
+                # cache revalidation of the same already received source.
+                assert all(status in (200,304) for status in statuses), (
+                    "unexpected browser module response for "+name+": "+repr(statuses))
             context.close()
 
             # Physical, disposable source mutant: reference a non-existent
