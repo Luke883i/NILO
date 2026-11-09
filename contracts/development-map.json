@@ -93,10 +93,11 @@
       ],
       "tests": [
         "tests/core.test.mjs",
-        "tests/mutation.test.mjs"
+        "tests/mutation.test.mjs",
+        "tests/browser-e2e.py"
       ],
       "authority": "MODEL_TEST_ONLY",
-      "browser": "NOT_ATTESTED"
+      "browser": "TEST_DECLARED_NOT_ATTESTED"
     },
     {
       "id": "OR-04",
@@ -121,9 +122,11 @@
         "web/main.mjs",
         "web/art.mjs"
       ],
-      "tests": [],
+      "tests": [
+        "tests/browser-e2e.py"
+      ],
       "authority": "HUMAN_AND_BROWSER_REQUIRED",
-      "browser": "NOT_ATTESTED"
+      "browser": "TEST_DECLARED_NOT_ATTESTED"
     },
     {
       "id": "OR-06",

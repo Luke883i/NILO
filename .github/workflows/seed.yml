@@ -60,3 +60,48 @@ jobs:
             /tmp/nilo-semantic-10m.json
           if-no-files-found: warn
           retention-days: 14
+
+  browser-lv01:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Bind browser witness to exact source
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          python --version
+      - name: Install pinned test-only Playwright and actual Chromium
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Run original HTTP-origin browser flow and physical storage mutant
+        run: python tests/browser-e2e.py --out /tmp/nilo-browser-evidence --physical-mutant
+      - name: Verify receipt scope on exact HEAD (not beta approval)
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path('/tmp/nilo-browser-evidence/browser-receipt.json')
+          r=json.loads(p.read_text())
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert r['status']=='PASS_SCOPED_BROWSER_LV01'
+          assert r['source_sha']==sha and r['browser_executed']
+          assert not r['release_authorized'] and not r['independent_player_acceptance']
+          assert len(r['screenshots'])==4
+          assert len(r['checks'])>=8
+          print('PASS_SCOPED_BROWSER_LV01 on',sha)
+          PY
+      - name: Publish screenshots, logs, environment and digest receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nilo-browser-lv01-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/nilo-browser-evidence/
+          if-no-files-found: warn
+          retention-days: 14

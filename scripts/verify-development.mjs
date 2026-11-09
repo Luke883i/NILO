@@ -29,7 +29,11 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
     return x.source.includes("web/levels/"+slug+".mjs")&&x.tests.includes("tests/"+slug+".test.mjs");
   }));
   bad("bridge-no-runtime-promotion",r.every(x=>["MODEL_TEST_ONLY","LOCAL_SOURCE_MUTANT","HUMAN_AND_BROWSER_REQUIRED"].includes(x.authority)
-    &&x.browser==="NOT_ATTESTED"&&levels.some(l=>l.id===x.level)));
+    &&levels.some(l=>l.id===x.level) &&
+    (x.browser==="NOT_ATTESTED" ||
+      (x.browser==="TEST_DECLARED_NOT_ATTESTED" &&
+       ["OR-03","OR-05"].includes(x.id) &&
+       x.tests.includes("tests/browser-e2e.py")))));
   const enumerate=(dir,pre="")=>readdirSync(dir,{withFileTypes:true}).flatMap(e=>{
     const rel=pre+e.name,full=resolve(dir,e.name);
     return e.isDirectory()?enumerate(full,rel+"/"):e.isFile()?["web/"+rel]:[];
@@ -43,7 +47,9 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
   bad("bridge-test-paths",tests.every(x=>x.startsWith("tests/")&&existsSync(resolve(root,x))));
   bad("bridge-model-witness",r.filter(x=>x.authority!=="HUMAN_AND_BROWSER_REQUIRED").every(x=>x.tests?.length>0)&&
     r.find(x=>x.id==="OR-06")?.tests?.includes("tests/mutation.test.mjs")&&
-    r.find(x=>x.id==="OR-05")?.tests?.length===0);
+    r.find(x=>x.id==="OR-05")?.tests?.includes("tests/browser-e2e.py") &&
+    r.find(x=>x.id==="OR-03")?.tests?.includes("tests/browser-e2e.py") &&
+    r.find(x=>x.id==="OR-05")?.authority==="HUMAN_AND_BROWSER_REQUIRED");
   bad("bridge-narrative",bridge?.narrative_state==="DRAFT_AUTHOR_UNAPPROVED"&&contract?.goal?.human_approved===false);
   const rootAllowed=new Set([".git",".github",".gitignore","README.md","package.json","bom","contracts","docs","provenance","scripts","standards","tests","web","node_modules","artifacts","coverage",".DS_Store"]);
   bad("bridge-root-minimal",readdirSync(root).every(x=>rootAllowed.has(x)));

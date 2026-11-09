@@ -80,3 +80,16 @@ test("future level cannot be marked implemented by borrowing LV-01 tests",()=>{
  n.state="IMPLEMENTED_CANDIDATE";n.source=["web/core.mjs"];n.tests=["tests/core.test.mjs"];
  assert(validateBridge(d).includes("bridge-no-fake-levels"));
 });
+
+test("browser evidence requires real test owner and never confers UX approval",()=>{
+ const d=base();
+ assert.deepEqual(validateBridge(d),[]);
+ for(const id of ["OR-03","OR-05"]){
+   const mutant=base(),owner=mutant.bridge.requirements.find(x=>x.id===id);
+   owner.tests=owner.tests.filter(x=>x!=="tests/browser-e2e.py");
+   assert(validateBridge(mutant).length>0,id+" must have an actual browser test");
+ }
+ const falsePass=base();
+ falsePass.bridge.requirements.find(x=>x.id==="OR-05").browser="PASS_INDEPENDENT";
+ assert(validateBridge(falsePass).includes("bridge-no-runtime-promotion"));
+});
