@@ -8,7 +8,7 @@ const root=new URL('../',import.meta.url);
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const sha=raw=>createHash('sha256').update(raw).digest('hex');
 const pkg=()=>JSON.parse(read('package.json'));
-const currentSha=()=>spawnSync('git',['rev-parse','HEAD'],{cwd:new URL('..',root),encoding:'utf8'}).stdout.trim();
+const currentSha=()=>spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim();
 test('P0 RED: Codespaces forwards private HTTP port 8000 and game start is one command',()=>{
  const d=JSON.parse(read('.devcontainer/devcontainer.json'));
  assert.deepEqual(d.forwardPorts,[8000]);
@@ -26,7 +26,7 @@ test('P1 RED: Render Blueprint is a static site with gated main deploy',()=>{
  assert.match(pkg().scripts['build:static'],/scripts\/build-static\.mjs/);
 });
 test('P1 RED: reproducible static package maps every published file to source sha',()=>{
- const build=spawnSync(process.execPath,['scripts/build-static.mjs'],{cwd:new URL('..',root),encoding:'utf8',timeout:15000});
+ const build=spawnSync(process.execPath,['scripts/build-static.mjs'],{cwd:root,encoding:'utf8',timeout:15000});
  assert.equal(build.status,0,build.stderr||build.stdout);
  const dist=new URL('../dist/',import.meta.url);
  const manifest=JSON.parse(readFileSync(new URL('nilo-deploy.json',dist)));
@@ -52,7 +52,7 @@ test('P1 RED: reproducible static package maps every published file to source sh
 });
 test('P0 RED: actual zero-dependency HTTP server serves only game, with valid MIME and no traversal',async()=>{
  const child=spawn(process.execPath,['scripts/serve.mjs'],{
-   cwd:new URL('..',root),env:{...process.env,PORT:'0',HOST:'127.0.0.1',NILO_SERVE_DIR:'web'},stdio:['ignore','pipe','pipe']});
+   cwd:root,env:{...process.env,PORT:'0',HOST:'127.0.0.1',NILO_SERVE_DIR:'web'},stdio:['ignore','pipe','pipe']});
  let output='',errors='',port=null;
  child.stderr.on('data',b=>errors+=String(b));
  const ready=new Promise((resolveReady,rejectReady)=>{

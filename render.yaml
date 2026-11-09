@@ -1,0 +1,19 @@
+# NILO is a static browser game, not a Render Node web service.
+# Link this file as a Blueprint in Render; never commit API keys or deploy hooks.
+services:
+  - type: web
+    name: nilo-fabbrica-delle-ore
+    runtime: static
+    buildCommand: npm run build:static
+    staticPublishPath: ./dist
+    autoDeployTrigger: checksPass
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: no-referrer
+      - path: /nilo-deploy.json
+        name: Cache-Control
+        value: no-store
