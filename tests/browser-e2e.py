@@ -173,6 +173,26 @@ def verify_input_lifecycle(browser,url,report,physical_mutant):
                     "real browser source mutant survived: event queue removal")
                 report["checks"]["physical_subtick_queue_mutant"]="KILLED_BY_BROWSER_ORACLE"
 
+def pixel_grid(page):
+    """Actual 960x540 browser canvas must be a 2x enlargement of 480x270.
+    Seeded sample is structural, not an aesthetic or accessibility oracle."""
+    return page.evaluate("""() => {
+      const c=document.querySelector('#game'),a=c.getContext('2d').getImageData(0,0,c.width,c.height).data;
+      let seed=20261109,mismatches=0,first=null;
+      const rand=()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);
+      const rgba=(x,y)=>{const i=(y*c.width+x)*4;return [a[i],a[i+1],a[i+2],a[i+3]].join(',');};
+      for(let n=0;n<1200;n++){
+        const x=Math.floor(rand()*479)*2,y=Math.floor(rand()*269)*2;
+        const a0=rgba(x,y),b=rgba(x+1,y),d=rgba(x,y+1),e=rgba(x+1,y+1);
+        if(a0!==b||a0!==d||a0!==e){mismatches++;if(!first)first={x,y,values:[a0,b,d,e]};}
+      }
+      return {samples:1200,mismatches,first,logical_source:[480,270],display:[c.width,c.height]};
+    }""")
+
+def scene_text(page):
+    return {"title":page.locator("#scene-title").inner_text(),
+            "hint":page.locator("#scene-hint").inner_text()}
+
 def run(args):
     out=Path(args.out).resolve()
     out.mkdir(parents=True,exist_ok=True)
@@ -204,6 +224,15 @@ def run(args):
               return {canvas:[c.width,c.height],different_sample_colors:colors.size}}""")
             assert samples["different_sample_colors"]>=10, "blank/corrupt canvas"
             report["pixel_sample"]=samples
+            report["pixel_grid"]=pixel_grid(page)
+            assert report["pixel_grid"]["display"]==[960,540]
+            assert report["pixel_grid"]["mismatches"]==0,("broken 2x grid: "+repr(report["pixel_grid"]))
+            page.wait_for_function("() => document.querySelector('#scene-title')?.textContent?.includes('TICA')")
+            report["visual_scene_start"]=scene_text(page)
+            assert "segnatempo" in report["visual_scene_start"]["title"].lower()
+            assert "ottone" in report["visual_scene_start"]["hint"].lower()
+            report["checks"]["visual_narrative_start"]="PASS_OBSERVED"
+            report["checks"]["pixel_grid"]="PASS_OBSERVED"
             report["screenshots"].append(screenshot(page,out,"01-start"))
             report["last_stage"]="smoke"
             if args.stage=="smoke":
@@ -231,6 +260,10 @@ def run(args):
             assert state(page)["deaths"]==0
             report["checks"]["checkpoint_from_keys"]="PASS_OBSERVED"
             report["jumps_before_checkpoint"]=jumps
+            page.wait_for_function("() => document.querySelector('#scene-title')?.textContent?.includes('PERNO')")
+            report["visual_scene_checkpoint"]=scene_text(page)
+            assert "checkpoint" in report["visual_scene_checkpoint"]["hint"].lower()
+            report["checks"]["visual_narrative_checkpoint"]="PASS_OBSERVED"
             report["screenshots"].append(screenshot(page,out,"02-checkpoint"))
             report["last_stage"]="checkpoint"
             if args.stage=="checkpoint":
@@ -267,6 +300,10 @@ def run(args):
             assert state(page)["deaths"]==0
             assert "altri 5 capitoli non ancora disponibili" in page.locator("#hud").inner_text()
             report["checks"]["keyboard_end_to_end"]="PASS_OBSERVED"
+            page.wait_for_function("() => document.querySelector('#scene-title')?.textContent?.includes('PRIMA ORA RESTITUITA')")
+            report["visual_scene_completed"]=scene_text(page)
+            assert "cinque livelli" in report["visual_scene_completed"]["hint"].lower()
+            report["checks"]["visual_narrative_finish"]="PASS_OBSERVED"
             report["screenshots"].append(screenshot(page,out,"03-completed"))
             report["last_stage"]="finish"
             if args.stage=="finish":
@@ -389,6 +426,24 @@ def run(args):
             # session is complete. Secondary contexts may hide the original
             # tab, whose visibility handler intentionally pauses gameplay.
             verify_input_lifecycle(browser,url,report,args.physical_mutant)
+            if args.physical_mutant:
+                with tempfile.TemporaryDirectory(prefix="nilo-pixel-grid-mutant-") as temp:
+                    target=Path(temp)/"web"
+                    shutil.copytree(ROOT/"web",target)
+                    original=(target/"main.mjs").read_text("utf-8")
+                    needle="ctx.imageSmoothingEnabled=false;"
+                    assert original.count(needle)==1,"pixel grid physical mutation anchor drifted"
+                    (target/"main.mjs").write_text(
+                        original.replace(needle,"ctx.imageSmoothingEnabled=true;"),encoding="utf-8")
+                    with serve(target) as mutant_url:
+                        mctx=browser.new_context(viewport={"width":1280,"height":900})
+                        victim=mctx.new_page()
+                        loaded(victim,mutant_url)
+                        victim.wait_for_timeout(150)
+                        broken=pixel_grid(victim)
+                        assert broken["mismatches"]>0,("smoothing mutant survived actual pixel oracle: "+repr(broken))
+                        report["checks"]["physical_pixel_grid_mutant"]="KILLED_BY_BROWSER_ORACLE"
+                        mctx.close()
             browser.close()
             report["last_stage"]="complete"
             report["status"]="PASS_SCOPED_BROWSER_LV01"
