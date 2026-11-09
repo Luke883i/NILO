@@ -13,6 +13,7 @@
     "test": "node --test tests/*.test.mjs",
     "evidence": "node scripts/evidence.mjs",
     "quality": "node scripts/verify.mjs && node --test tests/*.test.mjs",
-    "verify:bridge": "node scripts/verify-development.mjs"
+    "verify:bridge": "node scripts/verify-development.mjs",
+    "assurance:semantic": "node scripts/semantic-campaign.mjs --count 10000000 --seed 20261109"
   }
 }

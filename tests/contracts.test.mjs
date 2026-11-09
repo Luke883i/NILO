@@ -45,7 +45,16 @@ test("no dependency laundering or false standards completeness",()=>{
 test("dropping a beta prerequisite cannot be laundered as full-contract acceptance",()=>{
  const d=fresh(),beta=d.dod.nodes.find(x=>x.id==="G_BETA_RELEASE");
  assert.equal(d.dod.beta_goal,"G_BETA_RELEASE");
- assert.equal(beta.depends_on.length,7);
+ assert.equal(beta.depends_on.length,8);
  beta.depends_on=beta.depends_on.filter(x=>x!=="Q03");
  assert(audit(d).includes("dod-AND"));
+});
+
+test("an aesthetic self-certificate or missing mandatory experience criterion blocks beta",()=>{
+ const d=fresh(),experience=d.dod.nodes.find(n=>n.id==="Q07");
+ experience.baseline_status="PASS";
+ assert(audit(d).includes("dod-no-false-pass"));
+ assert(audit(d).includes("dod-experience-quality"));
+ const f=fresh();f.dod.nodes.find(n=>n.id==="Q07").noncompensatory_subcriteria.pop();
+ assert(audit(f).includes("dod-experience-quality"));
 });

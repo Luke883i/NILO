@@ -25,7 +25,7 @@ jobs:
       - name: Test deterministic playable physics and checkpoint
         run: node --test tests/core.test.mjs
       - name: Test contract, reticular DoD and S-BOM negative cases
-        run: node --test tests/contracts.test.mjs
+        run: node --test tests/contracts.test.mjs tests/experience.test.mjs
       - name: Enforce product -> software -> repository bindings on every PR
         run: |
           node scripts/verify-development.mjs
@@ -42,6 +42,10 @@ jobs:
         env:
           NILO_MUTANT: platform-tunneling
         run: node --test tests/mutation.test.mjs
+      - name: Verify pixel-art source, real contrast mutant and semantic-oracle tests
+        run: node --test tests/art.test.mjs tests/art-mutation.test.mjs tests/semantic-campaign.test.mjs
+      - name: Exhaust pre-seeded 10M semantic design vectors (not game executions)
+        run: node scripts/semantic-campaign.mjs --count 10000000 --seed 20261109 --out /tmp/nilo-semantic-10m.json
       - name: Capture process-reported source hashes and SHA without self-approval
         run: |
           node scripts/evidence.mjs --out /tmp/nilo-seed-evidence.json
@@ -51,6 +55,8 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: nilo-source-receipt-${{ github.event.pull_request.head.sha || github.sha }}
-          path: /tmp/nilo-seed-evidence.json
+          path: |
+            /tmp/nilo-seed-evidence.json
+            /tmp/nilo-semantic-10m.json
           if-no-files-found: warn
           retention-days: 14

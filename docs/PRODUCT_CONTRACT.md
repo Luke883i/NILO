@@ -23,3 +23,17 @@ The root contract DoD is **demonstrated only** when the user can play the six le
 **Review questions before PR2:** approve names, tone and age target; choose final art style, platforms, audio policy, monetization/privacy policy, game locale and performance budget. For this seed the defaults are local/offline browser, no telemetry, Italian narrative and graphical placeholders; decisions outside that bounded scope remain open.
 
 **Sources of truth:** `contracts/nilo-semantic-v1.json` for design candidate; `contracts/dod-v1.json` for noncompensatory obligations; `provenance/semantic-chain.json` for cross-plane lineage; `standards/references.json` for normative references. Historical intent stays in CORA, not copied as an execution receipt.
+
+## Product-obiettivo commerciale — criteri derivati, non stato raggiunto
+
+**NILO come gioco finito:** un platform narrativo 2D in pixel art originale in cui sei ore rubate tornano progressivamente alla città. Nilo non vince semplicemente una corsa: ogni ora recuperata cambia visibilmente il mondo e una relazione con Tica, Perno o gli antagonisti. Sei livelli differenziati e tre boss con segnali d'attacco comprensibili portano a un finale coerente e titoli di coda.
+
+La direzione artistica candidata usa pixel integer 480×270 scalati a 960×540 senza smoothing, palette industriale blu/ottone/corallo, silhouette leggibili, skyline a parallasse, oggetti narrativi riconoscibili e segnali distinti per checkpoint/uscita. La PR3 sviluppa **soltanto LV-01**. Fonderia, canali, archivio, bosco, gli altri livelli e i tre boss non diventano contenuti disponibili perché hanno una palette nel contratto.
+
+**Benchmark qualitativi, non asset da copiare:** [Celeste](https://www.celestegame.com/) suggerisce precisione dell'input e ritorno immediato dopo l'errore; [Shovel Knight](https://www.yachtclubgames.com/press/shovel-knight-shovel-of-hope/) leggibilità di personaggi/animazioni e parallasse; [Hollow Knight](https://www.hollowknight.com/) luoghi e personaggi riconoscibili tramite narrazione ambientale. La derivazione è dall'esito per il giocatore ai mezzi software, non dal numero di elementi grafici o dal numero di iterazioni.
+
+**Problemi aperti nel prologo:** assenza di controlli touch, alternativa screen reader, riproduzione HTTP/browser su host osservato, audio, interazioni con gli NPC, pixel-font potenzialmente troppo piccolo a risoluzione ridotta, mancanza di valutazione con giocatori esterni. La resa grafica più ricca non dimostra gradevolezza o accessibilità.
+
+**Beta:** DoD non compensativo `G_BETA_RELEASE`; la qualità artistica e il divertimento richiedono osservazioni con giocatori e revisione dell'autore, non possono essere approvati automaticamente da un oracle CSS o da screenshot.
+
+**Gate mercato Q07:** non compensabile da una semplice schermata esteticamente migliorata. Richiede personaggi riconoscibili, superfici leggibili, controllo gratificante, un feedback sensoriale accettabile, comprensione della storia e accettazione esterna sulla piattaforma bersaglio. Stessa revisione Git delle prove tecniche.

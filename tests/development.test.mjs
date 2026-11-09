@@ -7,6 +7,10 @@ import {fileURLToPath} from "node:url";
 import {validateBridge} from "../scripts/verify-development.mjs";
 const read=p=>JSON.parse(readFileSync(new URL("../"+p,import.meta.url),"utf8"));
 const base=()=>({bridge:read("contracts/development-map.json"),contract:read("contracts/nilo-semantic-v1.json"),dod:read("contracts/dod-v1.json")});
+const fixtureFiles=["web/core.mjs","web/main.mjs","web/index.html","web/style.css","web/art.mjs",
+  "tests/core.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
+  "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs",
+  "tests/semantic-campaign.test.mjs","tests/experience.test.mjs",".github/workflows/seed.yml"];
 test("current contract maps 6 levels, 6 oracles and 4 web units without asserting browser beta",()=>{
   const d=base();assert.deepEqual(validateBridge(d),[]);
   assert.equal(d.bridge.beta_authorized,false);
@@ -45,9 +49,7 @@ test("an unowned nested web file physically added to a disposable repository fai
   const root=fileURLToPath(new URL("../",import.meta.url));
   const tmp=mkdtempSync(join(tmpdir(),"nilo-orphan-source-"));
   try {
-    for(const f of ["web/core.mjs","web/main.mjs","web/index.html","web/style.css",
-      "tests/core.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
-      "tests/development.test.mjs",".github/workflows/seed.yml"]){
+    for(const f of fixtureFiles){
       const dest=join(tmp,f);mkdirSync(join(dest,".."),{recursive:true});
       cpSync(join(root,f),dest);
     }
@@ -64,9 +66,7 @@ test("the root must not become a second undocumented source owner",()=>{
   const root=fileURLToPath(new URL("../",import.meta.url));
   const tmp=mkdtempSync(join(tmpdir(),"nilo-root-drift-"));
   try {
-    for(const f of ["web/core.mjs","web/main.mjs","web/index.html","web/style.css",
-      "tests/core.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
-      "tests/development.test.mjs",".github/workflows/seed.yml"]){
+    for(const f of fixtureFiles){
       const dest=join(tmp,f);mkdirSync(join(dest,".."),{recursive:true});cpSync(join(root,f),dest);
     }
     const d=base();

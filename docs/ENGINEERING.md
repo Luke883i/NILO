@@ -36,7 +36,7 @@ The images are not in this repository. A future CI browser job must produce its 
 | **P3 — Complex mechanics** | Levels 4–5 and Archivist boss | Negative tests for timing/accessibility, narrative semantics and no-regression replay of earlier levels | **Not implemented** |
 | **P4 — Full beta content** | Level 6, Director boss, ending and three complete boss encounters | `G_FULL_GAME` plus asset rights, novice traversal of all six levels | **Not implemented** |
 | **P5 — Beta qualification** | One exact candidate artifact, agreed target device/browser, observed full run | `Q01..Q05`; compatibility, usability/accessibility, frame/latency/error budgets, runtime/SBOM/asset receipts | **Blocked** |
-| **P6 — Controlled beta decision** | Releasable six-level game beta | `G_BETA_RELEASE = G_FULL_GAME AND Q01 AND ... AND Q06`; independent review, required host controls, distribution plan and rollback | **Blocked** |
+| **P6 — Controlled beta decision** | Releasable six-level game beta | `G_BETA_RELEASE = G_FULL_GAME AND Q01 AND ... AND Q07`; independent review, required host controls, distribution plan and rollback | **Blocked** |
 
 **Beta is the six-level game with three playable bosses**, not merely a beta-labeled demo of LV-01. The original `G_CONTRACT_DEMONSTRATED` remains stricter: it also requires the complete `G_SUPPLY_CHAIN` and `G_RELEASE` branches.
 
@@ -52,3 +52,24 @@ The images are not in this repository. A future CI browser job must produce its 
 **DoD fail closed:** a blocked required child makes its AND parent blocked; missing browser/asset/host evidence is `NOT_RUN` or `BLOCKED_EXTERNAL`, never percentage-based green. If a fixed-seed mutation family produces no new failure types for a declared tail window, that establishes only *bounded model saturation*, not absence of defects.
 
 **Minimal filesystem rule:** keep root as entrypoint (`README.md`, `package.json`, `.gitignore`), product runtime in `web/`, semantic owners in existing `contracts/`, tests and verifiers in existing `tests/` and `scripts/`, and historical/technical explanations in `docs/`. Do not add empty component directories for five not-yet-implemented levels. Build/screenshot/log artifacts stay outside tracked source or in CI artifacts; do not commit screenshot collections into root.
+
+## PR3 — target commerciale e derivazione retrograda
+
+| Benchmark / proprietà visibile | Esito necessario in NILO | Prova e falsificatore | Stato |
+| --- | --- | --- | --- |
+| *Celeste*: controllo preciso e ripartenza rapida | Salti riproducibili, errori comprensibili, morte non punitiva, eventuali assist approvati | playtest diversi skill levels, latenza/frame, mutanti collision/respawn | Core testato, user experience non misurata |
+| *Shovel Knight*: pixel art coerente e identità leggibile | Hero/companion/ally distinti, animazione, foreground/parallasse e HUD | source palette, mutante fisico contrasto, screenshot reale e verifica umana | Codice procedurale LV-01 candidato |
+| *Hollow Knight*: luoghi e relazioni memorabili | Ogni livello possiede bioma, tema, meccanica e arco di personaggio | completamento narrativo con giocatori e asset legalmente autorizzati | Solo bozza sei capitoli |
+| Qualità beta indipendente | Sei livelli, tre boss, compatibilità, accessibilità, produzione, arte/licenze, revisione e distribuzione | `G_BETA_RELEASE` e `G_SUPPLY_CHAIN` e `G_RELEASE`, tutti i prerequisiti richiesti | BLOCKED_EXTERNAL |
+
+**Iterazione controllata PR3:** nessuna cartella top-level nuova. La resa viene isolata in `web/art.mjs` (proprietà prodotto OR-05) lasciando `web/core.mjs` motore e fonte fisica invariata. `tests/art.test.mjs` controlla soltanto proprietà sorgente di palette e struttura; `tests/art-mutation.test.mjs` modifica fisicamente i byte dell'arte in un checkout temporaneo per verificare il controllo contrasto; questi test NON conferiscono `HUMAN_AND_BROWSER_REQUIRED` a OR-05.
+
+**10 milioni pre-seeded:** `contracts/semantic-campaign-v1.json` dichiara sette assi semantici × dieci valori ciascuno (scene, input, viewport, checkpoint, arte, storia, provenienza). `scripts/semantic-campaign.mjs` percorre esattamente 10.000.000 tuple deterministiche con seed 20261109 e oracolo a due implementazioni, cercando sette classi di promozione indebita. Il conteggio è di **vettori ipotetici combinatori**, non sessioni di giocatori, patch o rendering. Solo 128 firme di errore normalizzate sono possibili per i sette bit; nessuna novità nella finestra finale è *saturazione del modello*, non completezza semantica del gioco. Alcune combinazioni sono esperimenti di progettazione, non singole sessioni giocabili.
+
+**Osservazione browser circoscritta:** in un Chromium 144 instrumentato, import dei quattro nuovi file web ricostruito senza origine HTTP perché la policy locale blocca gli URL; screenshot desktop e mobile, completamento da tastiera con 6 salti e checkpoint, nessun errore JS. I Git blob dei file `web/art.mjs`, `web/main.mjs`, `web/style.css`, `web/index.html` sono stati verificati contro la branch di implementazione PR3 prima del reporting. Il pixel rendering è un candidato, non una valutazione umana di bellezza. I nuovi screenshot non sono un browser test CI su origine HTTP né prova di persistenza reale.
+
+**Prossima unità minima ad alta leva:** completare test browser effettivo su origine HTTP e persistenza reale; ottenere playtest di leggibilità; definire e approvare il sistema di direzione artistica e progressione di un intero livello prima di replicare il modello negli altri cinque. Poi elaborare jump buffering/coyote, audio originale e boss fairness con mutanti e osservazioni indipendenti.
+
+**Protocollo di accettazione indipendente:** [PLAYTEST_PROTOCOL.md](PLAYTEST_PROTOCOL.md) definisce attività, misure, falsificatori e autorità di approvazione del primo livello; non è un'autocertificazione della gradevolezza.
+
+**Nuovo gate Q07 — gradevolezza e significato percepito:** sette sottocriteri obbligatori (identità del personaggio, affordance delle superfici, sensazione di salto/riprova, leggibilità HUD, comprensione narrativa, audio originale oppure approvazione esplicita di una beta senza audio, accettazione indipendente del giocatore). Tutti sono `BLOCKED_EXTERNAL` finché non osservati e approvati: mutazioni del modello e test del contrasto non possono chiuderli.

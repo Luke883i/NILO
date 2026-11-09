@@ -402,11 +402,30 @@
         "Q03",
         "Q04",
         "Q05",
-        "Q06"
+        "Q06",
+        "Q07"
       ],
       "claim": "Releasable six-level, three-boss NILO game beta under an explicit audience/platform scope; never inferred from the seed prologue",
       "baseline_status": "BLOCKED",
       "authorization": "NONE"
+    },
+    {
+      "id": "Q07",
+      "kind": "LEAF",
+      "plane": "EXPERIENCE_QUALITY",
+      "claim": "distinctive original pixel art, game feel, narrative comprehension and sensory feedback confirmed on real target by independent players",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "independent players identify Nilo/Tica/Perno, platform affordances, checkpoint and goal, observe fair jump control, narrative comprehension and approved audio or mute scope",
+      "witness": null,
+      "noncompensatory_subcriteria": [
+        "character-identity",
+        "platform-affordance",
+        "jump-and-retry-feel",
+        "visual-hud-readability",
+        "narrative-comprehension",
+        "audio-or-author-approved-muted-scope",
+        "observed-independent-player-acceptance"
+      ]
     }
   ],
   "beta_goal": "G_BETA_RELEASE"

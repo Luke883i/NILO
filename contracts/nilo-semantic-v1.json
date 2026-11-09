@@ -328,5 +328,61 @@
       "title": "independent code review and required checks unverified",
       "state": "BLOCKED_EXTERNAL"
     }
-  ]
+  ],
+  "market_beta_vision": {
+    "status": "DRAFT_UNAPPROVED_QUALITY_TARGET",
+    "genre": "original 2D narrative precision platformer with pixel-art presentation",
+    "promise": "Recover six shared hours through six complete acts and three fair, legible bosses; each restored hour visibly repairs the factory and changes the city.",
+    "player_trajectory": [
+      "understand controls without a manual",
+      "master reversible jumps and fair checkpoints",
+      "meet allies with visually and narratively distinct roles",
+      "recover the hour and see an immediate world-state consequence",
+      "finish six levels and three bosses",
+      "reach a coherent ending and credits"
+    ],
+    "art_direction": {
+      "scope": "candidate original procedural 480x270 pixel canvas in LV-01 only",
+      "motifs": [
+        "clocks",
+        "industrial brick",
+        "brass",
+        "shared time",
+        "repair instead of domination"
+      ],
+      "hero": "Nilo: cap, scarf, face, watch and leg-cycle silhouette",
+      "guide": "Tica: clockwork bird visible in scene",
+      "ally": "Perno: static clockwork technician by first checkpoint",
+      "future_levels": "design-only; new palette and mechanic per chapter must be independently approved"
+    },
+    "experience_targets": {
+      "startup_seconds": "candidate <=3 on measured supported target",
+      "recovery_seconds": "candidate <=1.5 after death when gameplay exists",
+      "fps": "candidate >=60 at 960x540 on defined hardware",
+      "readability": "in-game instructions remain legible at supported viewport size",
+      "accessibility": "keyboard and reduced motion first; touch not implemented, screen reader equivalent unresolved",
+      "test_status": "UNMEASURED_OR_UNQUALIFIED"
+    },
+    "commercial_comparators": [
+      {
+        "title": "Celeste",
+        "principle": "precision input, readable retries, player challenge/assist options",
+        "source": "https://www.celestegame.com/",
+        "claims": "INSPIRATION_NOT_IMPLEMENTATION"
+      },
+      {
+        "title": "Shovel Knight: Shovel of Hope",
+        "principle": "coherent readable pixel silhouettes, multi-plane backgrounds and character progression",
+        "source": "https://www.yachtclubgames.com/press/shovel-knight-shovel-of-hope/",
+        "claims": "INSPIRATION_NOT_IMPLEMENTATION"
+      },
+      {
+        "title": "Hollow Knight",
+        "principle": "environmental storytelling, distinguishable regions and memorable characters",
+        "source": "https://www.hollowknight.com/",
+        "claims": "INSPIRATION_NOT_IMPLEMENTATION"
+      }
+    ],
+    "beta_boundary": "Six actual playable levels and three bosses plus G_BETA_RELEASE independent evidence; current LV-01 pixel-art proposal does not satisfy the commercial vision."
+  }
 }
