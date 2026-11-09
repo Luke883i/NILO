@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {run,expected,classify,BITS,validateIterationHypothesis,evaluateIterationHypothesis} from '../scripts/semantic-campaign.mjs';
+import {run,expected,classify,BITS,validateIterationHypothesis,evaluateIterationHypothesis,BROWSER_AXES,expectedBrowser,classifyBrowser,runBrowserAdversarial} from '../scripts/semantic-campaign.mjs';
 import {readFileSync} from 'node:fs';
 test('independent oracle matches derived classifier on deterministic source catalog',()=>{
  const r=run({count:30000,seed:20261109});
@@ -49,4 +49,22 @@ test('iteration counts, rewording, and missing external gates cannot forge compl
  assert(validateIterationHypothesis(mutant).includes('planning-false-guarantee'));
  const stuck=evaluateIterationHypothesis(getDod(),['I02','I02','I02']);
  assert.equal(stuck.decision,'REPLAN_STALLED_REPORTS');
+});
+
+test('browser attack catalog has ten concrete scenarios per seven independent axes',()=>{
+ assert.equal(BROWSER_AXES.length,7);
+ assert(BROWSER_AXES.every(a=>a.values.length===10 && a.values.every(v=>v.id && a.fields.every(f=>typeof v[f]==='boolean'))));
+ const r=runBrowserAdversarial({count:40000,seed:20261109});
+ assert.equal(r.enumerated,40000);
+ assert.equal(r.mismatches,0);
+ assert(r.blocked_vectors>0);
+ assert.equal(r.independent_browser_runs,0);
+ assert.equal(r.physical_mutations,0);
+ assert(r.distinct_failure_signatures>=20);
+});
+test('mutated expected/original browser evidence produces a real model disagreement',()=>{
+ const axes=structuredClone(BROWSER_AXES);
+ axes[0].values[0].http=false;
+ assert.notEqual(expectedBrowser([0,0,0,0,0,0,0],axes),classifyBrowser([0,0,0,0,0,0,0],axes));
+ assert(runBrowserAdversarial({count:10000,seed:1,axes}).mismatches>0);
 });
