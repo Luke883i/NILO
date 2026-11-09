@@ -18,9 +18,10 @@ test('physical LV02 route crosses mobile bridge, both currents and checkpoint',(
   if(j)index++;
   bridge ||= s.supportId==='canal-bridge';east ||= s.currentForce===52;west ||= s.currentForce===-38;
   s=step(s,{right:true,jump:j});
-  if(s.phase==='COMPLETED')break;
+  if(s.boss?.phase!=='LOCKED')break;
  }
- assert.equal(s.phase,'COMPLETED');assert.equal(index,7);assert.equal(s.deaths,0);
+ assert.equal(s.phase,'PLAYING');assert.equal(s.boss.phase,'TELEGRAPH');
+ assert.equal(index,7);assert.equal(s.deaths,0);
  assert(s.checkpointActive);assert(bridge&&east&&west);
  assert.notEqual(LV02.width,CFG.width);
 });
@@ -55,13 +56,13 @@ test('CP02 never accepts CP01 or forged records; death/restart remain level-boun
  const dead=step({...s,y:700,vy:120,onGround:false},{});
  assert.equal(dead.level,'LV-02');assert.equal(dead.x,LV02.checkpointSpawn.x);
 });
-test('Custode and the second hour are explicitly sealed',()=>{
+test('Custode gate is not an hour-two award; victory requires actual repairs',()=>{
  for(const phase of ['PLAYING','COMPLETED']){
   const s={...initialLevelState('LV-02'),phase};
   const c=sceneCue(s);assert(c.id.startsWith('CANAL-'));
   if(phase==='COMPLETED')assert.match(c.hint,/Custode/);
  }
- assert(LV02.exit.includes('not yet implemented'));
+ assert(LV02.exit.includes('gate alone is not victory'));
 });
 test('renderer stays one, with visible canal signage',()=>{
  const operations=[],ctx=new Proxy({}, {set(o,k,v){o[k]=v;return true},get(o,k){

@@ -10,7 +10,7 @@ test('physical contrast regression in actual pixel-art source is killed by origi
  const dir=mkdtempSync(join(tmpdir(),'nilo-pixel-mutant-'));
  try{
   mkdirSync(join(dir,'web'));mkdirSync(join(dir,'tests'));mkdirSync(join(dir,'web','levels'));
-  for(const file of ['web/art.mjs','web/core.mjs','web/levels/lv-02.mjs','tests/art.test.mjs']){
+  for(const file of ['web/art.mjs','web/core.mjs','web/levels/lv-02.mjs','web/levels/custode.mjs','tests/art.test.mjs']){
    writeFileSync(join(dir,file),readFileSync(resolve(root,file)));
   }
   writeFileSync(join(dir,'package.json'),JSON.stringify({type:'module'}));
@@ -29,7 +29,7 @@ test('PR8 original renderer negative controls kill removed character labels, led
  const dir=mkdtempSync(join(tmpdir(),'nilo-art-semantic-mutants-'));
  try {
    mkdirSync(join(dir,'web'));mkdirSync(join(dir,'tests'));mkdirSync(join(dir,'web','levels'));
-   for(const file of ['web/art.mjs','web/core.mjs','web/levels/lv-02.mjs','tests/art.test.mjs'])
+   for(const file of ['web/art.mjs','web/core.mjs','web/levels/lv-02.mjs','web/levels/custode.mjs','tests/art.test.mjs'])
      writeFileSync(join(dir,file),readFileSync(resolve(root,file)));
    writeFileSync(join(dir,'package.json'),JSON.stringify({type:'module'}));
    const env={...process.env};delete env.NODE_TEST_CONTEXT;
