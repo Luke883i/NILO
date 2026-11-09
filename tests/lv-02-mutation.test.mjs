@@ -10,7 +10,7 @@ const cases=[
  ['moving-bridge-frozen','web/levels/lv-02.mjs','p.amplitude*Math.sin(ticks*p.angularTick)','0*Math.sin(ticks*p.angularTick)'],
  ['current-force-disabled','web/levels/lv-02.mjs','zone?zone.boost:0','0'],
  ['checkpoint-version-forged','web/levels/lv-02.mjs','v.version!==1','v.version!==2'],
- ['checkpoint-level-forged','web/levels/lv-02.mjs','v.level!=="LV-02"','v.level!=="LV-01"'],
+ ['checkpoint-level-forged','web/levels/lv-02.mjs',"v.level!=='LV-02'","v.level!=='LV-01'"],
  ['moving-bridge-carry-disabled','web/core.mjs','movingBridge(state.ticks+1).x-movingBridge(state.ticks).x','0']
 ];
 test('five original-source LV02 mutants are killed by the independent real test',()=>{

@@ -136,15 +136,45 @@
     {
       "id": "LV-02",
       "title": "Canali dei Minuti",
-      "story": "discover how minutes are diverted",
+      "story": "Minutes diverted from the city flow through clockwork canals. Nilo crosses the locks before the sealed Custode encounter.",
       "mechanics": [
-        "moving platforms",
-        "current zones",
-        "boss telegraph"
+        "shared run/jump/collision physics",
+        "time-dependent moving bridge that carries player",
+        "two signed current zones",
+        "strict CP-02 checkpoint and reload",
+        "distinct procedural canal renderer",
+        "sealed Custode; no boss fight"
       ],
       "boss": "CH-CUSTODE",
-      "design_status": "DESIGN_ONLY",
-      "exit": "release hour two"
+      "design_status": "IMPLEMENTED_LEVEL_CANDIDATE_BOSS_NOT_IMPLEMENTED",
+      "exit": "reach the locked Custode gate; the second hour remains sealed until the boss encounter",
+      "acceptance_oracles": [
+        {
+          "id": "OR-LV02-01",
+          "claim": "LV-01 to LV-02 requires a completed first level and real KeyN; LV-02 traversable",
+          "type": "UNIT_AND_BROWSER_AND_MUTATION"
+        },
+        {
+          "id": "OR-LV02-02",
+          "claim": "moving bridge carries player across dynamic physical support",
+          "type": "UNIT_AND_BROWSER_AND_MUTATION"
+        },
+        {
+          "id": "OR-LV02-03",
+          "claim": "two signed currents affect physical velocity",
+          "type": "UNIT_AND_BROWSER_AND_MUTATION"
+        },
+        {
+          "id": "OR-LV02-04",
+          "claim": "CP-02 persists independently and rejects forged/cross-level records",
+          "type": "UNIT_AND_BROWSER_AND_MUTATION"
+        },
+        {
+          "id": "OR-LV02-05",
+          "claim": "art and status do not falsely report Custode defeat or hour two recovered",
+          "type": "UNIT_AND_BROWSER_AND_HUMAN_PENDING"
+        }
+      ]
     },
     {
       "id": "LV-03",
@@ -327,6 +357,29 @@
       "aesthetic_author_approval": "NOT_OBSERVED",
       "screen_reader_qualification": "NOT_OBSERVED",
       "mobile_touch_qualification": "EXPLICITLY_UNSUPPORTED"
+    },
+    "current_scope": "LV-01 and LV-02 are source-implemented candidates. Four levels and all bosses remain unimplemented.",
+    "lv02": {
+      "id": "I06",
+      "status": "IMPLEMENTED_CANDIDATE_NOT_PLAYER_ACCEPTED",
+      "level_owner": "web/levels/lv-02.mjs",
+      "shared_logic": "web/core.mjs",
+      "shared_view": "web/art.mjs",
+      "transition": "KeyN only after LV-01 COMPLETED, or valid CP-02 reload",
+      "checkpoint_key": "nilo.checkpoint.lv02.v1",
+      "moving_platform": "canal-bridge",
+      "currents": [
+        "flow-east",
+        "flow-west"
+      ],
+      "boss": "CH-CUSTODE DESIGN_ONLY",
+      "second_hour": "SEALED",
+      "player_acceptance": "BLOCKED_EXTERNAL",
+      "browser_oracle": "tests/browser-lv-02.py",
+      "source_oracles": [
+        "tests/lv-02.test.mjs",
+        "tests/lv-02-mutation.test.mjs"
+      ]
     }
   },
   "slice": {

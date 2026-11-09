@@ -5,6 +5,7 @@ import {fileURLToPath} from "node:url";
 import {validateBridge} from "./verify-development.mjs";
 import {validateIterationHypothesis} from "./semantic-campaign.mjs";
 import {CFG} from "../web/core.mjs";
+import {LV02,lv02Surfaces,currentForceAt,decodeLV02Checkpoint} from "../web/levels/lv-02.mjs";
 import {ART_CUES,ART_SIGNALS,ART_IDENTITY} from "../web/art.mjs";
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"..");
 const raw=p=>JSON.parse(readFileSync(resolve(ROOT,p),"utf8"));
@@ -48,6 +49,20 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     visual?.aesthetic_author_approval==="NOT_OBSERVED"&&
     visual?.screen_reader_qualification==="NOT_OBSERVED"&&
     visual?.mobile_touch_qualification==="EXPLICITLY_UNSUPPORTED");
+  const canal=contract?.gameplay?.lv02,lev=contract?.levels?.find(x=>x.id==="LV-02");
+  fail("lv02-real-level-source-boundary",
+   canal?.id==="I06"&&canal?.level_owner==="web/levels/lv-02.mjs"&&
+   canal?.shared_logic==="web/core.mjs"&&canal?.shared_view==="web/art.mjs"&&
+   canal?.status==="IMPLEMENTED_CANDIDATE_NOT_PLAYER_ACCEPTED"&&
+   canal?.checkpoint_key==="nilo.checkpoint.lv02.v1"&&canal?.moving_platform===LV02.moving.id&&
+   canal?.currents?.join(",")===LV02.currents.map(x=>x.id).join(",")&&
+   canal?.boss==="CH-CUSTODE DESIGN_ONLY"&&canal?.second_hour==="SEALED"&&
+   canal?.player_acceptance==="BLOCKED_EXTERNAL"&&
+   canal?.browser_oracle==="tests/browser-lv-02.py"&&
+   lev?.design_status==="IMPLEMENTED_LEVEL_CANDIDATE_BOSS_NOT_IMPLEMENTED"&&
+   lev?.acceptance_oracles?.length===5&&lev?.exit?.includes("second hour remains sealed")&&
+   lv02Surfaces(100).some(p=>p.moving)&&currentForceAt(620)===52&&currentForceAt(1680)===-38&&
+   decodeLV02Checkpoint('{"version":1,"level":"LV-01","checkpointId":"CP-02"}')===null);
   const chars=contract?.characters||[],levels=contract?.levels||[];
   const charIds=chars.map(x=>x.id),levelIds=levels.map(x=>x.id);
   fail("characters",chars.length===6&&distinct(charIds)&&chars.every(x=>x.name&&x.role&&x.motivation&&x.silhouette));
