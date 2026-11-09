@@ -20,8 +20,15 @@ test("three real-source mutations are killed by independent original unit tests"
    mkdirSync(join(tmp,"web"));mkdirSync(join(tmp,"tests"));
    writeFileSync(join(tmp,"tests/core.test.mjs"),sourceTests);
    const target=join(tmp,"web/core.mjs");
-   const run=()=>spawnSync(process.execPath,["--test","tests/core.test.mjs"],{
-     cwd:tmp,encoding:"utf8",timeout:12000});
+   // Node's parent test runner injects NODE_TEST_CONTEXT. A nested --test
+   // inherits it and silently skips tests with exit 0 unless removed.
+   // The child must actually execute the original oracle, not report fake PASS.
+   const run=()=>{
+     const env={...process.env};
+     delete env.NODE_TEST_CONTEXT;
+     return spawnSync(process.execPath,["--test","tests/core.test.mjs"],{
+       cwd:tmp,encoding:"utf8",timeout:12000,env});
+   };
    writeFileSync(target,source);
    const baseline=run();
    assert.equal(baseline.status,0,"baseline must PASS before mutations: "+baseline.stderr?.slice(-300));
