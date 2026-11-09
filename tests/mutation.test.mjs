@@ -25,7 +25,7 @@ test("three real-source mutations are killed by independent original unit tests"
    writeFileSync(target,source);
    const baseline=run();
    assert.equal(baseline.status,0,"baseline must PASS before mutations: "+baseline.stderr?.slice(-300));
-   for(const [id,needle,replacement] of cases){
+   for(const [id,needle,replacement] of cases.filter(([id])=>!process.env.NILO_MUTANT||process.env.NILO_MUTANT===id)){
      assert.equal(source.split(needle).length,2,"real source mutation anchor must occur exactly once: "+id);
      writeFileSync(target,source.replace(needle,replacement));
      const attempt=run();assert.notEqual(attempt.status,0,"surviving real mutation: "+id);

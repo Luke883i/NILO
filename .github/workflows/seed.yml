@@ -26,7 +26,17 @@ jobs:
         run: node --test tests/core.test.mjs
       - name: Test contract, reticular DoD and S-BOM negative cases
         run: node --test tests/contracts.test.mjs
-      - name: Kill real original-game-source mutants in isolated copies
+      - name: Kill checkpoint-forgery source mutant
+        env:
+          NILO_MUTANT: forged-checkpoint
+        run: node --test tests/mutation.test.mjs
+      - name: Kill broken-pause source mutant
+        env:
+          NILO_MUTANT: broken-pause
+        run: node --test tests/mutation.test.mjs
+      - name: Kill platform-tunneling source mutant
+        env:
+          NILO_MUTANT: platform-tunneling
         run: node --test tests/mutation.test.mjs
       - name: Capture process-reported source hashes and SHA without self-approval
         run: |
