@@ -1,3 +1,4 @@
+import {LV02,lv02Surfaces} from "./levels/lv-02.mjs";
 // Original, code-generated pixel art; no external textures, fonts or images.
 // The design palette is a candidate, not an independent aesthetic approval.
 export const ART = Object.freeze({
@@ -135,9 +136,28 @@ export const ART_CUES = Object.freeze([
   Object.freeze({id:'CUE-04',from:1550,until:2100,role:'CH-TICA',title:'TICA · VERSO IL PORTALE',
     hint:'Il primo arco riconsegna un’ora alla città. Le altre cinque attendono nuovi capitoli.'})
 ]);
+export const LV02_CUES=Object.freeze([
+  Object.freeze({id:'CANAL-01',from:0,until:650,role:'CH-TICA',title:'TICA · SEGUI IL FLUSSO',
+    hint:'Il canale ruba minuti: osserva le frecce dell’acqua prima di saltare.'}),
+  Object.freeze({id:'CANAL-02',from:650,until:1330,role:'CH-NILO',title:'NILO · IL PONTE SI MUOVE',
+    hint:'La piattaforma d’ottone si sposta. Aspetta il passaggio e salta sul bordo luminoso.'}),
+  Object.freeze({id:'CANAL-03',from:1330,until:1820,role:'CH-PERNO',title:'PERNO · SALVA IL PERCORSO',
+    hint:'Il molo custodisce il checkpoint LV-02, indipendente da quello del prologo.'}),
+  Object.freeze({id:'CANAL-04',from:1820,until:2400,role:'CH-TICA',title:'TICA · VERSO LA CHIUSA',
+    hint:'Il Custode sorveglia il varco: lo scontro non è ancora implementato.'})
+]);
 export function sceneCue(state) {
+  if(state.level==='LV-02'){
+    if(state.phase==='COMPLETED')return {id:'CANAL-END',role:'CH-TICA',
+      title:'CANALE ATTRAVERSATO',hint:'La seconda ora resta sigillata: il Custode sarà disponibile in una versione successiva.'};
+    if(state.phase==='PAUSED')return {id:'CANAL-PAUSE',role:'CH-NILO',
+      title:'CANALE IN PAUSA',hint:'Premi P per riprendere o R per il checkpoint di questo livello.'};
+    if(state.checkpointActive&&state.x>=1330&&state.x<1820)return {...LV02_CUES[2],
+      title:'PERNO · MOLO MEMORIZZATO',hint:'Checkpoint LV-02 attivo. Il Custode resta oltre la chiusa.'};
+    return LV02_CUES.find(c=>state.x>=c.from&&state.x<c.until)||LV02_CUES[3];
+  }
   if(state.phase==='COMPLETED')return Object.freeze({id:'CUE-END',role:'CH-NILO',
-    title:'PRIMA ORA RESTITUITA',hint:'Hai completato il prologo. Gli altri cinque livelli sono ancora in sviluppo.'});
+    title:'PRIMA ORA RESTITUITA',hint:'Hai restituito la prima ora. Premi N per LV-02; gli altri quattro livelli sono in sviluppo.'});
   if(state.phase==='PAUSED')return Object.freeze({id:'CUE-PAUSE',role:'CH-NILO',
     title:'TEMPO IN PAUSA',hint:'Premi P per riprendere oppure R per ricominciare.'});
   if(state.checkpointActive&&state.x>=1200&&state.x<1550)
@@ -178,9 +198,9 @@ function ledgeCues(c,platforms,state){
 function timeLanterns(c,state){
   px(c,674,16,276,59,ART.ink);px(c,678,20,268,50,ART.shadow);
   c.fillStyle=ART.cream;c.font='bold 13px monospace';
-  c.fillText('LE SEI ORE · SOLO LV-01',689,38);
+  c.fillText(state.level==='LV-02'?'LE SEI ORE · LV-02':'LE SEI ORE · LV-01',689,38);
   for(let j=0;j<6;j++){
-    const x=699+j*38,active=j===0&&state.phase==='COMPLETED';
+    const x=699+j*38,active=j===0&&(state.level==='LV-02'||state.phase==='COMPLETED');
     px(c,x,47,23,13,ART.ink);px(c,x+3,49,17,9,active?ART.teal:ART.brick);
     if(j>0)px(c,x+10,50,3,6,ART.ink);
   }
