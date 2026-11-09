@@ -140,6 +140,9 @@ export function sceneCue(state) {
     title:'PRIMA ORA RESTITUITA',hint:'Hai completato il prologo. Gli altri cinque livelli sono ancora in sviluppo.'});
   if(state.phase==='PAUSED')return Object.freeze({id:'CUE-PAUSE',role:'CH-NILO',
     title:'TEMPO IN PAUSA',hint:'Premi P per riprendere oppure R per ricominciare.'});
+  if(state.checkpointActive&&state.x>=1200&&state.x<1550)
+    return {...ART_CUES[2],title:'PERNO · SEGNATEMPO RIACCESO',
+      hint:'Checkpoint attivo: la posizione è salva. Raggiungi il portale per restituire la prima ora.'};
   return ART_CUES.find(c=>state.x>=c.from&&state.x<c.until)||ART_CUES[ART_CUES.length-1];
 }
 /** Permanent silhouettes are not collision geometry. Each signal has a
@@ -177,7 +180,7 @@ function timeLanterns(c,state){
   c.fillStyle=ART.cream;c.font='bold 13px monospace';
   c.fillText('LE SEI ORE · SOLO LV-01',689,38);
   for(let j=0;j<6;j++){
-    const x=699+j*38,active=j===0&&(state.phase==='COMPLETED'||state.checkpointActive);
+    const x=699+j*38,active=j===0&&state.phase==='COMPLETED';
     px(c,x,47,23,13,ART.ink);px(c,x+3,49,17,9,active?ART.teal:ART.brick);
     if(j>0)px(c,x+10,50,3,6,ART.ink);
   }

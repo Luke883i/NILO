@@ -41,7 +41,10 @@ test('PR8 original renderer negative controls kill removed character labels, led
      ['missing-roles','  nameplates(c,state);','  void state;'],
      ['invisible-ledge','  ledgeCues(c,platforms,state);','  void platforms;'],
      ['missing-hours','  timeLanterns(c,state);','  void state;'],
-     ['wrong-story-ending',"id:'CUE-END'","id:'CUE-FAKE'"]
+     ['wrong-story-ending',"id:'CUE-END'","id:'CUE-FAKE'"],
+     ['premature-hour-award',"const x=699+j*38,active=j===0&&state.phase==='COMPLETED';",
+       "const x=699+j*38,active=j===0&&state.checkpointActive;"],
+     ['stale-repair-prompt',"title:'PERNO · SEGNATEMPO RIACCESO'","title:'PERNO · RIACCENDI ANCORA'"]
    ];
    for(const [id,from,to] of mutants){
      assert.equal(source.split(from).length,2,'physical source anchor must be unique: '+id);

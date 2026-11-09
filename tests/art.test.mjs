@@ -43,6 +43,8 @@ test('PR8: four story beats follow real position; pause and completion override 
  assert.deepEqual(ART_CUES.map(x=>x.id),['CUE-01','CUE-02','CUE-03','CUE-04']);
  for(const [x,id] of [[48,'CUE-01'],[649,'CUE-01'],[650,'CUE-02'],[1199,'CUE-02'],[1200,'CUE-03'],[1549,'CUE-03'],[1550,'CUE-04'],[2050,'CUE-04']])
    assert.equal(sceneCue({...initialState(),x}).id,id);
+ assert.match(sceneCue({...initialState(),x:1250,checkpointActive:true}).title,/RIACCESO/);
+ assert.match(sceneCue({...initialState(),x:1250,checkpointActive:true}).hint,/checkpoint attivo/i);
  assert.equal(sceneCue({...initialState(),phase:'PAUSED'}).id,'CUE-PAUSE');
  const ending=sceneCue({...initialState(),phase:'COMPLETED'});
  assert.equal(ending.id,'CUE-END');
@@ -70,9 +72,13 @@ test('PR8: rendered start, checkpoint and completion preserve visible roles and 
  assert(edge,'first playable ledge must have readable jump chevrons');
  const cp=recording({...initialState(),x:1250,camera:970,checkpointActive:true});
  assert(cp.some(x=>x.kind==='fillText'&&x.args[0]==='PERNO'));
+ // Reaching a checkpoint must not represent an hour as restored.
+ const firstHour=ops=>ops.filter(x=>x.kind==='fillRect'&&x.args[0]===702&&x.args[1]===50);
+ assert(firstHour(cp).some(x=>x.color===ART.brick),'checkpoint must keep first-hour progress unlit');
  assert(cp.some(x=>x.kind==='fillText'&&String(x.args[0]).includes('TEMPO SALVATO')));
  const end=recording({...initialState(),phase:'COMPLETED',x:1980,camera:1140,checkpointActive:true});
  assert(end.some(x=>x.kind==='fillText'&&String(x.args[0]).includes('PRIMA ORA RESTITUITA')));
+ assert(firstHour(end).some(x=>x.color===ART.teal),'first hour lights only upon actual completion');
 });
 test('PR8: bounded seeded camera and temporal metamorphisms do not erase state cue',()=>{
  let state=20261109;
