@@ -23,10 +23,17 @@ LAST = (1320, 1620)
 class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self, *_args):
         pass
+    def send_response(self, code, message=None):
+        # Server-side status is independent of Playwright response events.
+        observed=getattr(self.server,"observed_responses",None)
+        if observed is not None:
+            observed.append({"path":self.path,"status":int(code)})
+        return super().send_response(code,message)
 
 @contextmanager
-def serve(root):
+def serve(root, observed_responses=None):
     server=ThreadingHTTPServer(("127.0.0.1",0),partial(QuietHandler,directory=str(root)))
+    server.observed_responses=observed_responses
     worker=threading.Thread(target=server.serve_forever,daemon=True)
     worker.start()
     try:
@@ -186,22 +193,30 @@ def run(args):
                 assert original.count(needle)==1,"module import mutation anchor changed"
                 (target/"main.mjs").write_text(
                     original.replace(needle,'from "./missing-core.mjs"'),encoding="utf-8")
-                with serve(target) as missing_url:
+                server_events=[]
+                with serve(target,server_events) as missing_url:
                     broken=browser.new_context()
                     missing=broken.new_page()
-                    missing_responses=[]
-                    missing.on("response",lambda r:missing_responses.append(
-                        (r.status,r.url)) if "missing-core.mjs" in r.url else None)
+                    missing_requests=[]
+                    missing.on("request",lambda request:missing_requests.append(request.url))
                     response=missing.goto(missing_url,wait_until="load",timeout=12000)
-                    assert response and response.status==200
-                    missing.wait_for_timeout(350)
-                    assert (404,missing_url.replace("index.html","missing-core.mjs")) in missing_responses, (
-                        "missing module must receive real HTTP 404: "+repr(missing_responses))
-                    assert missing.evaluate("typeof window.__niloReadback")=="undefined", (
-                        "missing original source dependency must not initialize playable state")
+                    assert response and response.status==200,"negative fixture must serve real HTML"
+                    missing.wait_for_timeout(500)
+                    reported=missing.evaluate("typeof window.__niloReadback")
+                    module_requested=any(url.endswith("/missing-core.mjs") for url in missing_requests)
+                    module_404=any(e["path"].split("?",1)[0]=="/missing-core.mjs"
+                                   and e["status"]==404 for e in server_events)
+                    report["module_negative_diagnostics"]={
+                        "missing_module_requested":module_requested,
+                        "missing_module_http_404":module_404,
+                        "readback_type":reported,
+                        "http_responses":server_events}
+                    broken.close()
+                    assert module_requested,"browser must request the physically missing module"
+                    assert module_404,"server must observe real HTTP 404 for requested dependency"
+                    assert reported=="undefined","missing dependency must not initialize playable state"
                     report["checks"]["missing_module_not_playable"]="KILLED_BY_HTTP_404"
                     report["last_stage"]="module-negative"
-                    broken.close()
             if args.stage=="module-negative":
                 report["status"]="PASS_SCOPED_BROWSER_MODULE_NEGATIVE"
                 return
