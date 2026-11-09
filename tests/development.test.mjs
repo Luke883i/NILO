@@ -12,7 +12,10 @@ const fixtureFiles=["web/core.mjs","web/main.mjs","web/index.html","web/style.cs
   "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs",
   "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py",
   "web/levels/lv-02.mjs","web/levels/custode.mjs","tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py",
-  "tests/custode.test.mjs","tests/custode-mutation.test.mjs","tests/browser-custode.py",".github/workflows/seed.yml"];
+  "tests/custode.test.mjs","tests/custode-mutation.test.mjs","tests/browser-custode.py",
+  ".github/workflows/seed.yml",".github/workflows/render-live.yml",
+  ".devcontainer/devcontainer.json","render.yaml","package.json",
+  "scripts/serve.mjs","scripts/build-static.mjs","tests/delivery.test.mjs","tests/browser-delivery.py"];
 test("current contract maps boss oracles and six levels without asserting beta",()=>{
   const d=base();assert.deepEqual(validateBridge(d),[]);
   assert.equal(d.bridge.beta_authorized,false);
@@ -124,4 +127,15 @@ test("Custode must retain a real source, independent test and browser owner",()=
   o.sources=o.sources.filter(x=>x!==file);o.tests=o.tests.filter(x=>x!==file);
   assert(validateBridge(d).includes("bridge-custode-witness"),file);
  }
+});
+
+test("PR11 delivery owners cannot be dropped or promoted to beta",()=>{
+  for(const path of ["scripts/serve.mjs","scripts/build-static.mjs","render.yaml",".devcontainer/devcontainer.json"]){
+    const x=base();x.bridge.delivery.source_paths=x.bridge.delivery.source_paths.filter(p=>p!==path);
+    assert(validateBridge(x).includes("bridge-delivery"),path);
+  }
+  const d=base();d.bridge.delivery.render_live="PASS";
+  assert(validateBridge(d).includes("bridge-delivery"));
+  const e=base();e.bridge.delivery.tests=[];
+  assert(validateBridge(e).includes("bridge-delivery"));
 });

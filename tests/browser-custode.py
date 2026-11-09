@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """PR10 first-boss Chrome HTTP witness. Only the positive path traverses LV01 and LV02.
 No author/user acceptance, beta decision or trusted localStorage provenance."""
-import argparse,hashlib,importlib.util,json,platform,subprocess,shutil,tempfile
+import argparse,hashlib,importlib.util,json,platform,subprocess,shutil,tempfile,os
+from contextlib import nullcontext
 from pathlib import Path
 from importlib.metadata import version
 from playwright.sync_api import sync_playwright
@@ -38,7 +39,12 @@ def run(args):
        'independent_player_acceptance':False,'six_levels_complete':False,
        'checks':{},'screenshots':[],'repairs':[],'errors':[]}
     try:
-        with old.serve(ROOT/'web') as url,sync_playwright() as pw:
+        serve_dir=Path(os.environ.get('NILO_WEB_ROOT',str(ROOT/'web'))).resolve()
+        remote_url=os.environ.get('NILO_URL','')
+        if remote_url and not (remote_url.startswith('https://') and remote_url.endswith('.onrender.com')):
+            raise ValueError('NILO_URL must be an HTTPS *.onrender.com origin')
+        context=nullcontext(remote_url.rstrip('/')+'/index.html') if remote_url else old.serve(serve_dir)
+        with context as url,sync_playwright() as pw:
             browser=pw.chromium.launch(headless=True,channel='chrome')
             ctx=browser.new_context(viewport={'width':1280,'height':900},device_scale_factor=1)
             page=ctx.new_page();page.on('pageerror',lambda e:r['errors'].append(str(e)))

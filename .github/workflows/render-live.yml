@@ -1,0 +1,68 @@
+name: NILO Render live post-deploy verification
+on:
+  workflow_run:
+    workflows: ["NILO PR1 seed - source assurance only"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      render_url:
+        description: "Optional exact https://YOUR-SERVICE.onrender.com (otherwise repo variable NILO_RENDER_URL)"
+        required: false
+        type: string
+permissions:
+  contents: read
+jobs:
+  live-render:
+    if: ${{ (github.event_name == 'workflow_dispatch' || (github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.conclusion == 'success')) && (inputs.render_url != '' || vars.NILO_RENDER_URL != '') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      RENDER_URL: ${{ inputs.render_url || vars.NILO_RENDER_URL }}
+      TARGET_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Require exact main commit
+        run: test "$(git rev-parse HEAD)" = "$TARGET_SHA"
+      - name: Wait for Render actual remote deployment (never simulate success)
+        run: node scripts/wait-render.mjs "$RENDER_URL" "$TARGET_SHA"
+      - name: Install pinned test-only Playwright
+        run: python -m pip install playwright==1.57.0
+      - name: Observe remote static asset integrity and Chrome input
+        run: python tests/browser-delivery.py --origin "$RENDER_URL" --expected-sha "$TARGET_SHA" --out /tmp/nilo-render-live
+      - name: Observe full live LV01 -> LV02 -> Custode gameplay and checkpoint
+        env:
+          NILO_URL: ${{ inputs.render_url || vars.NILO_RENDER_URL }}
+        run: python tests/browser-custode.py --out /tmp/nilo-render-live-game
+      - name: Verify external observation scope and SHA
+        run: |
+          python - <<'PY'
+          import json,os,hashlib
+          from pathlib import Path
+          r=json.loads(Path('/tmp/nilo-render-live/delivery-receipt.json').read_text())
+          g=json.loads(Path('/tmp/nilo-render-live-game/custode-receipt.json').read_text())
+          assert r['status']=='PASS_REMOTE_RENDER_SHA_SCOPED' and r['remote_render_observed'] and r['browser_executed']
+          assert r['source_sha']==g['source_sha']==os.environ['TARGET_SHA']
+          assert g['status']=='PASS_SCOPED_CUSTODE_BROWSER_NO_USER_APPROVAL'
+          assert not r['beta_authorized'] and not g['beta_authorized']
+          assert len(r['screenshots'])==1 and len(g['screenshots'])==3
+          for folder,receipt in [(Path('/tmp/nilo-render-live'),r),(Path('/tmp/nilo-render-live-game'),g)]:
+            for item in receipt['screenshots']:
+              blob=(folder/item['name']).read_bytes()
+              assert blob.startswith(bytes.fromhex('89504e470d0a1a0a'))
+              assert hashlib.sha256(blob).hexdigest()==item['sha256']
+          print('PASS_SCOPED_EXTERNAL_RENDER_DEPLOYMENT',os.environ['TARGET_SHA'])
+          PY
+      - name: Upload independently attributable remote site receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nilo-render-external-${{ github.event.workflow_run.head_sha || github.sha }}
+          path: |
+            /tmp/nilo-render-live/
+            /tmp/nilo-render-live-game/
+          if-no-files-found: warn
+          retention-days: 14

@@ -5,7 +5,7 @@
   "seed_goal": "G_SEED_SOURCE",
   "qualification": "ALL_GATES_NONCOMPENSATORY",
   "authority": "NONE",
-  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt.",
+  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt. PR11 extends the RELEASE branch noncompensatorily: source-and-local tests do not confer Codespace forwarding or an actual Render deploy. The external leaves DL02 and DL08 remain BLOCKED_EXTERNAL until observed.",
   "nodes": [
     {
       "id": "I01",
@@ -320,7 +320,8 @@
       "depends_on": [
         "R01",
         "R02",
-        "R03"
+        "R03",
+        "G_DELIVERY_PR11"
       ],
       "claim": "controlled independent release",
       "baseline_status": "BLOCKED",
@@ -426,6 +427,115 @@
         "audio-or-author-approved-muted-scope",
         "observed-independent-player-acceptance"
       ]
+    },
+    {
+      "id": "DL01",
+      "kind": "LEAF",
+      "plane": "DELIVERY",
+      "claim": "Codespaces configuration declares private forwarded HTTP 8000 and one-command launch",
+      "baseline_status": "SOURCE_DECLARED",
+      "oracle": "devcontainer + npm scripts verified on exact commit",
+      "witness": null
+    },
+    {
+      "id": "DL02",
+      "kind": "LEAF",
+      "plane": "DELIVERY",
+      "claim": "User opens actual forwarded Codespace URL and interacts with canvas",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "real Codespace port-forward session and browser receipt from user environment",
+      "witness": null
+    },
+    {
+      "id": "DL03",
+      "kind": "LEAF",
+      "plane": "DELIVERY",
+      "claim": "Zero dependency server serves playable NILO over real HTTP",
+      "baseline_status": "NOT_VERIFIED",
+      "oracle": "CI starts server, fetches HTML+ES modules and proves keyboard input",
+      "witness": null
+    },
+    {
+      "id": "DL04",
+      "kind": "LEAF",
+      "plane": "DELIVERY",
+      "claim": "Server isolates web files and rejects traversal, hidden files and missing modules",
+      "baseline_status": "NOT_VERIFIED",
+      "oracle": "negative HTTP 404/405, MIME and CSP on running server",
+      "witness": null
+    },
+    {
+      "id": "DL05",
+      "kind": "LEAF",
+      "plane": "DELIVERY",
+      "claim": "Render static Blueprint builds from checks-passed main, not a fake Node backend",
+      "baseline_status": "SOURCE_DECLARED",
+      "oracle": "parse config and independently validate render.yaml in Render",
+      "witness": null
+    },
+    {
+      "id": "DL06",
+      "kind": "LEAF",
+      "plane": "DELIVERY",
+      "claim": "Static published dist matches original game bytes and exact Git SHA",
+      "baseline_status": "NOT_VERIFIED",
+      "oracle": "full file SHA256 manifest, reproducible build, no extra source files",
+      "witness": null
+    },
+    {
+      "id": "DL07",
+      "kind": "LEAF",
+      "plane": "DELIVERY",
+      "claim": "Real Chrome plays packaged static artifact on HTTP origin",
+      "baseline_status": "NOT_RUN",
+      "oracle": "original LV01/LV02/Custode browser replay against dist and package checksum smoke",
+      "witness": null
+    },
+    {
+      "id": "DL08",
+      "kind": "LEAF",
+      "plane": "DELIVERY",
+      "claim": "Actual onrender.com service serves exact approved source SHA and playable controls",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "post-deploy remote HTTPS/browser probe linked to Render service and source SHA",
+      "witness": null
+    },
+    {
+      "id": "G_CODESPACES_P0",
+      "kind": "AND",
+      "depends_on": [
+        "DL01",
+        "DL02",
+        "DL03",
+        "DL04"
+      ],
+      "claim": "one-command accessible Codespaces game with actual forwarded user session",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "G_RENDER_P1",
+      "kind": "AND",
+      "depends_on": [
+        "DL05",
+        "DL06",
+        "DL07",
+        "DL08"
+      ],
+      "claim": "static Render delivery with source-identical playable deployed site",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "G_DELIVERY_PR11",
+      "kind": "AND",
+      "depends_on": [
+        "G_CODESPACES_P0",
+        "G_RENDER_P1"
+      ],
+      "claim": "product is actually accessible in both declared delivery environments",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
     }
   ],
   "beta_goal": "G_BETA_RELEASE",

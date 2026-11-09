@@ -10,15 +10,23 @@ NILO è un **platform narrativo 2D originale in sviluppo**: un viaggio per resti
 
 **Regola di sviluppo:** nessun comportamento dichiarato senza un collegamento obbligatorio tra requisito di prodotto, sorgente software e test/evidenza nel repository. `node scripts/verify.mjs` rifiuta le associazioni mancanti e le promozioni indebite.
 
-## Avvio e verifica
+## Gioca subito (desktop con tastiera)
+
+**Codespaces:** apri il repository in un nuovo Codespace (ricostruisci il container se era gia aperto), poi esegui dal terminale:
 
 ```sh
-# Dalla root del checkout: Node.js 20+, nessuna dipendenza npm runtime.
-npm run quality
-python3 -m http.server 8000 --directory web
+npm start
 ```
 
-Apri `http://127.0.0.1:8000` in un browser autorizzato; usa **←/→ o A/D**, **Spazio/W** per saltare, **P** per la pausa, **R** per il restart, **N** per accedere a LV-02 dopo LV-01 e **E** per riparare durante l'incontro con il Custode. Il prologo è destinato in questa fase al **desktop con tastiera**: non sono implementati controlli touch né un'alternativa equivalente allo screen reader.
+Apri **PORTS → 8000 (NILO · gioco) → Open in Browser**: Codespaces inoltra una porta **privata** all'URL HTTPS assegnato dalla piattaforma. Il link `localhost:8000` stampato nel terminale funziona **dentro** il Codespace, non necessariamente nel browser del tuo computer. Se la porta non appare, usa **PORTS → Add Port → 8000**; verifica `curl -I http://127.0.0.1:8000/` dal terminale, che il server sia ancora attivo e che il Codespace abbia caricato la configurazione aggiornata. <https://docs.github.com/en/codespaces/developing-in-a-codespace/forwarding-ports-in-your-codespace>
+
+**Checkout locale:** esegui `npm start` e apri `http://localhost:8000/` sullo stesso computer. Non serve alcun `npm install` per giocare.
+
+**Verifica:** `npm run quality` controlla il sorgente; `npm run build:static` genera in `dist/` esattamente gli asset pubblicabili. `npm run test:delivery` falsifica server, port forwarding dichiarato e manifesto della build.
+
+**Render (hosting pubblico, non beta):** crea un Blueprint Render collegato al repository usando [render.yaml](render.yaml); è un **Static Site**, non un web service Node. Si attiva sui check Git superati; la reale URL `onrender.com` è quella attribuita da Render dopo il deploy. Vedi [guida di distribuzione](docs/DELIVERY.md). La configurazione o una CI locale verde non dimostrano che un sito Render esista o sia pubblicato.
+
+**Comandi:** ←/→ o A/D muovi; Spazio/W salta; P pausa; R riparti; N entra in LV-02 dopo LV-01; E ripara il pendolo durante la finestra sicura. Touch e screen reader equivalenti non sono supportati.
 
 **Evidenza:** i test su HTTP/Chrome sono in `tests/browser-e2e.py`, `tests/browser-lv-02.py` e `tests/browser-custode.py`. Le CI raccolgono input, checkpoint, screenshot e SHA per ciascun commit; nessun esito tecnico sostituisce il playtest o autorizza una beta.
 

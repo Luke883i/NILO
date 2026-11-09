@@ -289,5 +289,28 @@
     "interaction": "web/main.mjs",
     "visual": "web/style.css"
   },
-  "notes": "Every product OR and LV ID must remain mapped; every live web file must be owned by at least one requirement. No static mapping proves runtime, user approval, licensed assets, or protected hosting. The artistic candidate is source-tested for layering/contrast and physically mutated, but OR-05 still requires independent human/browser observation; mobile touch remains unsupported. PR9: LV-02 is an independently source-tested level candidate; Custode boss and second hour remain sealed and UX/browser authority cannot be inferred from the map. PR10: boss is a pure LV02 state machine; E repair requires actual recovery, second hour only on VICTORY. No independent player acceptance."
+  "notes": "Every product OR and LV ID must remain mapped; every live web file must be owned by at least one requirement. No static mapping proves runtime, user approval, licensed assets, or protected hosting. The artistic candidate is source-tested for layering/contrast and physically mutated, but OR-05 still requires independent human/browser observation; mobile touch remains unsupported. PR9: LV-02 is an independently source-tested level candidate; Custode boss and second hour remain sealed and UX/browser authority cannot be inferred from the map. PR10: boss is a pure LV02 state machine; E repair requires actual recovery, second hour only on VICTORY. No independent player acceptance.",
+  "delivery": {
+    "id": "I07-D",
+    "authority": "SOURCE_AND_BROWSER_TESTS_NOT_EXTERNAL_ATTESTATION",
+    "source_paths": [
+      ".devcontainer/devcontainer.json",
+      "package.json",
+      "scripts/serve.mjs",
+      "scripts/build-static.mjs",
+      "render.yaml",
+      ".github/workflows/seed.yml",
+      ".github/workflows/render-live.yml"
+    ],
+    "tests": [
+      "tests/delivery.test.mjs",
+      "tests/browser-delivery.py",
+      "tests/browser-custode.py"
+    ],
+    "codespaces_port": 8000,
+    "render_publish_dir": "dist",
+    "user_codespace_forwarding": "NOT_OBSERVED",
+    "render_live": "BLOCKED_EXTERNAL",
+    "beta_authorized": false
+  }
 }

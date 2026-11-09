@@ -1,0 +1,16 @@
+{
+  "name": "NILO — playable development environment",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "forwardPorts": [
+    8000
+  ],
+  "portsAttributes": {
+    "8000": {
+      "label": "NILO · gioco (tastiera)",
+      "onAutoForward": "openBrowser",
+      "protocol": "http",
+      "visibility": "private"
+    }
+  },
+  "postCreateCommand": "node --version && npm --version"
+}

@@ -86,12 +86,28 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     contract.slice.acceptance_oracles.some(x=>x.type==="REAL_SOURCE_MUTATION"));
   fail("effects",contract?.gameplay?.security?.includes("no telemetry")&&contract?.permissions?.not_allowed?.includes("release"));
   fail("dod-shape",dod?.schema==="nilo.reticular-dod/1"&&dod?.root==="G_CONTRACT_DEMONSTRATED"&&
-    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===41);
+    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===52);
   const ids=(dod?.nodes||[]).map(n=>n.id),nodes=new Map((dod?.nodes||[]).map(n=>[n.id,n]));
   fail("dod-identities",distinct(ids));
-  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===9&&
+  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===12&&
     nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_BETA_RELEASE,G_SUPPLY_CHAIN,G_RELEASE"&&
-    nodes.get("G_BETA_RELEASE")?.depends_on?.join(",")==="G_FULL_GAME,Q01,Q02,Q03,Q04,Q05,Q06,Q07");
+    nodes.get("G_BETA_RELEASE")?.depends_on?.join(",")==="G_FULL_GAME,Q01,Q02,Q03,Q04,Q05,Q06,Q07"&&
+    nodes.get("G_RELEASE")?.depends_on?.join(",")==="R01,R02,R03,G_DELIVERY_PR11"&&
+    nodes.get("G_DELIVERY_PR11")?.depends_on?.join(",")==="G_CODESPACES_P0,G_RENDER_P1"&&
+    nodes.get("G_CODESPACES_P0")?.depends_on?.join(",")==="DL01,DL02,DL03,DL04"&&
+    nodes.get("G_RENDER_P1")?.depends_on?.join(",")==="DL05,DL06,DL07,DL08");
+  const delivery=contract?.delivery;
+  fail("delivery-source-truth",delivery?.id==="I07-D"&&
+   delivery?.codespaces?.port===8000&&delivery?.codespaces?.host==="0.0.0.0"&&
+   delivery?.codespaces?.command==="npm start"&&delivery?.codespaces?.visibility==="private"&&
+   delivery?.codespaces?.user_forwarded_connection==="NOT_OBSERVED"&&
+   delivery?.render?.kind==="STATIC_SITE"&&delivery?.render?.publish_dir==="dist"&&
+   delivery?.render?.deploy_trigger==="checksPass"&&
+   delivery?.render?.remote_deployment==="BLOCKED_EXTERNAL"&&
+   delivery?.render?.live_origin==="NOT_CONFIGURED"&&
+   delivery?.release_authorized===false&&delivery?.beta_authorized===false);
+  fail("delivery-no-external-laundering",["DL02","DL08"].every(id=>
+    nodes.get(id)?.baseline_status==="BLOCKED_EXTERNAL"&&nodes.get(id)?.witness===null));
   const experience=nodes.get("Q07");
   fail("dod-experience-quality",experience?.kind==="LEAF"&&experience?.baseline_status==="BLOCKED_EXTERNAL"&&
     experience?.witness===null&&experience?.noncompensatory_subcriteria?.join(",")==="character-identity,platform-affordance,jump-and-retry-feel,visual-hud-readability,narrative-comprehension,audio-or-author-approved-muted-scope,observed-independent-player-acceptance");
