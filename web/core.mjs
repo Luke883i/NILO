@@ -36,7 +36,7 @@ export function initialLevelState(level='LV-01',saved=null){
   return initialState(saved);
 }
 export function initialState(saved = null, savedLV02=null) {
-  // The LV-02 checkpoint is proof of an earlier real traversal, not a URL shortcut.
+  // CP-02 is a strict local resume record, not proof of past play: localStorage is user-controlled.
   if(decodeLV02Checkpoint(savedLV02))return initialLevelState('LV-02',savedLV02);
   const checkpointActive = Boolean(decodeCheckpoint(saved));
   const x = checkpointActive ? 1220 : 48;
