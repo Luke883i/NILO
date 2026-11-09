@@ -122,6 +122,12 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
   // Inspect source boundaries: no false full-game claim and no remote dependencies.
   const html=readFileSync(resolve(ROOT,"web/index.html"),"utf8");
   const main=readFileSync(resolve(ROOT,"web/main.mjs"),"utf8");
+  fail("runtime-controls-and-states",contract?.gameplay?.game_state?.join(",")==="PLAYING,PAUSED,DEFEATED,COMPLETED"&&
+    contract?.gameplay?.design_only_states?.join(",")==="TITLE,FALLEN"&&
+    contract?.gameplay?.input?.repair?.join(",")==="KeyE"&&
+    contract?.gameplay?.input?.next_level?.join(",")==="KeyN"&&
+    main.includes("e.code==='KeyE'")&&main.includes('e.code==="KeyN"')&&
+    readFileSync(resolve(ROOT,"web/core.mjs"),"utf8").includes("'DEFEATED'"));
   fail("no-network",html.includes("connect-src 'none'")&&!/https?:\/\/|fetch\s*\(/.test(main));
   for(const p of ["web/core.mjs","web/main.mjs","web/index.html","docs/PRODUCT_CONTRACT.md","docs/PROVENANCE.md"])
     fail("missing-source:"+p,existsSync(resolve(ROOT,p)));

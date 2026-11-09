@@ -254,6 +254,12 @@
       ],
       "restart": [
         "KeyR"
+      ],
+      "next_level": [
+        "KeyN"
+      ],
+      "repair": [
+        "KeyE"
       ]
     },
     "physics": {
@@ -263,10 +269,9 @@
       "jump_velocity": -555
     },
     "game_state": [
-      "TITLE",
       "PLAYING",
       "PAUSED",
-      "FALLEN",
+      "DEFEATED",
       "COMPLETED"
     ],
     "checkpoint": {
@@ -408,7 +413,11 @@
       "checkpoint": "CP-02_NOT_VICTORY_RECEIPT",
       "player_acceptance": "BLOCKED_EXTERNAL",
       "browser_oracle": "tests/browser-custode.py"
-    }
+    },
+    "design_only_states": [
+      "TITLE",
+      "FALLEN"
+    ]
   },
   "slice": {
     "id": "SLICE-01",
