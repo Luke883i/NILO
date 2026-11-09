@@ -30,7 +30,7 @@ function building(c,x,y,w,h,seed){
   px(c,x+w*.62,y-24,14,24,ART.shadow);
 }
 function skyline(c,camera){
-  for(let row=0;row<7;row++)px(c,0,row*36,960,36,[ART.sky,ART.sky,'#19334b','#1c384f','#203e55','#26465c','#2b4c60'][row]);
+  for(let row=0;row<15;row++)px(c,0,row*36,960,36,[ART.sky,ART.sky,'#19334b','#1c384f','#203e55','#26465c','#2b4c60','#2a4e62','#2d5267','#2d5267','#284b60','#284b60','#26465a','#254357','#254357'][row]);
   for(let j=0;j<60;j++){let x=(hash(j*13)%2200)-(camera*.11)%2200;while(x<0)x+=2200;x%=1180;
     let y=28+hash(j*91)%180;px(c,x,y,2,2,j%5===0?ART.brass:'#6d8292');}
   c.save();c.translate(-Math.floor(camera*.15/2)*2,0);

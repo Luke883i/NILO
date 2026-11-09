@@ -57,7 +57,8 @@ function frame(now) {
   }
   if(lastPhase!==state.phase){lastPhase=state.phase;
     if(state.phase==="COMPLETED")announce("Prologo completato. Il resto del gioco è ancora da realizzare.");}
-  const tip=state.phase==="COMPLETED"?"Prologo concluso · altri 5 capitoli non ancora disponibili":
+  const tip=state.phase==="PAUSED"?"Pausa · premi P per riprendere":
+    state.phase==="COMPLETED"?"Prologo concluso · altri 5 capitoli non ancora disponibili":
     state.checkpointActive?"Prima ora · checkpoint salvato · raggiungi il portale":
     state.x>750?"Segui il segnatempo dorato": "Prima ora · segui la freccia →";
   if(lastTip!==tip){lastTip=tip;hud.textContent="NILO · "+(state.phase==="PAUSED"?"Pausa":tip);}
