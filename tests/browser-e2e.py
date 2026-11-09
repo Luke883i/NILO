@@ -90,7 +90,7 @@ def run(args):
       "checks":{},"screenshots":[],"page_errors":[],"failed_requests":[],"requests":[]}
     try:
         with serve(ROOT/"web") as url,sync_playwright() as playwright:
-            browser=playwright.chromium.launch(headless=True)
+            browser=playwright.chromium.launch(headless=True,channel="chrome")
             report["browser_version"]=browser.version
             context=browser.new_context(viewport={"width":1280,"height":900},device_scale_factor=1)
             page=context.new_page()

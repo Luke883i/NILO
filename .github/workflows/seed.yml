@@ -26,10 +26,10 @@ jobs:
         run: node --test tests/core.test.mjs
       - name: Test contract, reticular DoD and S-BOM negative cases
         run: node --test tests/contracts.test.mjs tests/experience.test.mjs
-      - name: Enforce product -> software -> repository bindings on every PR
-        run: |
-          node scripts/verify-development.mjs
-          node --test tests/development.test.mjs
+      - name: Validate product software repository map
+        run: node scripts/verify-development.mjs
+      - name: Falsify bridge declarations and missing owners
+        run: node --test tests/development.test.mjs
       - name: Kill checkpoint-forgery source mutant
         env:
           NILO_MUTANT: forged-checkpoint
@@ -76,10 +76,12 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
           python --version
-      - name: Install pinned test-only Playwright and actual Chromium
+      - name: Install pinned test-only Playwright
+        run: python -m pip install playwright==1.57.0
+      - name: Verify GitHub-hosted Chrome browser is available
         run: |
-          python -m pip install playwright==1.57.0
-          python -m playwright install --with-deps chromium
+          command -v google-chrome
+          google-chrome --version
       - name: Run original HTTP-origin browser flow and physical storage mutant
         run: python tests/browser-e2e.py --out /tmp/nilo-browser-evidence --physical-mutant
       - name: Verify receipt scope on exact HEAD (not beta approval)
