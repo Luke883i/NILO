@@ -7,6 +7,9 @@ const announcement = document.querySelector("#announcement");
 if (!ctx) throw new Error("Canvas2D unavailable; no false playable claim");
 const STORE = "nilo.checkpoint.v1";
 const controls = new Set();
+const jumpKeys=new Set(["Space","ArrowUp","KeyW"]);
+let pendingJumpPress=false;
+const physicalJumpHeld=()=>[...jumpKeys].some(code=>controls.has(code));
 let saved = null;
 try { saved = localStorage.getItem(STORE); } catch { /* unavailable storage: gameplay degrades safely */ }
 let state = initialState(saved);
@@ -17,23 +20,35 @@ Object.defineProperty(window,"__niloReadback",{
   configurable:false,enumerable:false,writable:false,
   value:()=>Object.freeze({phase:state.phase,x:state.x,y:state.y,
     onGround:state.onGround,checkpointActive:state.checkpointActive,
-    ticks:state.ticks,deaths:state.deaths,camera:state.camera})
+    ticks:state.ticks,deaths:state.deaths,camera:state.camera,vy:state.vy,jumpHeld:state.jumpHeld})
 });
 const keyMap = new Set(["ArrowLeft","ArrowRight","ArrowUp","KeyA","KeyD","KeyW","Space","KeyP","KeyR"]);
 function announce(text) { announcement.textContent=text; }
 window.addEventListener("keydown", e => {
   if (!keyMap.has(e.code)) return;
   if (e.code === "Space" || e.code.startsWith("Arrow")) e.preventDefault();
+  const wasJumpHeld=physicalJumpHeld();
   if (!e.repeat && (e.code === "KeyP" || e.code === "KeyR")) {
-    state = applyAction(state,e.code);
+    // Transition boundaries consume pending presses, but preserve held keys
+    // until a physical release. No input may be manufactured by a restart.
+    pendingJumpPress=false;
+    state=applyAction(state,e.code,wasJumpHeld);
     announce(e.code==="KeyP"?(state.phase==="PAUSED"?"In pausa":"Gioco ripreso"):"Ricomincia dal checkpoint, se presente");
   }
+  if(!e.repeat && jumpKeys.has(e.code) && !wasJumpHeld && state.phase==="PLAYING")
+    pendingJumpPress=true;
   controls.add(e.code);
 });
 window.addEventListener("keyup", e => controls.delete(e.code));
-window.addEventListener("blur", () => controls.clear());
+window.addEventListener("blur", () => {controls.clear();pendingJumpPress=false;});
 document.addEventListener("visibilitychange", () => {
-  if (document.hidden && state.phase==="PLAYING") {state=applyAction(state,"KeyP"); announce("In pausa: finestra non attiva");}
+  if(document.hidden){
+    controls.clear();pendingJumpPress=false;
+    if(state.phase==="PLAYING"){
+      state=applyAction(state,"KeyP",false);
+      announce("In pausa: finestra non attiva");
+    }
+  }
 });
 // Pixel-resolution buffer: 2x nearest-neighbour output, source physics unchanged.
 const pixelCanvas=document.createElement("canvas");
@@ -51,11 +66,13 @@ function frame(now) {
   const delta=Math.min(.05,Math.max(0,(now-last)/1000));last=now;accumulator+=delta;
   let n=0;
   while(accumulator>=CFG.tick && n++<4){
+    const jump=physicalJumpHeld()||pendingJumpPress;
     state=step(state,{
       left:controls.has("ArrowLeft")||controls.has("KeyA"),
-      right:controls.has("ArrowRight")||controls.has("KeyD"),
-      jump:controls.has("Space")||controls.has("ArrowUp")||controls.has("KeyW")
+      right:controls.has("ArrowRight")||controls.has("KeyD"),jump
     },CFG.tick);
+    // A press/release within one animation frame is delivered exactly once.
+    pendingJumpPress=false;
     accumulator-=CFG.tick;
   }
   if(!savedInSession && state.checkpointActive){
