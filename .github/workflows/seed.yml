@@ -20,6 +20,8 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
           node --version
+      - name: Verify Codespaces delivery, static build, Render blueprint and original source mutants
+        run: node --test tests/delivery.test.mjs tests/delivery-mutation.test.mjs
       - name: Verify physical LV02 game route, independent CP02 and five source mutants
         run: node --test tests/lv-02.test.mjs tests/lv-02-mutation.test.mjs
       - name: Verify Custode encounter contract and eight original-source physical mutants
@@ -192,6 +194,38 @@ jobs:
               assert hashlib.sha256(raw).hexdigest()==z['sha256']
           print('PASS_SCOPED_CUSTODE_BROWSER_NO_USER_APPROVAL',sha)
           PY_BOSS
+      - name: Build the exact Git SHA static publish artifact for Render
+        run: npm run build:static
+      - name: E2E real HTTP Chrome and asset digests on the actual dist bytes
+        run: python tests/browser-delivery.py --out /tmp/nilo-render-local
+      - name: Full two-level first-boss replay against the deployable static directory
+        env:
+          NILO_WEB_ROOT: dist
+        run: python tests/browser-custode.py --out /tmp/nilo-render-static-game
+      - name: Check that the packaged artifact and browser observations match Git SHA
+        run: |
+          python - <<'PY_DELIVERY'
+          import json,hashlib,subprocess
+          from pathlib import Path
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          m=json.loads(Path('dist/nilo-deploy.json').read_text())
+          r=json.loads(Path('/tmp/nilo-render-local/delivery-receipt.json').read_text())
+          g=json.loads(Path('/tmp/nilo-render-static-game/custode-receipt.json').read_text())
+          assert m['source_commit_sha']==r['source_sha']==g['source_sha']==sha
+          assert r['status']=='PASS_LOCAL_STATIC_RENDER_EQUIVALENT'
+          assert g['status']=='PASS_SCOPED_CUSTODE_BROWSER_NO_USER_APPROVAL'
+          assert not r['remote_render_observed'] and not m['external_render_observed']
+          assert not m['beta_authorized'] and not r['beta_authorized']
+          assert r['checks']['published_files_exact_sha256']=='PASS_HTTP_OBSERVED'
+          assert r['checks']['missing_module_404']=='PASS_HTTP_OBSERVED'
+          assert len(r['screenshots'])==1 and len(g['screenshots'])==3
+          for p,receipt in [(Path('/tmp/nilo-render-local'),r),(Path('/tmp/nilo-render-static-game'),g)]:
+            for f in receipt['screenshots']:
+              b=(p/f['name']).read_bytes()
+              assert b.startswith(bytes.fromhex('89504e470d0a1a0a'))
+              assert hashlib.sha256(b).hexdigest()==f['sha256']
+          print('PASS_SCOPED_RENDER_ARTIFACT_E2E_NOT_REMOTE',sha)
+          PY_DELIVERY
       - name: Verify receipt scope on exact HEAD (not beta approval)
         run: |
           python - <<'PY'
@@ -234,5 +268,7 @@ jobs:
             /tmp/nilo-browser-evidence/
             /tmp/nilo-browser-lv02/
             /tmp/nilo-browser-custode/
+            /tmp/nilo-render-local/
+            /tmp/nilo-render-static-game/
           if-no-files-found: warn
           retention-days: 14
