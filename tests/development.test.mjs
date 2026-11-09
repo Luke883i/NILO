@@ -1,0 +1,39 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {readFileSync} from "node:fs";
+import {validateBridge} from "../scripts/verify-development.mjs";
+const read=p=>JSON.parse(readFileSync(new URL("../"+p,import.meta.url),"utf8"));
+const base=()=>({bridge:read("contracts/development-map.json"),contract:read("contracts/nilo-semantic-v1.json"),dod:read("contracts/dod-v1.json")});
+test("current contract maps 6 levels, 6 oracles and 4 web units without asserting browser beta",()=>{
+  const d=base();assert.deepEqual(validateBridge(d),[]);
+  assert.equal(d.bridge.beta_authorized,false);
+  assert.equal(d.bridge.levels.filter(x=>x.state==="DESIGN_ONLY").length,5);
+});
+test("product change without software and repository binding fails closed",()=>{
+  const d=base();d.contract.slice.acceptance_oracles.push({id:"OR-07"});
+  assert(validateBridge(d).includes("bridge-oracles"));
+});
+test("mislabeled implemented level without tested source is rejected",()=>{
+  const d=base();d.bridge.levels[1].state="IMPLEMENTED_CANDIDATE";
+  assert(validateBridge(d).includes("bridge-no-fake-levels"));
+});
+test("source changes may not bypass product requirements",()=>{
+  const d=base();d.bridge.requirements.find(x=>x.id==="OR-03").sources=["web/not-real.mjs"];
+  assert(validateBridge(d).includes("bridge-valid-sources"));
+});
+test("an untraceable browser PASS or beta authorization is refuted",()=>{
+  let d=base();d.bridge.requirements.find(x=>x.id==="OR-05").browser="PASS";
+  assert(validateBridge(d).includes("bridge-no-runtime-promotion"));
+  d=base();d.bridge.beta_authorized=true;assert(validateBridge(d).includes("bridge-authority"));
+});
+test("model evidence cannot masquerade as independent UX or touch support",()=>{
+  let d=base();d.bridge.requirements.find(x=>x.id==="OR-05").tests=["tests/core.test.mjs"];
+  assert(validateBridge(d).includes("bridge-model-witness"));
+  d=base();d.bridge.mobile_touch="SUPPORTED";assert(validateBridge(d).includes("bridge-mobile-truth"));
+});
+test("removing a source owner or mutation witness is rejected",()=>{
+  let d=base();d.bridge.requirements=d.bridge.requirements.filter(x=>x.id!=="OR-01");
+  assert(validateBridge(d).includes("bridge-oracles"));
+  d=base();d.bridge.requirements.find(x=>x.id==="OR-06").tests=["tests/core.test.mjs"];
+  assert(validateBridge(d).includes("bridge-model-witness"));
+});

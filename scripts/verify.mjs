@@ -2,6 +2,7 @@
 import {readFileSync, existsSync} from "node:fs";
 import {resolve,dirname} from "node:path";
 import {fileURLToPath} from "node:url";
+import {validateBridge} from "./verify-development.mjs";
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"..");
 const raw=p=>JSON.parse(readFileSync(resolve(ROOT,p),"utf8"));
 export const load=()=>({
@@ -10,10 +11,11 @@ export const load=()=>({
   chain:raw("provenance/semantic-chain.json"),
   refs:raw("standards/references.json"),
   bom:raw("bom/nilo.cdx.json"),
-  pkg:raw("package.json")
+  pkg:raw("package.json"),
+  bridge:raw("contracts/development-map.json")
 });
 const distinct=xs=>new Set(xs).size===xs.length;
-export function audit({contract,dod,chain,refs,bom,pkg}) {
+export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
   const errors=[];
   const fail=(id,cond)=>{if(!cond)errors.push(id);};
   fail("contract-schema",contract?.schema==="nilo.semantic-contract/1");
@@ -67,6 +69,7 @@ export function audit({contract,dod,chain,refs,bom,pkg}) {
   fail("no-network",html.includes("connect-src 'none'")&&!/https?:\/\/|fetch\s*\(/.test(main));
   for(const p of ["web/core.mjs","web/main.mjs","web/index.html","docs/PRODUCT_CONTRACT.md","docs/PROVENANCE.md"])
     fail("missing-source:"+p,existsSync(resolve(ROOT,p)));
+  errors.push(...validateBridge({bridge,contract,dod},ROOT));
   return [...new Set(errors)].sort();
 }
 export function verify() {
