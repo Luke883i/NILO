@@ -1,6 +1,7 @@
 import {CFG, PLATFORMS, initialState, applyAction, step, encodeCheckpoint} from "./core.mjs";
 import {renderPixelWorld,sceneCue} from "./art.mjs";
 import {encodeLV02Checkpoint} from "./levels/lv-02.mjs";
+import {encodeLV03Checkpoint} from "./levels/lv-03.mjs";
 const canvas = document.querySelector("#game");
 const ctx = canvas?.getContext("2d");
 const hud = document.querySelector("#hud");
@@ -12,6 +13,7 @@ if(!sceneTitle||!sceneHint||!sceneChapter)throw new Error("Narrative scene cues 
 if (!ctx) throw new Error("Canvas2D unavailable; no false playable claim");
 const STORE = "nilo.checkpoint.v1";
 const STORE_LV02 = "nilo.checkpoint.lv02.v1";
+const STORE_LV03 = "nilo.checkpoint.lv03.v1";
 const controls = new Set();
 const jumpKeys=new Set(["Space","ArrowUp","KeyW"]);
 let pendingRepairPress=false;
@@ -21,7 +23,9 @@ let saved = null;
 try { saved = localStorage.getItem(STORE); } catch { /* unavailable storage: gameplay degrades safely */ }
 let savedLV02=null;
 try {savedLV02=localStorage.getItem(STORE_LV02);}catch { /* no false persistence */ }
-let state = initialState(saved,savedLV02);
+let savedLV03=null;
+try {savedLV03=localStorage.getItem(STORE_LV03);}catch { /* no false persistence */ }
+let state = initialState(saved,savedLV02,savedLV03);
 let last = performance.now(), accumulator=0, lastPhase=state.phase, savedInSession=state.checkpointActive;
 let lastTip="",lastCue="";
 /** Read-only diagnostic readback. It does not advance, override or certify game state. */
@@ -31,7 +35,9 @@ Object.defineProperty(window,"__niloReadback",{
     onGround:state.onGround,checkpointActive:state.checkpointActive,
     ticks:state.ticks,deaths:state.deaths,camera:state.camera,vy:state.vy,
     jumpHeld:state.jumpHeld,supportId:state.supportId,currentForce:state.currentForce,
-    boss:state.boss?{...state.boss}:null})
+    boss:state.boss?{...state.boss}:null,
+    lightMode:state.lightMode??null,doorsPassed:state.doorsPassed??0,
+    archiveLog:Boolean(state.archiveLog),switchesUsed:state.switchesUsed??0})
 });
 const keyMap = new Set(["ArrowLeft","ArrowRight","ArrowUp","KeyA","KeyD","KeyW","Space","KeyP","KeyR","KeyN","KeyE"]);
 function announce(text) { announcement.textContent=text; }
@@ -46,15 +52,19 @@ window.addEventListener("keydown", e => {
     state=applyAction(state,e.code,wasJumpHeld);
     announce(e.code==="KeyP"?(state.phase==="PAUSED"?"In pausa":"Gioco ripreso"):"Ricomincia dal checkpoint, se presente");
   }
-  if(!e.repeat&&e.code==="KeyN"&&state.phase==="COMPLETED"&&state.level==="LV-01"){
+  if(!e.repeat&&e.code==="KeyN"&&state.phase==="COMPLETED"&&
+     (state.level==="LV-01"||state.level==="LV-02")){
     pendingJumpPress=false;pendingRepairPress=false;
     state=applyAction(state,"KeyN",wasJumpHeld);
     savedInSession=false;lastPhase=state.phase;lastTip="";lastCue="";
-    announce("LV-02: Canali dei Minuti. Il Custode sarà disponibile in una versione successiva.");
+    announce(state.level==='LV-03'?
+      'LV-03: Archivio delle Ombre. Premi E vicino alle lampade per cambiare luce e aprire le porte.':
+      'LV-02: Canali dei Minuti. Il Custode sorveglia il pendolo.');
   }
   if(!e.repeat && jumpKeys.has(e.code) && !wasJumpHeld && state.phase==="PLAYING")
     pendingJumpPress=true;
-  if(!e.repeat&&e.code==='KeyE'&&state.phase==='PLAYING'&&state.level==='LV-02')
+  if(!e.repeat&&e.code==='KeyE'&&state.phase==='PLAYING'&&
+     (state.level==='LV-02'||state.level==='LV-03'))
     pendingRepairPress=true;
   controls.add(e.code);
 });
@@ -89,7 +99,8 @@ function frame(now) {
     state=step(state,{
       left:controls.has("ArrowLeft")||controls.has("KeyA"),
       right:controls.has("ArrowRight")||controls.has("KeyD"),jump,
-      jumpPressed:pendingJumpPress,repairPressed:pendingRepairPress
+      jumpPressed:pendingJumpPress,repairPressed:pendingRepairPress,
+      interactPressed:pendingRepairPress
     },CFG.tick);
     // A press/release within one animation frame is delivered exactly once.
     pendingJumpPress=false;pendingRepairPress=false;
@@ -97,18 +108,26 @@ function frame(now) {
   }
   if(!savedInSession && state.checkpointActive){
     try {
-      const key=state.level==='LV-02'?STORE_LV02:STORE;
-      const receipt=state.level==='LV-02'?encodeLV02Checkpoint():encodeCheckpoint();
+      const key=state.level==='LV-03'?STORE_LV03:state.level==='LV-02'?STORE_LV02:STORE;
+      const receipt=state.level==='LV-03'?encodeLV03Checkpoint():
+        state.level==='LV-02'?encodeLV02Checkpoint():encodeCheckpoint();
       localStorage.setItem(key,receipt);savedInSession=true;
       announce("Checkpoint " + state.level + " salvato: ricarica la pagina per verificare.");
     }
     catch {announce("Checkpoint raggiunto, ma non persistito: archivio locale indisponibile.");}
   }
   if(lastPhase!==state.phase){lastPhase=state.phase;
-    if(state.phase==="COMPLETED")announce(state.level==='LV-02'?
-      "Custode fermato. La seconda ora è stata restituita; LV-03 è in sviluppo.":
+    if(state.phase==="COMPLETED")announce(state.level==='LV-03'?
+      "Terza ora restituita. L'Archivio è aperto; LV-04 è ancora in sviluppo.":
+      state.level==='LV-02'?
+      "Custode fermato. La seconda ora è stata restituita; premi N per entrare nell'Archivio.":
       "Prima ora restituita. Premi N per accedere ai Canali dei Minuti.");}
   const tip=state.phase==="PAUSED"?"Pausa · premi P per riprendere":
+    state.level==='LV-03'?(state.phase==='COMPLETED'?
+      "TERZA ORA RESTITUITA · LV-04 in sviluppo":
+      state.checkpointActive?
+      "Archivio delle Ombre · CP-03 salvato · E alterna luce e ombra presso le lampade":
+      "Archivio delle Ombre · E alle lampade · attraversa le porte nell'ordine corretto"):
     state.level==='LV-02'?(state.phase==="COMPLETED"?
       "SECONDA ORA RESTITUITA · LV-03 in sviluppo":
       state.phase==='DEFEATED'?"Custode · sconfitta · premi R per riprovare":
@@ -127,7 +146,8 @@ function frame(now) {
   if(cue.id!==lastCue){
     lastCue=cue.id;
     sceneTitle.textContent=cue.title;
-    sceneChapter.textContent=state.level==='LV-02'?'ORA II · CANALI DEI MINUTI':'ORA I · CORTILE DELLE LANCETTE';
+    sceneChapter.textContent=state.level==='LV-03'?'ORA III · ARCHIVIO DELLE OMBRE':
+      state.level==='LV-02'?'ORA II · CANALI DEI MINUTI':'ORA I · CORTILE DELLE LANCETTE';
     sceneHint.textContent=cue.hint;
   }
   paint();requestAnimationFrame(frame);

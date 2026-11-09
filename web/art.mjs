@@ -1,4 +1,5 @@
 import {LV02,lv02Surfaces} from "./levels/lv-02.mjs";
+import {LV03,archiveDoorOpen} from "./levels/lv-03.mjs";
 // Original, code-generated pixel art; no external textures, fonts or images.
 // The design palette is a candidate, not an independent aesthetic approval.
 export const ART = Object.freeze({
@@ -147,6 +148,23 @@ export const LV02_CUES=Object.freeze([
     hint:'Il Custode sorveglia il varco: lo scontro non è ancora implementato.'})
 ]);
 export function sceneCue(state) {
+  if(state.level==='LV-03'){
+    if(state.phase==='COMPLETED')return {id:'ARCHIVE-VICTORY',role:'CH-NILO',
+      title:'TERZA ORA RESTITUITA',hint:'Hai liberato i registri del tempo. LV-04 è in sviluppo.'};
+    if(state.phase==='PAUSED')return {id:'ARCHIVE-PAUSE',role:'CH-TICA',
+      title:'TEMPO IN PAUSA',hint:'Premi P per tornare all’Archivio.'};
+    const position=state.x,mode=state.lightMode==='LIGHT'?'LUCE':'OMBRA';
+    if(position<600)return {id:'ARCHIVE-ENTRY-'+mode,role:'CH-TICA',
+      title:'ARCHIVIO · LUCE E OMBRA',hint:'Premi E vicino alla lampada. La prima porta richiede OMBRA.'};
+    if(position<1000)return {id:'ARCHIVE-DOOR1-'+mode,role:'CH-PERNO',
+      title:'PORTA D’OMBRA · '+mode,hint:'Porta aperta solo in OMBRA; il colore non è l’unico segnale.'};
+    if(position<1370)return {id:'ARCHIVE-LEDGER-'+mode+'-'+state.archiveLog,role:'CH-PERNO',
+      title:'REGISTRI DEL TEMPO',hint:'Il registro è facoltativo: E per leggerlo. CP-03 consente la ripresa.'};
+    if(position<1750)return {id:'ARCHIVE-DOOR2-'+mode,role:'CH-TICA',
+      title:'PORTA DI LUCE · '+mode,hint:'Premi E presso la seconda lampada: questa porta richiede LUCE.'};
+    return {id:'ARCHIVE-EXIT-'+mode,role:'CH-NILO',
+      title:'TERZA ORA · PORTALE',hint:'Attraversa entrambe le porte e raggiungi il portale.'};
+  }
   if(state.level==='LV-02'){
     if(state.phase==='COMPLETED')return {id:'CANAL-VICTORY',role:'CH-NILO',
       title:'SECONDA ORA RESTITUITA',hint:'Il Custode è fermo. Hai riparato il pendolo. LV-03 è in sviluppo.'};
@@ -209,10 +227,11 @@ function ledgeCues(c,platforms,state){
 function timeLanterns(c,state){
   px(c,674,16,276,59,ART.ink);px(c,678,20,268,50,ART.shadow);
   c.fillStyle=ART.cream;c.font='bold 13px monospace';
-  c.fillText(state.level==='LV-02'?'LE SEI ORE · LV-02':'LE SEI ORE · LV-01',689,38);
+  c.fillText('LE SEI ORE · '+state.level,689,38);
   for(let j=0;j<6;j++){
-    const x=699+j*38,active=(j===0&&(state.level==='LV-02'||state.phase==='COMPLETED'))||
-      (j===1&&state.level==='LV-02'&&state.boss?.phase==='VICTORY');
+    const x=699+j*38,active=(j===0&&(state.level!=='LV-01'||state.phase==='COMPLETED'))||
+      (j===1&&(state.level==='LV-03'||state.level==='LV-02'&&state.boss?.phase==='VICTORY'))||
+      (j===2&&state.level==='LV-03'&&state.phase==='COMPLETED');
     px(c,x,47,23,13,ART.ink);px(c,x+3,49,17,9,active?ART.teal:ART.brick);
     if(j>0)px(c,x+10,50,3,6,ART.ink);
   }
@@ -275,19 +294,64 @@ function canalDetails(c,state){
     c.fillText('RIPARA '+b.repairs+'/2',2154,315);
   }
 }
+
+function archiveBackdrop(c,state,cfg){
+  const bands=[ART.ink,'#1a2e4c','#253751','#2d4057','#374960','#465269'];
+  for(let i=0;i<18;i++)px(c,0,i*30,cfg.viewport,30,bands[Math.min(5,Math.floor(i/3))]);
+  for(let x=-60;x<cfg.viewport+80;x+=90){
+    const far=(x-Math.floor(state.camera*.12))%(cfg.viewport+90);
+    px(c,far,110,62,330,ART.shadow);
+    for(let k=0;k<5;k++)px(c,far+12,130+k*51,36,9,ART.brass);
+  }
+  if(state.lightMode==='SHADOW'){
+    for(let i=0;i<7;i++)px(c,0,i*65,cfg.viewport,12,'#15273c');
+  }else{
+    for(let i=0;i<7;i++)px(c,0,i*65,cfg.viewport,7,ART.brass);
+  }
+}
+function archiveDetails(c,state){
+  for(const lamp of LV03.switches){
+    px(c,lamp.x-6,383,16,77,ART.ink);
+    px(c,lamp.x-15,375,33,24,state.lightMode==='LIGHT'?ART.brass:ART.teal);
+    c.fillStyle=ART.cream;c.font='bold 13px monospace';
+    c.fillText('E · '+(state.lightMode==='LIGHT'?'LUCE':'OMBRA'),lamp.x-28,361);
+  }
+  for(const door of LV03.doors){
+    const open=archiveDoorOpen(door,state.lightMode);
+    px(c,door.x,242,door.w,218,ART.ink);
+    px(c,door.x+5,250,door.w-10,202,open?ART.shadow:ART.coral);
+    for(let k=0;k<5;k++)px(c,door.x+6,266+k*34,door.w-12,5,
+      open?ART.teal:ART.cream);
+    c.fillStyle=ART.cream;c.font='bold 12px monospace';
+    c.fillText(door.label+' '+(open?'APERTA':'CHIUSA'),door.x-22,229);
+    if(open)px(c,door.x+7,268,door.w-14,178,ART.shadow);
+  }
+  px(c,LV03.collectible.x-12,417,25,22,state.archiveLog?ART.teal:ART.brass);
+  c.fillStyle=ART.cream;c.font='bold 12px monospace';
+  c.fillText(state.archiveLog?'REGISTRO LETTO':'E · REGISTRO',LV03.collectible.x-42,404);
+  px(c,LV03.checkpointX+5,377,36,42,state.checkpointActive?ART.teal:ART.brass);
+  c.fillStyle=ART.cream;c.font='bold 12px monospace';
+  c.fillText('CP-03',LV03.checkpointX,370);
+  px(c,LV03.finishX+8,324,62,136,ART.brass);
+  px(c,LV03.finishX+17,339,44,118,ART.shadow);
+  c.fillStyle=ART.cream;c.font='bold 12px monospace';
+  c.fillText('ORA III',LV03.finishX,314);
+}
 export function renderPixelWorld(c,state,cfg,platforms){
   c.clearRect(0,0,cfg.viewport,cfg.height);
-  const second=state.level==='LV-02';
-  if(second)canalBackdrop(c,state,cfg);
+  const second=state.level==='LV-02',third=state.level==='LV-03';
+  if(third)archiveBackdrop(c,state,cfg);
+  else if(second)canalBackdrop(c,state,cfg);
   else {skyline(c,state.camera);factoryMachinery(c,state.camera);}
   c.save();c.translate(-Math.floor(state.camera/2)*2,0);
-  const surfaces=second?lv02Surfaces(state.ticks):platforms;
+  const surfaces=third?LV03.platforms:second?lv02Surfaces(state.ticks):platforms;
   for(let i=0;i<surfaces.length;i++)platform(c,surfaces[i],i);
   ledgeCues(c,surfaces,state);
-  if(second)canalDetails(c,state);
+  if(third)archiveDetails(c,state);
+  else if(second)canalDetails(c,state);
   else {arrow(c,118,366);checkpoint(c,state);perno(c);gate(c);}
   nilo(c,state);tica(c,state);
-  if(second){
+  if(second||third){
     spriteLabel(c,Math.max(10,state.x-5),state.y-35,'NILO',ART.brass);
     spriteLabel(c,Math.max(14,state.x-50),state.y-75,'TICA',ART.teal);
   }else nameplates(c,state);
@@ -296,15 +360,21 @@ export function renderPixelWorld(c,state,cfg,platforms){
   // Dedicated in-game signage; primary accessible text remains outside canvas.
   px(c,14,13,274,56,ART.ink);px(c,16,15,270,52,'#213e56');
   c.fillStyle=ART.cream;c.font='bold 18px system-ui';
-  c.fillText(second?'CANALE · ORA 2':'PROLOGO · ORA 1',28,39);
+  c.fillText(third?'ARCHIVIO · ORA 3':second?'CANALE · ORA 2':'PROLOGO · ORA 1',28,39);
   c.fillStyle=ART.teal;c.font='14px system-ui';
-  c.fillText(second?(state.checkpointActive?'MOLO SALVATO':'SEGUI LE CORRENTI'):(state.checkpointActive?'TEMPO SALVATO':'CERCATE IL SEGNATEMPO'),28,60);
+  c.fillText(third?(state.checkpointActive?'CP-03 · ARCHIVIO SALVATO':
+    state.lightMode==='SHADOW'?'MODALITÀ OMBRA':'MODALITÀ LUCE'):
+    second?(state.checkpointActive?'MOLO SALVATO':'SEGUI LE CORRENTI'):
+    (state.checkpointActive?'TEMPO SALVATO':'CERCATE IL SEGNATEMPO'),28,60);
   if(state.phase==='PAUSED'||state.phase==='COMPLETED'||state.phase==='DEFEATED'){
     px(c,209,184,544,158,ART.ink);px(c,216,192,528,142,'#24465c');
     c.fillStyle=ART.brass;c.font='bold 29px system-ui';
-    c.fillText(state.phase==='PAUSED'?'TEMPO IN PAUSA':state.phase==='DEFEATED'?'CUSTODE · SCONFITTA':second?'SECONDA ORA RESTITUITA':'PRIMA ORA RESTITUITA',245,247);
+    c.fillText(state.phase==='PAUSED'?'TEMPO IN PAUSA':state.phase==='DEFEATED'?'CUSTODE · SCONFITTA':
+      third?'TERZA ORA RESTITUITA':second?'SECONDA ORA RESTITUITA':'PRIMA ORA RESTITUITA',245,247);
     c.fillStyle=ART.ivory;c.font='16px system-ui';
-    c.fillText(state.phase==='PAUSED'?'Premi P per continuare':state.phase==='DEFEATED'?'Premi R per riprovare':second?'Custode sconfitto; LV-03 in sviluppo':'Premi N per il secondo livello',245,280);
+    c.fillText(state.phase==='PAUSED'?'Premi P per continuare':state.phase==='DEFEATED'?'Premi R per riprovare':
+      third?'Archivio completato; LV-04 in sviluppo':
+      second?'Custode sconfitto; premi N per LV-03':'Premi N per il secondo livello',245,280);
     c.fillText('Premi R per ricominciare',245,307);
   }
 }

@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'">
   <meta name="theme-color" content="#10273e">
-  <title>NILO — La Fabbrica delle Ore · Due livelli e primo boss</title>
+  <title>NILO — La Fabbrica delle Ore · Tre livelli e primo boss</title>
   <link rel="stylesheet" href="./style.css">
   <script type="module" src="./main.mjs"></script>
 </head>
 <body>
 <main>
-  <header><p class="eyebrow">NILO · LV-01 + LV-02 · VERTICAL SLICE SPERIMENTALE</p>
+  <header><p class="eyebrow">NILO · LV-01 + LV-02 + LV-03 · VERTICAL SLICE SPERIMENTALE</p>
     <h1>La Fabbrica delle Ore</h1>
-    <p>Sei ore scomparse. Accompagna Nilo e Tica dal Cortile delle Lancette ai Canali dei Minuti. Affronta il Custode e ripara il pendolo per restituire la seconda ora.</p></header>
+    <p>Sei ore scomparse. Accompagna Nilo e Tica dal Cortile delle Lancette ai Canali dei Minuti e all’Archivio delle Ombre. Ripara il Custode, poi apri le porte luce/ombra per restituire la terza ora.</p></header>
   <section aria-label="Platform 2D sperimentale, controllabile da tastiera">
     <p class="mobile-warning">Demo desktop con tastiera: i comandi touch non sono ancora disponibili. Non è una beta mobile.</p>
     <div class="scene-card" aria-label="Contesto narrativo dinamico del prologo" aria-live="polite" aria-atomic="true">
@@ -25,11 +25,11 @@
     </div>
     <div class="game-shell">
     <canvas id="game" width="960" height="540" tabindex="0"
-       aria-label="Campo di gioco: frecce o A/D per muoversi, spazio per saltare, P pausa, R ricomincia, N livello 2 dopo il prologo, E ripara durante il boss. Rappresentazione principalmente visiva; accessibilità non ancora qualificata.">
+       aria-label="Campo di gioco: frecce o A/D per muoversi, spazio per saltare, P pausa, R ricomincia, N livello successivo dopo una vittoria, E interagisce con il pendolo o le lampade. Rappresentazione principalmente visiva; accessibilità non ancora qualificata.">
        La versione canvas richiede un browser con Canvas2D. La versione testuale completa non è ancora implementata.
     </canvas>
     </div>
-    <div class="hud"><strong id="hud">Stato: gioco pronto</strong><span id="hint">← → / A D muovi · Spazio salta · P pausa · R ricomincia · N LV-02 dopo il prologo · E ripara</span></div>
+    <div class="hud"><strong id="hud">Stato: gioco pronto</strong><span id="hint">← → / A D muovi · Spazio salta · P pausa · R ricomincia · N livello successivo · E ripara o cambia luce</span></div>
     <p id="announcement" class="announcer" aria-live="polite">Il gioco è pronto.</p>
     <p class="caution">Pixel art procedurale originale in sperimentazione. Il gioco non è ancora qualificato con utenti o screen reader; nessuna telemetria o dipendenza remota.</p>
   </section>
