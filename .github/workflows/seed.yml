@@ -130,6 +130,10 @@ jobs:
         run: python tests/browser-e2e.py --stage smoke --out /tmp/nilo-browser-smoke
       - name: Input lifecycle - native events, real respawn, pause and physical queue mutant
         run: python tests/browser-e2e.py --stage input-continuity --out /tmp/nilo-input-continuity --physical-mutant
+      - name: Diagnostic - original six-jump route to finish before any auxiliary contexts
+        run: python tests/browser-e2e.py --stage finish --out /tmp/nilo-debug-finish
+      - name: Diagnostic - original module and mobile negative oracles
+        run: python tests/browser-e2e.py --stage negative --out /tmp/nilo-debug-negative
       - name: Full LV01 real-origin E2E including all prior negative oracles
         run: python tests/browser-e2e.py --stage complete --out /tmp/nilo-browser-evidence --physical-mutant
       - name: Verify receipt scope on exact HEAD (not beta approval)
