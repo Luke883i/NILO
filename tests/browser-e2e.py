@@ -404,9 +404,9 @@ def run(args):
                     target=Path(temp)/"web"
                     shutil.copytree(ROOT/"web",target)
                     original=(target/"main.mjs").read_text("utf-8")
-                    needle="localStorage.setItem(STORE,encodeCheckpoint());"
+                    needle="localStorage.setItem(key,receipt);"
                     assert original.count(needle)==1,"source mutation anchor changed"
-                    (target/"main.mjs").write_text(original.replace(needle,"void encodeCheckpoint();"),"utf-8")
+                    (target/"main.mjs").write_text(original.replace(needle,"void receipt;"),"utf-8")
                     with serve(target) as mutant_url:
                         mctx=browser.new_context(viewport={"width":1280,"height":900})
                         mutant=mctx.new_page()
