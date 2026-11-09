@@ -10,7 +10,7 @@ test('physical contrast regression in actual pixel-art source is killed by origi
  const dir=mkdtempSync(join(tmpdir(),'nilo-pixel-mutant-'));
  try{
   mkdirSync(join(dir,'web'));mkdirSync(join(dir,'tests'));
-  for(const file of ['web/art.mjs','web/core.mjs','tests/art.test.mjs']){
+  for(const file of ['web/art.mjs','web/core.mjs','web/levels/lv-02.mjs','tests/art.test.mjs']){
    writeFileSync(join(dir,file),readFileSync(resolve(root,file)));
   }
   writeFileSync(join(dir,'package.json'),JSON.stringify({type:'module'}));

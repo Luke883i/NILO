@@ -28,6 +28,11 @@ test("all original and game-feel real-source mutations are killed by independent
  const tmp=mkdtempSync(join(tmpdir(),"nilo-real-mutants-"));
  try{
    mkdirSync(join(tmp,"web"));mkdirSync(join(tmp,"tests"));
+   // Shared core now imports the new level data; physical copies must
+   // preserve the original import topology before applying any mutation.
+   mkdirSync(join(tmp,"web","levels"),{recursive:true});
+   writeFileSync(join(tmp,"web","levels","lv-02.mjs"),
+     readFileSync(resolve(root,"web/levels/lv-02.mjs"),"utf8"));
    writeFileSync(join(tmp,"tests/core.test.mjs"),sourceTests);
    writeFileSync(join(tmp,"tests/feel.test.mjs"),feelTests);
    const target=join(tmp,"web/core.mjs");
