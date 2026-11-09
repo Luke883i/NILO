@@ -11,8 +11,9 @@ const fixtureFiles=["web/core.mjs","web/main.mjs","web/index.html","web/style.cs
   "tests/core.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
   "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs",
   "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py",
-  "web/levels/lv-02.mjs","tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py",".github/workflows/seed.yml"];
-test("current contract maps 6 levels, 6 oracles and 4 web units without asserting browser beta",()=>{
+  "web/levels/lv-02.mjs","web/levels/custode.mjs","tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py",
+  "tests/custode.test.mjs","tests/custode-mutation.test.mjs","tests/browser-custode.py",".github/workflows/seed.yml"];
+test("current contract maps boss oracles and six levels without asserting beta",()=>{
   const d=base();assert.deepEqual(validateBridge(d),[]);
   assert.equal(d.bridge.beta_authorized,false);
   assert.equal(d.bridge.levels.filter(x=>x.state==="DESIGN_ONLY").length,4);
@@ -115,4 +116,12 @@ test("LV02 required path and owner cannot be dropped or promoted to beta",()=>{
  d=base();d.bridge.requirements.find(x=>x.id==="OR-LV02-05").browser="PASS";
  assert(validateBridge(d).includes("bridge-no-runtime-promotion"));
  d=base();d.bridge.beta_authorized=true;assert(validateBridge(d).includes("bridge-authority"));
+});
+
+test("Custode must retain a real source, independent test and browser owner",()=>{
+ for(const file of ["web/levels/custode.mjs","tests/custode.test.mjs","tests/custode-mutation.test.mjs","tests/browser-custode.py"]){
+  const d=base(),o=d.bridge.requirements.find(x=>x.id==="OR-LV02-06");
+  o.sources=o.sources.filter(x=>x!==file);o.tests=o.tests.filter(x=>x!==file);
+  assert(validateBridge(d).includes("bridge-custode-witness"),file);
+ }
 });

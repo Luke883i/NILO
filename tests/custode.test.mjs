@@ -65,3 +65,23 @@ test('PR10 RED: pause freezes boss; R resets fight without granting hour 2',()=>
   assert.equal(reset.boss.phase,'LOCKED');
   assert.notEqual(reset.phase,'COMPLETED');
 });
+
+test('core translates actual one-shot repair into boss state; location alone never wins',()=>{
+  const fresh=initialLevelState('LV-02');
+  const gate={...fresh,x:CUSTODE.gateX,y:460-CFG.playerHeight,onGround:true};
+  const started=step(gate,{});
+  assert.equal(started.phase,'PLAYING');
+  assert.equal(started.boss.phase,'TELEGRAPH');
+  const recovering={...started,boss:{...started.boss,phase:'RECOVERY',clock:0}};
+  assert.equal(step(recovering,{}).boss.repairs,0);
+  const repaired=step(recovering,{repairPressed:true});
+  assert.equal(repaired.boss.repairs,1);
+  assert.equal(repaired.phase,'PLAYING');
+});
+test('repair cannot count outside window, range or grounded support',()=>{
+  const start=enterCustode(initialCustode());
+  assert.equal(advanceCustode(start,{repairPressed:true,nearMechanism:true,grounded:true}).repairs,0);
+  const recovery=until(start,'RECOVERY');
+  assert.equal(advanceCustode(recovery,{repairPressed:true,nearMechanism:false,grounded:true}).repairs,0);
+  assert.equal(advanceCustode(recovery,{repairPressed:true,nearMechanism:true,grounded:false}).repairs,0);
+});
