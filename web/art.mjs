@@ -258,7 +258,7 @@ export function renderPixelWorld(c,state,cfg,platforms){
   for(let i=0;i<surfaces.length;i++)platform(c,surfaces[i],i);
   ledgeCues(c,surfaces,state);
   if(second)canalDetails(c,state);
-  else {arrow(c,118,366);checkpoint(c,state);perno(c);gate(c);
+  else {arrow(c,118,366);checkpoint(c,state);perno(c);gate(c);}
   nilo(c,state);tica(c,state);
   if(second){
     spriteLabel(c,Math.max(10,state.x-5),state.y-35,'NILO',ART.brass);
