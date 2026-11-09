@@ -60,6 +60,26 @@ jobs:
         env:
           NILO_MUTANT: hold-autorepeat
         run: node --test tests/mutation.test.mjs
+      - name: Kill held-key respawn spurious jump
+        env:
+          NILO_MUTANT: respawn-held-edge
+        run: node --test tests/mutation.test.mjs
+      - name: Kill held-key restart spurious jump
+        env:
+          NILO_MUTANT: restart-held-edge
+        run: node --test tests/mutation.test.mjs
+      - name: Kill paused-key spurious jump
+        env:
+          NILO_MUTANT: resume-held-edge
+        run: node --test tests/mutation.test.mjs
+      - name: Kill incorrect buffered short-hop apex
+        env:
+          NILO_MUTANT: buffered-hop-released
+        run: node --test tests/mutation.test.mjs
+      - name: Kill missing sub-tick press event
+        env:
+          NILO_MUTANT: subtick-edge-dropped
+        run: node --test tests/mutation.test.mjs
       - name: Verify pixel-art source, real contrast mutant and semantic-oracle tests
         run: node --test tests/art.test.mjs tests/art-mutation.test.mjs tests/semantic-campaign.test.mjs
       - name: Exhaust pre-seeded 10M semantic design vectors (not game executions)
@@ -106,33 +126,11 @@ jobs:
         run: |
           command -v google-chrome
           google-chrome --version
-      - name: Verify real HTTP origin CSP modules and initial pixel render
+      - name: Smoke - real HTTP origin, modules and pixel rendering
         run: python tests/browser-e2e.py --stage smoke --out /tmp/nilo-browser-smoke
-      - name: Verify keyboard pause and reach checkpoint with real localStorage
-        run: python tests/browser-e2e.py --stage checkpoint --out /tmp/nilo-browser-checkpoint
-      - name: Verify checkpoint persists through a real reload
-        run: python tests/browser-e2e.py --stage reload --out /tmp/nilo-browser-reload
-      - name: Verify forged checkpoint is rejected after reload
-        run: python tests/browser-e2e.py --stage forged --out /tmp/nilo-browser-forged
-      - name: Verify gameplay completes from genuine saved checkpoint
-        run: python tests/browser-e2e.py --stage finish --out /tmp/nilo-browser-finish
-      - name: Assert no uncaught game JavaScript errors across reloads
-        run: python tests/browser-e2e.py --stage no-pageerrors --out /tmp/nilo-no-pageerrors
-      - name: Assert no unexpected browser network failures across reloads
-        run: python tests/browser-e2e.py --stage no-requestfailures --out /tmp/nilo-no-requestfailures
-      - name: Prove missing dependency mutation is physical and isolated
-        run: python tests/browser-e2e.py --stage module-source --out /tmp/nilo-module-source
-      - name: Prove browser requests the missing imported dependency
-        run: python tests/browser-e2e.py --stage module-request --out /tmp/nilo-module-request
-      - name: Prove HTTP server returned 404 for missing module
-        run: python tests/browser-e2e.py --stage module-status --out /tmp/nilo-module-status
-      - name: Prove missing dependency prevents playable initialization
-        run: python tests/browser-e2e.py --stage module-readback --out /tmp/nilo-module-readback
-      - name: Verify missing imported module cannot produce playable state
-        run: python tests/browser-e2e.py --stage module-negative --out /tmp/nilo-module-negative
-      - name: Verify mobile screen explicitly unsupported and capture screenshot
-        run: python tests/browser-e2e.py --stage negative --out /tmp/nilo-browser-negative
-      - name: Kill physical checkpoint storage mutant using browser oracle
+      - name: Input lifecycle - native events, real respawn, pause and physical queue mutant
+        run: python tests/browser-e2e.py --stage input-continuity --out /tmp/nilo-input-continuity --physical-mutant
+      - name: Full LV01 real-origin E2E including all prior negative oracles
         run: python tests/browser-e2e.py --stage complete --out /tmp/nilo-browser-evidence --physical-mutant
       - name: Verify receipt scope on exact HEAD (not beta approval)
         run: |
@@ -146,8 +144,26 @@ jobs:
           assert r['source_sha']==sha and r['browser_executed']
           assert not r['release_authorized'] and not r['independent_player_acceptance']
           assert len(r['screenshots'])==4
-          assert len(r['checks'])>=8
-          print('PASS_SCOPED_BROWSER_LV01 on',sha)
+          assert len(r['checks'])>=13
+          assert r['checks']['held_respawn_not_retriggered']=='PASS_OBSERVED'
+          assert r['checks']['held_restart_not_retriggered']=='PASS_OBSERVED'
+          assert r['checks']['paused_key_requires_new_edge']=='PASS_OBSERVED'
+          assert r['checks']['subtick_keydown_keyup']=='PASS_OBSERVED'
+          assert r['checks']['physical_subtick_queue_mutant']=='KILLED_BY_BROWSER_ORACLE'
+          assert r['checks']['missing_module_not_playable']=='KILLED_BY_HTTP_404'
+          assert r['checks']['real_checkpoint_write_mutant']=='KILLED_BY_BROWSER_ORACLE'
+          assert r['subtick_witness']['ticks_before']==r['subtick_witness']['ticks_after']
+          import hashlib
+          folder=p.parent
+          images={z['name'] for z in r['screenshots']}
+          assert images=={'01-start.png','02-checkpoint.png','03-completed.png','04-mobile-unsupported.png'}
+          for z in r['screenshots']:
+              raw=(folder/z['name']).read_bytes()
+              assert raw.startswith(bytes.fromhex('89504e470d0a1a0a'))
+              assert len(raw)==z['bytes'] and len(raw)>1000
+              assert hashlib.sha256(raw).hexdigest()==z['sha256']
+              assert hashlib.sha256(raw+b'X').hexdigest()!=z['sha256']
+          print('PASS_SCOPED_BROWSER_LV01 and PR7 input continuity on',sha)
           PY
       - name: Publish screenshots, logs, environment and digest receipts
         if: always()
