@@ -150,7 +150,7 @@ export function runBrowserAdversarial({count=10_000_000,seed=20261109,axes=BROWS
     model:"SEVEN_REALISTIC_BROWSER_FAILURE_FAMILIES_FINITE_DESIGN_VECTORS_NOT_BROWSER_RUNS",
     mismatches,blocked_vectors:blocked,distinct_failure_signatures:signatures.size,
     novelty_in_last_100k:[...signatures.values()].filter(n=>n>=Math.max(0,count-100000)).length,
-    killed_single-bit_model_mutants:killed,checksum_u32:checksum.toString(16).padStart(8,"0"),
+    killed_single_bit_model_mutants:killed,checksum_u32:checksum.toString(16).padStart(8,"0"),
     catalog_sha256:createHash("sha256").update(JSON.stringify(axes)).digest("hex"),
     physical_mutations:0,independent_browser_runs:0,
     beta_authorized:false,
