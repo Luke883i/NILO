@@ -157,6 +157,90 @@ export function runBrowserAdversarial({count=10_000_000,seed=20261109,axes=BROWS
     interpretation:"Enumerated pre-seeded adversarial semantic hypotheses; cannot substitute for the independent Playwright physical browser check."};
 }
 
+
+/** PR6 six-axis, ten-state game-feel design catalog. Precisely 10^6 unique
+ * pre-seeded vectors in the full run; NOT 1M game or hardware executions. */
+export const FEEL_BITS=Object.freeze({EDGE:1,COYOTE:2,BUFFER:4,RELEASE:8,LIFECYCLE:16,EVIDENCE:32});
+const feelRows=[
+ ["EDGE",["press_edge","hold_no_repeat","focus","pause_safe"],[
+ ["lost_first_press","press_edge"],["auto_jump","hold_no_repeat"],["focus_lost","focus"],
+ ["pause_queues_input","pause_safe"],["restart_held_jump","hold_no_repeat"],
+ ["duplicate_keydown","press_edge"],["blurred_game","focus"],["paused_press","pause_safe"]]],
+ ["COYOTE",["near_ledge","window_bounded","surface_valid","expiry_rejected"],[
+ ["missed_ledge","near_ledge"],["infinite_grace","window_bounded"],["airborne_grace","surface_valid"],
+ ["late_edge_jump","expiry_rejected"],["ledge_delay","near_ledge"],["time_accumulation","window_bounded"],
+ ["ghost_collision","surface_valid"],["late_input_accepted","expiry_rejected"]]],
+ ["BUFFER",["prelanding","fresh_input","landing_real","consumed_once"],[
+ ["early_jump_lost","prelanding"],["held_input_requeues","fresh_input"],["phantom_platform","landing_real"],
+ ["double_jump_on_land","consumed_once"],["buffer_not_armed","prelanding"],["repeat_spam","fresh_input"],
+ ["coyote_as_ground","landing_real"],["buffer_leaks","consumed_once"]]],
+ ["RELEASE",["height_choice","cut_once","tap_viable","no_auto_bounce"],[
+ ["fixed_height","height_choice"],["every_frame_cut","cut_once"],["tap_unreachable","tap_viable"],
+ ["hold_auto_bounce","no_auto_bounce"],["release_no_effect","height_choice"],["cut_stacking","cut_once"],
+ ["softlock_short_hop","tap_viable"],["held_jump_repeat","no_auto_bounce"]]],
+ ["LIFECYCLE",["pause_freeze","death_reset","checkpoint_resume","bounded_timestep"],[
+ ["paused_decay","pause_freeze"],["death_buffer_leak","death_reset"],["checkpoint_held_key","checkpoint_resume"],
+ ["unbounded_step","bounded_timestep"],["pause_consumes_buffer","pause_freeze"],
+ ["death_auto_jump","death_reset"],["restore_old_buffer","checkpoint_resume"],["delta_spike","bounded_timestep"]]],
+ ["EVIDENCE",["source_sha","physical_mutant","real_browser","no_ux_certificate"],[
+ ["stale_revision","source_sha"],["model_only_mutation","physical_mutant"],
+ ["dom_injection_play","real_browser"],["fun_claim_from_unit","no_ux_certificate"],
+ ["missing_provenance","source_sha"],["uncaught_survivor","physical_mutant"],
+ ["mock_origin","real_browser"],["beta_claim_from_ci","no_ux_certificate"]]]
+];
+export const FEEL_AXES=Object.freeze(feelRows.map(([name,fields,mutants])=>{
+ const pass=Object.fromEntries(fields.map(f=>[f,true]));
+ return Object.freeze({name,fields,values:Object.freeze([
+ {id:"valid_primary",...pass,expected_blocker:0},
+ {id:"valid_replay",...pass,expected_blocker:0},
+ ...mutants.map(([id,f])=>({id,...pass,[f]:false,expected_blocker:FEEL_BITS[name]}))
+ ])});
+}));
+export function expectedFeel(vector,axes=FEEL_AXES){
+ let mask=0;
+ for(let i=0;i<6;i++)mask|=axes[i].values[vector[i]].expected_blocker;
+ return mask;
+}
+export function classifyFeel(vector,axes=FEEL_AXES){
+ let mask=0;
+ for(let i=0;i<6;i++){
+   const a=axes[i],v=a.values[vector[i]];
+   if(!a.fields.every(f=>v[f]===true))mask|=FEEL_BITS[a.name];
+ }
+ return mask;
+}
+export function runFeelAdversarial({count=1_000_000,seed=20261109,axes=FEEL_AXES}={}){
+ if(!Number.isInteger(count)||count<1||count>1_000_000||!Number.isInteger(seed))
+   throw Error("bounded feel count/seed required");
+ if(axes.length!==6||axes.some(a=>a.values.length!==10))throw Error("six 10-state axes required");
+ const stride=3301,offset=((seed%1_000_000)+1_000_000)%1_000_000,v=Array(6).fill(0);
+ const firstSeen=new Map(),killed=Object.fromEntries(Object.keys(FEEL_BITS).map(k=>[k,0]));
+ let mismatch=0,blocked=0,hash=2166136261;
+ for(let n=0;n<count;n++){
+   let k=(n*stride+offset)%1_000_000;
+   for(let i=5;i>=0;i--){v[i]=k%10;k=Math.floor(k/10);}
+   const e=expectedFeel(v,axes),a=classifyFeel(v,axes);
+   if(e!==a)mismatch++;
+   if(e)blocked++;
+   if(!firstSeen.has(e))firstSeen.set(e,n);
+   for(const [key,bit] of Object.entries(FEEL_BITS))
+     if((e&bit)!==0 && (a & ~bit)!==e)killed[key]++;
+   hash=Math.imul(hash^((e<<6)^a^n),16777619)>>>0;
+ }
+ return {schema:"nilo.game-feel-semantic-adversarial/1",seed,stride,offset,
+   enumerated:count,full_catalog:count===1_000_000,
+   distinct_tuples_by_bijective_decimal_enumeration:true,
+   conceptual_mutations:count,physical_source_mutations:0,browser_executions:0,
+   model:"SIX_PRESEEDED_GAME_FEEL_SEMANTIC_AXES_NOT_PLAYER_SESSIONS",
+   oracle_mismatches:mismatch,blocked_vectors:blocked,
+   distinct_signatures:firstSeen.size,
+   novelty_last_100k:[...firstSeen.values()].filter(x=>x>=Math.max(0,count-100000)).length,
+   killed_model_mutants:killed,checksum_u32:hash.toString(16).padStart(8,"0"),
+   catalog_sha256:createHash("sha256").update(JSON.stringify(axes)).digest("hex"),
+   release_authorized:false,
+   interpretation:"Finite adversarial design-vector coverage only. Separate original-code mutants, Chrome tests and independent player judgment remain mandatory."};
+}
+
 const option=(name,fallback)=>{const a=process.argv.indexOf(name);return a<0?fallback:process.argv[a+1]};
 export function run({count=10_000_000,seed=20261109,contract=source()}={}){
  if(!Number.isInteger(count)||count<1||count>10_000_000)throw Error('count must be 1..10000000');
@@ -200,11 +284,14 @@ export function run({count=10_000_000,seed=20261109,contract=source()}={}){
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const count=Number(option('--count','10000000')),seed=Number(option('--seed','20261109'));
- const r=process.argv.includes('--browser-adversarial') ?
+ const r=process.argv.includes('--feel-adversarial') ?
+   runFeelAdversarial({count,seed}) : process.argv.includes('--browser-adversarial') ?
    runBrowserAdversarial({count,seed}) : run({count,seed});
  const text=JSON.stringify(r,null,2)+'\n';
  const out=option('--out',null);if(out)writeFileSync(out,text);else console.log(text);
- if(r.schema==='nilo.semantic-campaign-result/1' ?
-   (r.oracle_mismatches||r.mutants.some(x=>!x.killed_vectors)) :
-   (r.mismatches||Object.values(r.killed_single_bit_model_mutants).some(x=>!x)))process.exitCode=2;
+ if(r.schema==='nilo.game-feel-semantic-adversarial/1' ?
+    (r.oracle_mismatches||Object.values(r.killed_model_mutants).some(x=>!x)) :
+    r.schema==='nilo.semantic-campaign-result/1' ?
+    (r.oracle_mismatches||r.mutants.some(x=>!x.killed_vectors)) :
+    (r.mismatches||Object.values(r.killed_single_bit_model_mutants).some(x=>!x)))process.exitCode=2;
 }

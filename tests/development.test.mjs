@@ -10,7 +10,7 @@ const base=()=>({bridge:read("contracts/development-map.json"),contract:read("co
 const fixtureFiles=["web/core.mjs","web/main.mjs","web/index.html","web/style.css","web/art.mjs",
   "tests/core.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
   "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs",
-  "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/browser-e2e.py",".github/workflows/seed.yml"];
+  "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py",".github/workflows/seed.yml"];
 test("current contract maps 6 levels, 6 oracles and 4 web units without asserting browser beta",()=>{
   const d=base();assert.deepEqual(validateBridge(d),[]);
   assert.equal(d.bridge.beta_authorized,false);

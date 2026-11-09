@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {run,expected,classify,BITS,validateIterationHypothesis,evaluateIterationHypothesis,BROWSER_AXES,expectedBrowser,classifyBrowser,runBrowserAdversarial} from '../scripts/semantic-campaign.mjs';
+import {run,expected,classify,BITS,validateIterationHypothesis,evaluateIterationHypothesis,BROWSER_AXES,expectedBrowser,classifyBrowser,runBrowserAdversarial,FEEL_AXES,expectedFeel,classifyFeel,runFeelAdversarial} from '../scripts/semantic-campaign.mjs';
 import {readFileSync} from 'node:fs';
 test('independent oracle matches derived classifier on deterministic source catalog',()=>{
  const r=run({count:30000,seed:20261109});
@@ -67,4 +67,22 @@ test('mutated expected/original browser evidence produces a real model disagreem
  axes[0].values[0].http=false;
  assert.notEqual(expectedBrowser([0,0,0,0,0,0,0],axes),classifyBrowser([0,0,0,0,0,0,0],axes));
  assert(runBrowserAdversarial({count:10000,seed:1,axes}).mismatches>0);
+});
+
+test("I02 catalog defines six distinct ten-state adversarial axes",()=>{
+ assert.equal(FEEL_AXES.length,6);
+ assert(FEEL_AXES.every(a=>a.values.length===10&&
+   a.values.every(v=>v.id && a.fields.every(f=>typeof v[f]==='boolean'))));
+ const r=runFeelAdversarial({count:50000,seed:20261109});
+ assert.equal(r.enumerated,50000);assert.equal(r.oracle_mismatches,0);
+ assert(r.blocked_vectors>0);assert(r.distinct_signatures>20);
+ assert.equal(r.physical_source_mutations,0);assert.equal(r.browser_executions,0);
+ assert.equal(r.release_authorized,false);
+});
+test("a corrupted expected mask cannot disguise a false physical assumption",()=>{
+ const m=structuredClone(FEEL_AXES);
+ m[2].values[2].expected_blocker=0;
+ assert.notEqual(expectedFeel([0,0,2,0,0,0],m),classifyFeel([0,0,2,0,0,0],m));
+ const r=runFeelAdversarial({count:10000,seed:20261109,axes:m});
+ assert(r.oracle_mismatches>0);
 });
