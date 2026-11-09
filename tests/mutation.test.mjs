@@ -17,7 +17,12 @@ const cases=[
   ["coyote-disabled",'state.onGround ? CFG.coyoteTicks : Math.max','state.onGround ? CFG.coyoteTicks : 0*Math.max'],
   ["buffer-disabled",'justPressed ? CFG.bufferTicks : Math.max','justPressed ? 0 : Math.max'],
   ["jump-height-disabled",'vy*=CFG.jumpReleaseMultiplier;','vy*=1;'],
-  ["hold-autorepeat",'held && !Boolean(state.jumpHeld)','held']
+  ["hold-autorepeat",'held && !Boolean(state.jumpHeld)','held'],
+  ["respawn-held-edge",'ticks:state.ticks+1,jumpHeld:held','ticks:state.ticks+1,jumpHeld:false'],
+  ["restart-held-edge",'deaths:state.deaths,jumpHeld:Boolean(physicalJumpHeld)','deaths:state.deaths,jumpHeld:false'],
+  ["resume-held-edge",'jumpHeld:Boolean(physicalJumpHeld),bufferLeft:0','jumpHeld:false,bufferLeft:0'],
+  ["buffered-hop-released",'else if(!held && vy<0 && !jumpCut)','else if(!held && state.jumpHeld && vy<0 && !jumpCut)'],
+  ["subtick-edge-dropped",'Boolean(input.jumpPressed) || (held && !Boolean(state.jumpHeld))','false || (held && !Boolean(state.jumpHeld))']
 ];
 test("all original and game-feel real-source mutations are killed by independent original unit tests",()=>{
  const tmp=mkdtempSync(join(tmpdir(),"nilo-real-mutants-"));
