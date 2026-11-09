@@ -249,7 +249,22 @@
       "visual cues without audio dependency",
       "reduced-motion preference",
       "manual contrast and screen-reader assessment before release"
-    ]
+    ],
+    "game_feel": {
+      "scope": "LV-01 source mechanics candidate, not validated enjoyment",
+      "id": "I02",
+      "coyote_ticks": 6,
+      "buffer_ticks": 6,
+      "short_hop_velocity_multiplier": 0.85,
+      "input_contract": "One rising jump edge, held input for variable height, no repeat without release",
+      "proof_owners": [
+        "web/core.mjs",
+        "tests/feel.test.mjs",
+        "tests/mutation.test.mjs",
+        "tests/browser-e2e.py"
+      ],
+      "external_player_acceptance": "BLOCKED_EXTERNAL"
+    }
   },
   "slice": {
     "id": "SLICE-01",

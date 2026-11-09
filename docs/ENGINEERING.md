@@ -127,3 +127,14 @@ indefinite. The temporary diagnostic bundle is an archival handoff proposal,
 **not** a CORA-verified portable chat bundle; use CORA's existing
 `process-run --one-run --chat-step --chat-bundle` and
 `verify-process` to generate and check that artifact for a real session.
+
+
+## PR6 — bounded game feel (I02)
+
+**Goal:** improve how the existing LV-01 jump responds to input *without* changing the pixel renderer, adding another engine or claiming perceptual approval. The original `web/core.mjs` owns deterministic physics; `contracts/nilo-semantic-v1.json` owns the 6-tick coyote/buffer and 0.85 release parameters; original `scripts/verify.mjs` rejects divergence between source values and contract. `contracts/development-map.json` binds I02 source tests to OR-01, OR-02 and OR-04.
+
+**DoD source conditions:** (1) fresh input edge makes one jump; holding cannot auto-retrigger on landing; (2) coyote grace expires after six fixed ticks; (3) a pre-landing press is consumed exactly once; (4) short and held presses produce distinguishable heights while short taps still complete the original route; (5) pause freezes timers and death/restart clear latches; (6) original six-jump route and real HTTP browser E2E remain green; (7) seven original and new physical code mutants are killed by unchanged real test assertions; (8) one million seeded semantic design hypotheses are enumerated with a second implementation, a reproducible seed and a falsifier test.
+
+**External boundary:** neither fixed-step oracle nor design-vector saturation proves ease, fun, disability accessibility, fair boss encounters or beta readiness. Q07, independent playtest and the full-game gate remain **BLOCKED_EXTERNAL**. Any visual/perceptual change is PR7's own independent slice. In PR7 validate pixel readability, animation and character silhouettes through original screenshots and real user interpretation before replicating content.
+
+**PR challenge to release sequencing:** separate each new boss into its own reviewable PR instead of coupling it with a whole new level; shift asset provenance, supported input, accessibility and browser E2E validation earlier and maintain them cumulatively. Eighteen semantic planning iterations are not eighteen guaranteed PRs; proposed candidate release decision moves to approximately PR21, conditional on independent evidence.

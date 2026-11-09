@@ -4,6 +4,7 @@ import {resolve,dirname} from "node:path";
 import {fileURLToPath} from "node:url";
 import {validateBridge} from "./verify-development.mjs";
 import {validateIterationHypothesis} from "./semantic-campaign.mjs";
+import {CFG} from "../web/core.mjs";
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"..");
 const raw=p=>JSON.parse(readFileSync(resolve(ROOT,p),"utf8"));
 export const load=()=>({
@@ -23,6 +24,11 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
   fail("contract-author-approval",contract?.authority==="DRAFT_CREATIVE_PROPOSAL_REQUIRES_AUTHOR_REVIEW"
     && contract.goal?.human_approved===false);
   fail("story-identity",Boolean(contract?.story?.theme&&contract?.story?.premise&&contract?.story?.ending));
+  const feel=contract?.gameplay?.game_feel;
+  fail("game-feel-source-drift",feel?.id==="I02"&&
+    feel.coyote_ticks===CFG.coyoteTicks&&feel.buffer_ticks===CFG.bufferTicks&&
+    feel.short_hop_velocity_multiplier===CFG.jumpReleaseMultiplier&&
+    feel.external_player_acceptance==="BLOCKED_EXTERNAL");
   const chars=contract?.characters||[],levels=contract?.levels||[];
   const charIds=chars.map(x=>x.id),levelIds=levels.map(x=>x.id);
   fail("characters",chars.length===6&&distinct(charIds)&&chars.every(x=>x.name&&x.role&&x.motivation&&x.silhouette));

@@ -24,6 +24,8 @@ jobs:
         run: node scripts/verify.mjs
       - name: Test deterministic playable physics and checkpoint
         run: node --test tests/core.test.mjs
+      - name: Prove bounded input timing, jump height, reset and original six-jump route
+        run: node --test tests/feel.test.mjs
       - name: Test contract, reticular DoD and S-BOM negative cases
         run: node --test tests/contracts.test.mjs tests/experience.test.mjs
       - name: Validate product software repository map
@@ -42,12 +44,30 @@ jobs:
         env:
           NILO_MUTANT: platform-tunneling
         run: node --test tests/mutation.test.mjs
+      - name: Kill coyote-grace removal in original source
+        env:
+          NILO_MUTANT: coyote-disabled
+        run: node --test tests/mutation.test.mjs
+      - name: Kill jump buffer removal in original source
+        env:
+          NILO_MUTANT: buffer-disabled
+        run: node --test tests/mutation.test.mjs
+      - name: Kill short/long jump height equivalence in original source
+        env:
+          NILO_MUTANT: jump-height-disabled
+        run: node --test tests/mutation.test.mjs
+      - name: Kill held-key automatic jump re-trigger
+        env:
+          NILO_MUTANT: hold-autorepeat
+        run: node --test tests/mutation.test.mjs
       - name: Verify pixel-art source, real contrast mutant and semantic-oracle tests
         run: node --test tests/art.test.mjs tests/art-mutation.test.mjs tests/semantic-campaign.test.mjs
       - name: Exhaust pre-seeded 10M semantic design vectors (not game executions)
         run: node scripts/semantic-campaign.mjs --count 10000000 --seed 20261109 --out /tmp/nilo-semantic-10m.json
       - name: Exhaust 10M browser-aware adversarial semantic design mutants (not browser runs)
         run: node scripts/semantic-campaign.mjs --browser-adversarial --count 10000000 --seed 20261109 --out /tmp/nilo-browser-semantic-10m.json
+      - name: Falsify 1M preseeded I02 game-feel semantic vectors (not physical playthroughs)
+        run: node scripts/semantic-campaign.mjs --feel-adversarial --count 1000000 --seed 20261109 --out /tmp/nilo-feel-semantic-1m.json
       - name: Capture process-reported source hashes and SHA without self-approval
         run: |
           node scripts/evidence.mjs --out /tmp/nilo-seed-evidence.json
@@ -61,6 +81,7 @@ jobs:
             /tmp/nilo-seed-evidence.json
             /tmp/nilo-semantic-10m.json
             /tmp/nilo-browser-semantic-10m.json
+            /tmp/nilo-feel-semantic-1m.json
           if-no-files-found: warn
           retention-days: 14
 

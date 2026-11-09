@@ -9,16 +9,22 @@ import {spawnSync} from "node:child_process";
 const root=resolve(dirname(fileURLToPath(import.meta.url)),"..");
 const source=readFileSync(resolve(root,"web/core.mjs"),"utf8");
 const sourceTests=readFileSync(resolve(root,"tests/core.test.mjs"),"utf8");
+const feelTests=readFileSync(resolve(root,"tests/feel.test.mjs"),"utf8");
 const cases=[
   ["forged-checkpoint",'Boolean(decodeCheckpoint(saved))','Boolean(saved)'],
   ["broken-pause",'code === "KeyP"','code === "KeyQ"'],
-  ["platform-tunneling",'prevBottom <= p.y + 2','prevBottom <= p.y - 100']
+  ["platform-tunneling",'prevBottom <= p.y + 2','prevBottom <= p.y - 100'],
+  ["coyote-disabled",'state.onGround ? CFG.coyoteTicks : Math.max','state.onGround ? CFG.coyoteTicks : 0*Math.max'],
+  ["buffer-disabled",'justPressed ? CFG.bufferTicks : Math.max','justPressed ? 0 : Math.max'],
+  ["jump-height-disabled",'vy*=CFG.jumpReleaseMultiplier;','vy*=1;'],
+  ["hold-autorepeat",'held && !Boolean(state.jumpHeld)','held']
 ];
-test("three real-source mutations are killed by independent original unit tests",()=>{
+test("all original and game-feel real-source mutations are killed by independent original unit tests",()=>{
  const tmp=mkdtempSync(join(tmpdir(),"nilo-real-mutants-"));
  try{
    mkdirSync(join(tmp,"web"));mkdirSync(join(tmp,"tests"));
    writeFileSync(join(tmp,"tests/core.test.mjs"),sourceTests);
+   writeFileSync(join(tmp,"tests/feel.test.mjs"),feelTests);
    const target=join(tmp,"web/core.mjs");
    // Node's parent test runner injects NODE_TEST_CONTEXT. A nested --test
    // inherits it and silently skips tests with exit 0 unless removed.
@@ -26,7 +32,7 @@ test("three real-source mutations are killed by independent original unit tests"
    const run=()=>{
      const env={...process.env};
      delete env.NODE_TEST_CONTEXT;
-     return spawnSync(process.execPath,["--test","tests/core.test.mjs"],{
+     return spawnSync(process.execPath,["--test","tests/core.test.mjs","tests/feel.test.mjs"],{
        cwd:tmp,encoding:"utf8",timeout:12000,env});
    };
    writeFileSync(target,source);
