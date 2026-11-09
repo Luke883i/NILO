@@ -1,5 +1,6 @@
 import {CFG, PLATFORMS, initialState, applyAction, step, encodeCheckpoint} from "./core.mjs";
 import {renderPixelWorld,sceneCue} from "./art.mjs";
+import {encodeLV02Checkpoint} from "./levels/lv-02.mjs";
 const canvas = document.querySelector("#game");
 const ctx = canvas?.getContext("2d");
 const hud = document.querySelector("#hud");
@@ -9,23 +10,27 @@ const sceneHint=document.querySelector("#scene-hint");
 if(!sceneTitle||!sceneHint)throw new Error("Narrative scene cues unavailable");
 if (!ctx) throw new Error("Canvas2D unavailable; no false playable claim");
 const STORE = "nilo.checkpoint.v1";
+const STORE_LV02 = "nilo.checkpoint.lv02.v1";
 const controls = new Set();
 const jumpKeys=new Set(["Space","ArrowUp","KeyW"]);
 let pendingJumpPress=false;
 const physicalJumpHeld=()=>[...jumpKeys].some(code=>controls.has(code));
 let saved = null;
 try { saved = localStorage.getItem(STORE); } catch { /* unavailable storage: gameplay degrades safely */ }
-let state = initialState(saved);
+let savedLV02=null;
+try {savedLV02=localStorage.getItem(STORE_LV02);}catch { /* no false persistence */ }
+let state = initialState(saved,savedLV02);
 let last = performance.now(), accumulator=0, lastPhase=state.phase, savedInSession=state.checkpointActive;
 let lastTip="",lastCue="";
 /** Read-only diagnostic readback. It does not advance, override or certify game state. */
 Object.defineProperty(window,"__niloReadback",{
   configurable:false,enumerable:false,writable:false,
-  value:()=>Object.freeze({phase:state.phase,x:state.x,y:state.y,
+  value:()=>Object.freeze({phase:state.phase,level:state.level,x:state.x,y:state.y,
     onGround:state.onGround,checkpointActive:state.checkpointActive,
-    ticks:state.ticks,deaths:state.deaths,camera:state.camera,vy:state.vy,jumpHeld:state.jumpHeld})
+    ticks:state.ticks,deaths:state.deaths,camera:state.camera,vy:state.vy,
+    jumpHeld:state.jumpHeld,supportId:state.supportId,currentForce:state.currentForce})
 });
-const keyMap = new Set(["ArrowLeft","ArrowRight","ArrowUp","KeyA","KeyD","KeyW","Space","KeyP","KeyR"]);
+const keyMap = new Set(["ArrowLeft","ArrowRight","ArrowUp","KeyA","KeyD","KeyW","Space","KeyP","KeyR","KeyN"]);
 function announce(text) { announcement.textContent=text; }
 window.addEventListener("keydown", e => {
   if (!keyMap.has(e.code)) return;
@@ -37,6 +42,12 @@ window.addEventListener("keydown", e => {
     pendingJumpPress=false;
     state=applyAction(state,e.code,wasJumpHeld);
     announce(e.code==="KeyP"?(state.phase==="PAUSED"?"In pausa":"Gioco ripreso"):"Ricomincia dal checkpoint, se presente");
+  }
+  if(!e.repeat&&e.code==="KeyN"&&state.phase==="COMPLETED"&&state.level==="LV-01"){
+    pendingJumpPress=false;
+    state=applyAction(state,"KeyN",wasJumpHeld);
+    savedInSession=false;lastPhase=state.phase;lastTip="";lastCue="";
+    announce("LV-02: Canali dei Minuti. Il Custode sarà disponibile in una versione successiva.");
   }
   if(!e.repeat && jumpKeys.has(e.code) && !wasJumpHeld && state.phase==="PLAYING")
     pendingJumpPress=true;
@@ -80,13 +91,25 @@ function frame(now) {
     accumulator-=CFG.tick;
   }
   if(!savedInSession && state.checkpointActive){
-    try {localStorage.setItem(STORE,encodeCheckpoint());savedInSession=true;announce("Checkpoint salvato: ricarica la pagina per verificare.");}
+    try {
+      const key=state.level==='LV-02'?STORE_LV02:STORE;
+      const receipt=state.level==='LV-02'?encodeLV02Checkpoint():encodeCheckpoint();
+      localStorage.setItem(key,receipt);savedInSession=true;
+      announce("Checkpoint " + state.level + " salvato: ricarica la pagina per verificare.");
+    }
     catch {announce("Checkpoint raggiunto, ma non persistito: archivio locale indisponibile.");}
   }
   if(lastPhase!==state.phase){lastPhase=state.phase;
-    if(state.phase==="COMPLETED")announce("Prologo completato. Il resto del gioco è ancora da realizzare.");}
+    if(state.phase==="COMPLETED")announce(state.level==='LV-02'?
+      "Canali attraversati. Il Custode e la seconda ora non sono ancora disponibili.":
+      "Prima ora restituita. Premi N per accedere ai Canali dei Minuti.");}
   const tip=state.phase==="PAUSED"?"Pausa · premi P per riprendere":
-    state.phase==="COMPLETED"?"Prologo concluso · altri 5 capitoli non ancora disponibili":
+    state.level==='LV-02'?(state.phase==="COMPLETED"?
+      "LV-02 concluso · Custode e seconda ora ancora non disponibili":
+      state.checkpointActive?"Canali dei Minuti · checkpoint LV-02 salvato · prosegui al molo":
+      "Canali dei Minuti · usa la piattaforma mobile e supera le correnti"):
+    state.phase==="COMPLETED"?
+      "Prologo concluso · premi N per LV-02 · altri quattro livelli non disponibili":
     state.checkpointActive?"Prima ora · checkpoint salvato · raggiungi il portale":
     state.x>750?"Segui il segnatempo dorato": "Prima ora · segui la freccia →";
   if(lastTip!==tip){lastTip=tip;hud.textContent="NILO · "+(state.phase==="PAUSED"?"Pausa":tip);}
