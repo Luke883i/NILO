@@ -1,6 +1,6 @@
 # NILO — La Fabbrica delle Ore
 
-NILO è un **platform narrativo 2D originale in sviluppo**: un viaggio per restituire sei ore rubate, con identità pixel art propria, sei livelli e tre boss previsti. Oggi il prodotto dispone di **un prologo sperimentale**; gli altri cinque livelli e tutti i boss sono proposte narrative, non software giocabile.
+NILO è un **platform narrativo 2D originale in sviluppo**: un viaggio per restituire sei ore rubate, con identità pixel art propria, sei livelli e tre boss previsti. Oggi il prodotto dispone di **due livelli candidati sperimentali (LV-01 e LV-02)**; gli altri quattro livelli e tutti i boss sono proposte narrative, non software giocabile.
 
 | Piano | Che cos'è | Dove verificarlo |
 | --- | --- | --- |
@@ -25,3 +25,4 @@ Apri `http://127.0.0.1:8000` in un browser autorizzato; usa **←/→ o A/D**, *
 Per falsificare il catalogo di **10 milioni di scenari semantici ipotetici** (non 10 milioni di test del gioco): `npm run assurance:semantic`. Il [contratto della campagna](contracts/semantic-campaign-v1.json) esplicita assi e oracoli.
 
 Il **DoD beta** è `G_BETA_RELEASE`: sei livelli e tre boss realmente giocabili, test browser e UX indipendenti, build/SBOM e licenze verificabili, controlli qualità e autorizzazione esterna. Le fasi e le regole di avanzamento sono nella [guida ingegneristica](docs/ENGINEERING.md). CORA fornisce il metodo di assurance, **non** un certificato di qualità né un agente che scrive autonomamente il prodotto.
+\n\n**PR9 / LV-02:** dopo il completamento di LV-01, premi **N** per accedere ai Canali dei Minuti. La piattaforma mobile e le correnti sono in sviluppo; CP-02 è indipendente dal checkpoint di LV-01. Usa `npm run test:lv02` per prove di sorgente e `npm run test:browser:lv02` su un host Chrome autorizzato. **Custode e seconda ora rimangono non implementati; nessuna beta o approvazione estetica è attestata.**\n

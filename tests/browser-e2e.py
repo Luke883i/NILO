@@ -298,11 +298,11 @@ def run(args):
             finally:
                 page.keyboard.up("ArrowRight")
             assert state(page)["deaths"]==0
-            assert "altri 5 capitoli non ancora disponibili" in page.locator("#hud").inner_text()
+            assert "premi N per LV-02" in page.locator("#hud").inner_text()
             report["checks"]["keyboard_end_to_end"]="PASS_OBSERVED"
             page.wait_for_function("() => document.querySelector('#scene-title')?.textContent?.includes('PRIMA ORA RESTITUITA')")
             report["visual_scene_completed"]=scene_text(page)
-            assert "cinque livelli" in report["visual_scene_completed"]["hint"].lower()
+            assert "quattro livelli" in report["visual_scene_completed"]["hint"].lower()
             report["checks"]["visual_narrative_finish"]="PASS_OBSERVED"
             report["screenshots"].append(screenshot(page,out,"03-completed"))
             report["last_stage"]="finish"
@@ -404,9 +404,9 @@ def run(args):
                     target=Path(temp)/"web"
                     shutil.copytree(ROOT/"web",target)
                     original=(target/"main.mjs").read_text("utf-8")
-                    needle="localStorage.setItem(STORE,encodeCheckpoint());"
+                    needle="localStorage.setItem(key,receipt);"
                     assert original.count(needle)==1,"source mutation anchor changed"
-                    (target/"main.mjs").write_text(original.replace(needle,"void encodeCheckpoint();"),"utf-8")
+                    (target/"main.mjs").write_text(original.replace(needle,"void receipt;"),"utf-8")
                     with serve(target) as mutant_url:
                         mctx=browser.new_context(viewport={"width":1280,"height":900})
                         mutant=mctx.new_page()

@@ -10,18 +10,19 @@ const base=()=>({bridge:read("contracts/development-map.json"),contract:read("co
 const fixtureFiles=["web/core.mjs","web/main.mjs","web/index.html","web/style.css","web/art.mjs",
   "tests/core.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
   "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs",
-  "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py",".github/workflows/seed.yml"];
+  "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py",
+  "web/levels/lv-02.mjs","tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py",".github/workflows/seed.yml"];
 test("current contract maps 6 levels, 6 oracles and 4 web units without asserting browser beta",()=>{
   const d=base();assert.deepEqual(validateBridge(d),[]);
   assert.equal(d.bridge.beta_authorized,false);
-  assert.equal(d.bridge.levels.filter(x=>x.state==="DESIGN_ONLY").length,5);
+  assert.equal(d.bridge.levels.filter(x=>x.state==="DESIGN_ONLY").length,4);
 });
 test("product change without software and repository binding fails closed",()=>{
   const d=base();d.contract.slice.acceptance_oracles.push({id:"OR-07"});
   assert(validateBridge(d).includes("bridge-oracles"));
 });
 test("mislabeled implemented level without tested source is rejected",()=>{
-  const d=base();d.bridge.levels[1].state="IMPLEMENTED_CANDIDATE";
+  const d=base();d.bridge.levels[2].state="IMPLEMENTED_CANDIDATE";
   assert(validateBridge(d).includes("bridge-no-fake-levels"));
 });
 test("source changes may not bypass product requirements",()=>{
@@ -106,4 +107,12 @@ test("PR8 original visual and physical art witnesses remain linked to OR-05",()=
    o.tests=o.tests.filter(x=>x!==file);
    assert(validateBridge(d).includes("bridge-model-witness"),file);
  }
+});
+
+test("LV02 required path and owner cannot be dropped or promoted to beta",()=>{
+ let d=base();d.bridge.levels.find(x=>x.id==="LV-02").tests=[];
+ assert(validateBridge(d).includes("bridge-lv02-source-witness"));
+ d=base();d.bridge.requirements.find(x=>x.id==="OR-LV02-05").browser="PASS";
+ assert(validateBridge(d).includes("bridge-no-runtime-promotion"));
+ d=base();d.bridge.beta_authorized=true;assert(validateBridge(d).includes("bridge-authority"));
 });

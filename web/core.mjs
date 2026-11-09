@@ -1,3 +1,4 @@
+import {LV02,lv02Surfaces,movingBridge,currentForceAt,decodeLV02Checkpoint,encodeLV02Checkpoint} from "./levels/lv-02.mjs";
 // NILO PR1 source-only prologue. Pure deterministic simulation, no browser APIs.
 export const CFG = Object.freeze({
   width: 2100, height: 540, viewport: 960, ground: 460,
@@ -22,23 +23,41 @@ export function decodeCheckpoint(raw) {
 export function encodeCheckpoint() {
   return JSON.stringify({version:1,level:"LV-01",checkpointId:"CP-01"});
 }
-export function initialState(saved = null) {
+export function initialLevelState(level='LV-01',saved=null){
+  if(level==='LV-02'){
+    const active=Boolean(decodeLV02Checkpoint(saved));
+    const spawn=active?LV02.checkpointSpawn:LV02.initial;
+    return {phase:'PLAYING',level:'LV-02',x:spawn.x,y:spawn.y,vx:0,vy:0,
+      onGround:true,checkpointActive:active,camera:active?1170:0,
+      deaths:0,ticks:0,coyoteLeft:0,bufferLeft:0,jumpHeld:false,
+      jumpCut:false,supportId:null,currentForce:0};
+  }
+  if(level!=='LV-01')throw new RangeError('unknown level');
+  return initialState(saved);
+}
+export function initialState(saved = null, savedLV02=null) {
+  // CP-02 is a strict local resume record, not proof of past play: localStorage is user-controlled.
+  if(decodeLV02Checkpoint(savedLV02))return initialLevelState('LV-02',savedLV02);
   const checkpointActive = Boolean(decodeCheckpoint(saved));
   const x = checkpointActive ? 1220 : 48;
   return {
-    phase:"PLAYING", x, y:checkpointActive ? 358 : 418,
+    phase:"PLAYING", level:"LV-01", x, y:checkpointActive ? 358 : 418,
     vx:0, vy:0, onGround:true, checkpointActive,
     camera:checkpointActive ? 900 : 0, deaths:0, ticks:0,
-    coyoteLeft:0, bufferLeft:0, jumpHeld:false, jumpCut:false
+    coyoteLeft:0, bufferLeft:0, jumpHeld:false, jumpCut:false, supportId:null,currentForce:0
   };
 }
 export function applyAction(state, code, physicalJumpHeld=false) {
+  if(code==='KeyN'&&state.phase==='COMPLETED'&&state.level==='LV-01')
+    return {...initialLevelState('LV-02'),jumpHeld:Boolean(physicalJumpHeld)};
   if (code === "KeyP" && (state.phase === "PLAYING" || state.phase === "PAUSED")) {
     return {...state, phase:state.phase === "PAUSED" ? "PLAYING" : "PAUSED",
       jumpHeld:Boolean(physicalJumpHeld),bufferLeft:0};
   }
   if (code === "KeyR") {
-    return {...initialState(state.checkpointActive ? encodeCheckpoint() : null),
+    const saved=state.checkpointActive?
+      (state.level==='LV-02'?encodeLV02Checkpoint():encodeCheckpoint()):null;
+    return {...initialLevelState(state.level||'LV-01',saved),
       deaths:state.deaths,jumpHeld:Boolean(physicalJumpHeld)};
   }
   return state;
@@ -53,9 +72,16 @@ export function step(state, input = {}, dt = CFG.tick) {
   const justPressed=Boolean(input.jumpPressed) || (held && !Boolean(state.jumpHeld));
   let coyoteLeft=state.onGround ? CFG.coyoteTicks : Math.max(0,(state.coyoteLeft ?? 0)-1);
   let bufferLeft=justPressed ? CFG.bufferTicks : Math.max(0,(state.bufferLeft ?? 0)-1);
-  const vx=((input.right ? 1 : 0) - (input.left ? 1 : 0))*CFG.speed;
-  const x=Math.max(0,Math.min(CFG.width-CFG.playerWidth,state.x+vx*dt));
+  const second=state.level==='LV-02';
+  const worldWidth=second?LV02.width:CFG.width;
+  const platforms=second?lv02Surfaces(state.ticks+1):PLATFORMS;
+  const movingCarry=second&&state.onGround&&state.supportId==='canal-bridge'?
+    movingBridge(state.ticks+1).x-movingBridge(state.ticks).x:0;
+  const flow=second?currentForceAt(state.x+CFG.playerWidth/2):0;
+  const vx=((input.right ? 1 : 0) - (input.left ? 1 : 0))*CFG.speed+flow;
+  const x=Math.max(0,Math.min(worldWidth-CFG.playerWidth,state.x+movingCarry+vx*dt));
   let y=state.y,vy=state.vy,grounded=state.onGround;
+  let supportId=state.supportId??null;
   let jumpCut=Boolean(state.jumpCut);
   if(bufferLeft>0 && coyoteLeft>0) {
     vy=CFG.jump;grounded=false;coyoteLeft=0;bufferLeft=0;jumpCut=false;
@@ -67,11 +93,12 @@ export function step(state, input = {}, dt = CFG.tick) {
   vy=Math.min(950,vy+CFG.gravity*dt);
   y+=vy*dt;
   if(vy>=0){
-    for(const p of PLATFORMS){
+    for(const p of platforms){
       if(x+CFG.playerWidth>p.x && x<p.x+p.w &&
           prevBottom <= p.y + 2 && y+CFG.playerHeight>=p.y &&
           y>=p.y-CFG.playerHeight){
         y=p.y-CFG.playerHeight;vy=0;grounded=true;coyoteLeft=CFG.coyoteTicks;
+        supportId=p.id||null;
         // Pre-landing jump presses execute as soon as a valid platform is hit.
         if(bufferLeft>0){
           vy=CFG.jump;grounded=false;bufferLeft=0;coyoteLeft=0;jumpCut=false;
@@ -80,16 +107,19 @@ export function step(state, input = {}, dt = CFG.tick) {
       }
     }
   }
-  if(vy!==0) grounded=false;
+  if(vy!==0){grounded=false;supportId=null;}
   let checkpointActive=state.checkpointActive;
-  if(!checkpointActive && grounded && x>=CFG.checkpointX && x<=1390) checkpointActive=true;
+  if(!checkpointActive && grounded && (second?
+    (x>=LV02.checkpointX&&x<=1600):
+    (x>=CFG.checkpointX && x<=1390))) checkpointActive=true;
   if(y>CFG.height+100){
-    const fresh=initialState(checkpointActive?encodeCheckpoint():null);
+    const saved=checkpointActive?(second?encodeLV02Checkpoint():encodeCheckpoint()):null;
+    const fresh=initialLevelState(second?'LV-02':'LV-01',saved);
     return {...fresh,deaths:state.deaths+1,ticks:state.ticks+1,jumpHeld:held};
   }
-  const camera=Math.max(0,Math.min(CFG.width-CFG.viewport,x-280));
-  const phase=x>=CFG.finishX && grounded ? "COMPLETED" : "PLAYING";
-  return {phase,x,y,vx,vy,onGround:grounded,checkpointActive,camera,
-    deaths:state.deaths,ticks:state.ticks+1,coyoteLeft,bufferLeft,
-    jumpHeld:held,jumpCut};
+  const camera=Math.max(0,Math.min(worldWidth-CFG.viewport,x-280));
+  const phase=x>=(second?LV02.finishX:CFG.finishX)&&grounded?"COMPLETED":"PLAYING";
+  return {phase,level:second?'LV-02':'LV-01',x,y,vx,vy,onGround:grounded,
+    checkpointActive,camera,deaths:state.deaths,ticks:state.ticks+1,
+    coyoteLeft,bufferLeft,jumpHeld:held,jumpCut,supportId,currentForce:flow};
 }

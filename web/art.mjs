@@ -1,3 +1,4 @@
+import {LV02,lv02Surfaces} from "./levels/lv-02.mjs";
 // Original, code-generated pixel art; no external textures, fonts or images.
 // The design palette is a candidate, not an independent aesthetic approval.
 export const ART = Object.freeze({
@@ -135,9 +136,28 @@ export const ART_CUES = Object.freeze([
   Object.freeze({id:'CUE-04',from:1550,until:2100,role:'CH-TICA',title:'TICA · VERSO IL PORTALE',
     hint:'Il primo arco riconsegna un’ora alla città. Le altre cinque attendono nuovi capitoli.'})
 ]);
+export const LV02_CUES=Object.freeze([
+  Object.freeze({id:'CANAL-01',from:0,until:650,role:'CH-TICA',title:'TICA · SEGUI IL FLUSSO',
+    hint:'Il canale ruba minuti: osserva le frecce dell’acqua prima di saltare.'}),
+  Object.freeze({id:'CANAL-02',from:650,until:1330,role:'CH-NILO',title:'NILO · IL PONTE SI MUOVE',
+    hint:'La piattaforma d’ottone si sposta. Aspetta il passaggio e salta sul bordo luminoso.'}),
+  Object.freeze({id:'CANAL-03',from:1330,until:1820,role:'CH-PERNO',title:'PERNO · SALVA IL PERCORSO',
+    hint:'Il molo custodisce il checkpoint LV-02, indipendente da quello del prologo.'}),
+  Object.freeze({id:'CANAL-04',from:1820,until:2400,role:'CH-TICA',title:'TICA · VERSO LA CHIUSA',
+    hint:'Il Custode sorveglia il varco: lo scontro non è ancora implementato.'})
+]);
 export function sceneCue(state) {
+  if(state.level==='LV-02'){
+    if(state.phase==='COMPLETED')return {id:'CANAL-END',role:'CH-TICA',
+      title:'CANALE ATTRAVERSATO',hint:'La seconda ora resta sigillata: il Custode sarà disponibile in una versione successiva.'};
+    if(state.phase==='PAUSED')return {id:'CANAL-PAUSE',role:'CH-NILO',
+      title:'CANALE IN PAUSA',hint:'Premi P per riprendere o R per il checkpoint di questo livello.'};
+    if(state.checkpointActive&&state.x>=1330&&state.x<1820)return {...LV02_CUES[2],
+      title:'PERNO · MOLO MEMORIZZATO',hint:'Checkpoint LV-02 attivo. Il Custode resta oltre la chiusa.'};
+    return LV02_CUES.find(c=>state.x>=c.from&&state.x<c.until)||LV02_CUES[3];
+  }
   if(state.phase==='COMPLETED')return Object.freeze({id:'CUE-END',role:'CH-NILO',
-    title:'PRIMA ORA RESTITUITA',hint:'Hai completato il prologo. Gli altri cinque livelli sono ancora in sviluppo.'});
+    title:'PRIMA ORA RESTITUITA',hint:'Hai restituito la prima ora. Premi N per LV-02; gli altri quattro livelli sono in sviluppo.'});
   if(state.phase==='PAUSED')return Object.freeze({id:'CUE-PAUSE',role:'CH-NILO',
     title:'TEMPO IN PAUSA',hint:'Premi P per riprendere oppure R per ricominciare.'});
   if(state.checkpointActive&&state.x>=1200&&state.x<1550)
@@ -178,9 +198,9 @@ function ledgeCues(c,platforms,state){
 function timeLanterns(c,state){
   px(c,674,16,276,59,ART.ink);px(c,678,20,268,50,ART.shadow);
   c.fillStyle=ART.cream;c.font='bold 13px monospace';
-  c.fillText('LE SEI ORE · SOLO LV-01',689,38);
+  c.fillText(state.level==='LV-02'?'LE SEI ORE · LV-02':'LE SEI ORE · LV-01',689,38);
   for(let j=0;j<6;j++){
-    const x=699+j*38,active=j===0&&state.phase==='COMPLETED';
+    const x=699+j*38,active=j===0&&(state.level==='LV-02'||state.phase==='COMPLETED');
     px(c,x,47,23,13,ART.ink);px(c,x+3,49,17,9,active?ART.teal:ART.brick);
     if(j>0)px(c,x+10,50,3,6,ART.ink);
   }
@@ -192,30 +212,72 @@ function nameplates(c,state){
   if(state.camera>850||state.x>1100)spriteLabel(c,1323,326,'PERNO',ART.brass);
 }
 
+function canalBackdrop(c,state,cfg){
+  const bands=[ART.ink,'#123e59','#1c526b','#276f83','#28798b','#207d8b','#15586e'];
+  for(let row=0;row<18;row++)px(c,0,row*30,cfg.viewport,30,bands[Math.min(bands.length-1,Math.floor(row/3))]);
+  for(let x=0;x<cfg.viewport+150;x+=115){
+    const px0=(x-Math.floor(state.camera*.14/2)*2)%(cfg.viewport+100);
+    px(c,px0,290+(x%3)*20,82,170,ART.near);
+    px(c,px0+12,275+(x%2)*20,46,18,ART.shadow);
+  }
+  for(let row=0;row<6;row++){
+    const y=465+row*14;
+    px(c,0,y,cfg.viewport,12,row%2?'#155b77':'#174e72');
+    for(let j=0;j<28;j++){
+      const wave=(j*37+row*11+Math.floor(state.ticks/3)*2)%cfg.viewport;
+      px(c,wave,y+4,14,2,row%2?ART.teal:ART.cream);
+    }
+  }
+}
+function canalDetails(c,state){
+  for(const zone of LV02.currents){
+    for(let k=0;k<3;k++){
+      const x=zone.x+10+k*39,y=354+(k%2)*12,dir=zone.boost>0?1:-1;
+      px(c,x,y,28,4,ART.teal);px(c,x+(dir>0?24:0),y-6,5,16,ART.cream);
+    }
+  }
+  const p=lv02Surfaces(state.ticks).find(x=>x.moving);
+  px(c,p.x,p.y-20,p.w,5,ART.teal);
+  for(let n=0;n<4;n++)px(c,p.x+10+n*32,p.y-12,7,7,ART.cream);
+  const x=1452;
+  px(c,x,369,10,52,ART.ink);px(c,x+8,373,54,36,state.checkpointActive?ART.teal:ART.brass);
+  px(c,x+16,382,38,16,ART.ink);
+  c.fillStyle=ART.cream;c.font='bold 11px monospace';c.fillText('CP-02',x+14,394);
+  const gate=2230;
+  px(c,gate,340,70,120,ART.brass);px(c,gate+8,355,54,104,ART.ink);
+  px(c,gate+18,375,34,7,ART.coral);
+  c.fillStyle=ART.cream;c.font='bold 13px monospace';c.fillText('CUSTODE',gate-4,328);
+}
 export function renderPixelWorld(c,state,cfg,platforms){
   c.clearRect(0,0,cfg.viewport,cfg.height);
-  skyline(c,state.camera);
-  factoryMachinery(c,state.camera);
+  const second=state.level==='LV-02';
+  if(second)canalBackdrop(c,state,cfg);
+  else {skyline(c,state.camera);factoryMachinery(c,state.camera);}
   c.save();c.translate(-Math.floor(state.camera/2)*2,0);
-  for(let i=0;i<platforms.length;i++)platform(c,platforms[i],i);
-  ledgeCues(c,platforms,state);
-  arrow(c,118,366);checkpoint(c,state);perno(c);gate(c);
+  const surfaces=second?lv02Surfaces(state.ticks):platforms;
+  for(let i=0;i<surfaces.length;i++)platform(c,surfaces[i],i);
+  ledgeCues(c,surfaces,state);
+  if(second)canalDetails(c,state);
+  else {arrow(c,118,366);checkpoint(c,state);perno(c);gate(c);}
   nilo(c,state);tica(c,state);
-  nameplates(c,state);
+  if(second){
+    spriteLabel(c,Math.max(10,state.x-5),state.y-35,'NILO',ART.brass);
+    spriteLabel(c,Math.max(14,state.x-50),state.y-75,'TICA',ART.teal);
+  }else nameplates(c,state);
   c.restore();
   timeLanterns(c,state);
   // Dedicated in-game signage; primary accessible text remains outside canvas.
   px(c,14,13,274,56,ART.ink);px(c,16,15,270,52,'#213e56');
   c.fillStyle=ART.cream;c.font='bold 18px system-ui';
-  c.fillText('PROLOGO · ORA 1',28,39);
+  c.fillText(second?'CANALE · ORA 2':'PROLOGO · ORA 1',28,39);
   c.fillStyle=ART.teal;c.font='14px system-ui';
-  c.fillText(state.checkpointActive?'TEMPO SALVATO':'CERCATE IL SEGNATEMPO',28,60);
+  c.fillText(second?(state.checkpointActive?'MOLO SALVATO':'SEGUI LE CORRENTI'):(state.checkpointActive?'TEMPO SALVATO':'CERCATE IL SEGNATEMPO'),28,60);
   if(state.phase==='PAUSED'||state.phase==='COMPLETED'){
     px(c,209,184,544,158,ART.ink);px(c,216,192,528,142,'#24465c');
     c.fillStyle=ART.brass;c.font='bold 29px system-ui';
-    c.fillText(state.phase==='PAUSED'?'TEMPO IN PAUSA':'PRIMA ORA RESTITUITA',245,247);
+    c.fillText(state.phase==='PAUSED'?'TEMPO IN PAUSA':second?'CANALE ATTRAVERSATO':'PRIMA ORA RESTITUITA',245,247);
     c.fillStyle=ART.ivory;c.font='16px system-ui';
-    c.fillText(state.phase==='PAUSED'?'Premi P per continuare':'Cinque capitoli ancora da costruire',245,280);
+    c.fillText(state.phase==='PAUSED'?'Premi P per continuare':second?'Custode e seconda ora ancora sigillati':'Premi N per il secondo livello',245,280);
     c.fillText('Premi R per ricominciare',245,307);
   }
 }
