@@ -109,6 +109,10 @@ def run(args):
             assert samples["different_sample_colors"]>=10, "blank/corrupt canvas"
             report["pixel_sample"]=samples
             report["screenshots"].append(screenshot(page,out,"01-start"))
+            report["last_stage"]="smoke"
+            if args.stage=="smoke":
+                report["status"]="PASS_SCOPED_BROWSER_SMOKE"
+                return
 
             page.keyboard.press("p")
             assert state(page)["phase"]=="PAUSED"
@@ -126,6 +130,10 @@ def run(args):
             report["checks"]["checkpoint_from_keys"]="PASS_OBSERVED"
             report["jumps_before_checkpoint"]=jumps
             report["screenshots"].append(screenshot(page,out,"02-checkpoint"))
+            report["last_stage"]="checkpoint"
+            if args.stage=="checkpoint":
+                report["status"]="PASS_SCOPED_BROWSER_CHECKPOINT"
+                return
 
             page.reload(wait_until="load")
             page.wait_for_function("() => typeof window.__niloReadback==='function'")
@@ -196,6 +204,7 @@ def run(args):
                         report["checks"]["real_checkpoint_write_mutant"]="KILLED_BY_BROWSER_ORACLE"
                         mctx.close()
             browser.close()
+            report["last_stage"]="complete"
             report["status"]="PASS_SCOPED_BROWSER_LV01"
     except Exception as exc:
         report["status"]="FAIL"
@@ -210,4 +219,5 @@ if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--out",default="artifacts/browser-lv01")
     p.add_argument("--physical-mutant",action="store_true")
+    p.add_argument("--stage",choices=("smoke","checkpoint","complete"),default="complete")
     run(p.parse_args())

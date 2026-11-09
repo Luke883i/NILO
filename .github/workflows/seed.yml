@@ -82,8 +82,12 @@ jobs:
         run: |
           command -v google-chrome
           google-chrome --version
-      - name: Run original HTTP-origin browser flow and physical storage mutant
-        run: python tests/browser-e2e.py --out /tmp/nilo-browser-evidence --physical-mutant
+      - name: Verify real HTTP origin CSP modules and initial pixel render
+        run: python tests/browser-e2e.py --stage smoke --out /tmp/nilo-browser-smoke
+      - name: Verify keyboard pause and reach checkpoint with real localStorage
+        run: python tests/browser-e2e.py --stage checkpoint --out /tmp/nilo-browser-checkpoint
+      - name: Verify real reload, corruption, completion and physical storage mutant
+        run: python tests/browser-e2e.py --stage complete --out /tmp/nilo-browser-evidence --physical-mutant
       - name: Verify receipt scope on exact HEAD (not beta approval)
         run: |
           python - <<'PY'
