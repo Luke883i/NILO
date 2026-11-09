@@ -11,6 +11,8 @@
   "scripts": {
     "verify": "node scripts/verify.mjs",
     "test": "node --test tests/*.test.mjs",
-    "evidence": "node scripts/evidence.mjs"
+    "evidence": "node scripts/evidence.mjs",
+    "quality": "node scripts/verify.mjs && node --test tests/*.test.mjs",
+    "verify:bridge": "node scripts/verify-development.mjs"
   }
 }

@@ -2,6 +2,7 @@
 import {readFileSync, existsSync} from "node:fs";
 import {resolve,dirname} from "node:path";
 import {fileURLToPath} from "node:url";
+import {validateBridge} from "./verify-development.mjs";
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"..");
 const raw=p=>JSON.parse(readFileSync(resolve(ROOT,p),"utf8"));
 export const load=()=>({
@@ -10,10 +11,11 @@ export const load=()=>({
   chain:raw("provenance/semantic-chain.json"),
   refs:raw("standards/references.json"),
   bom:raw("bom/nilo.cdx.json"),
-  pkg:raw("package.json")
+  pkg:raw("package.json"),
+  bridge:raw("contracts/development-map.json")
 });
 const distinct=xs=>new Set(xs).size===xs.length;
-export function audit({contract,dod,chain,refs,bom,pkg}) {
+export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
   const errors=[];
   const fail=(id,cond)=>{if(!cond)errors.push(id);};
   fail("contract-schema",contract?.schema==="nilo.semantic-contract/1");
@@ -31,11 +33,12 @@ export function audit({contract,dod,chain,refs,bom,pkg}) {
     contract.slice.acceptance_oracles.some(x=>x.type==="REAL_SOURCE_MUTATION"));
   fail("effects",contract?.gameplay?.security?.includes("no telemetry")&&contract?.permissions?.not_allowed?.includes("release"));
   fail("dod-shape",dod?.schema==="nilo.reticular-dod/1"&&dod?.root==="G_CONTRACT_DEMONSTRATED"&&
-    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.authority==="NONE"&&dod?.nodes?.length===33);
+    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===40);
   const ids=(dod?.nodes||[]).map(n=>n.id),nodes=new Map((dod?.nodes||[]).map(n=>[n.id,n]));
   fail("dod-identities",distinct(ids));
-  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===8&&
-    nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_FULL_GAME,G_SUPPLY_CHAIN,G_RELEASE");
+  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===9&&
+    nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_BETA_RELEASE,G_SUPPLY_CHAIN,G_RELEASE"&&
+    nodes.get("G_BETA_RELEASE")?.depends_on?.join(",")==="G_FULL_GAME,Q01,Q02,Q03,Q04,Q05,Q06");
   const visit=new Set(),stack=new Set(),reachable=new Set();
   const walk=id=>{if(stack.has(id)){errors.push("dod-cycle");return;}if(visit.has(id))return;
     const n=nodes.get(id);if(!n){errors.push("dod-dangling:"+id);return;}
@@ -66,6 +69,7 @@ export function audit({contract,dod,chain,refs,bom,pkg}) {
   fail("no-network",html.includes("connect-src 'none'")&&!/https?:\/\/|fetch\s*\(/.test(main));
   for(const p of ["web/core.mjs","web/main.mjs","web/index.html","docs/PRODUCT_CONTRACT.md","docs/PROVENANCE.md"])
     fail("missing-source:"+p,existsSync(resolve(ROOT,p)));
+  errors.push(...validateBridge({bridge,contract,dod},ROOT));
   return [...new Set(errors)].sort();
 }
 export function verify() {

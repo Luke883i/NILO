@@ -1,0 +1,154 @@
+{
+  "schema": "nilo.product-software-repository/1",
+  "version": 1,
+  "authority": "DECLARED_LINKAGE_NOT_EXECUTION_ATTESTATION",
+  "beta_goal": "G_BETA_RELEASE",
+  "product_contract": "contracts/nilo-semantic-v1.json",
+  "dod_contract": "contracts/dod-v1.json",
+  "provenance_contract": "provenance/semantic-chain.json",
+  "software_root": "web",
+  "repository_oracle": "scripts/verify.mjs",
+  "supported_surface": "DESKTOP_KEYBOARD_CANDIDATE",
+  "mobile_touch": "NOT_IMPLEMENTED",
+  "beta_authorized": false,
+  "levels": [
+    {
+      "id": "LV-01",
+      "state": "IMPLEMENTED_CANDIDATE",
+      "source": [
+        "web/core.mjs",
+        "web/main.mjs",
+        "web/index.html",
+        "web/style.css"
+      ],
+      "tests": [
+        "tests/core.test.mjs",
+        "tests/mutation.test.mjs"
+      ]
+    },
+    {
+      "id": "LV-02",
+      "state": "DESIGN_ONLY",
+      "source": [],
+      "tests": []
+    },
+    {
+      "id": "LV-03",
+      "state": "DESIGN_ONLY",
+      "source": [],
+      "tests": []
+    },
+    {
+      "id": "LV-04",
+      "state": "DESIGN_ONLY",
+      "source": [],
+      "tests": []
+    },
+    {
+      "id": "LV-05",
+      "state": "DESIGN_ONLY",
+      "source": [],
+      "tests": []
+    },
+    {
+      "id": "LV-06",
+      "state": "DESIGN_ONLY",
+      "source": [],
+      "tests": []
+    }
+  ],
+  "requirements": [
+    {
+      "id": "OR-01",
+      "level": "LV-01",
+      "sources": [
+        "web/core.mjs",
+        "web/main.mjs"
+      ],
+      "tests": [
+        "tests/core.test.mjs"
+      ],
+      "authority": "MODEL_TEST_ONLY",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-02",
+      "level": "LV-01",
+      "sources": [
+        "web/core.mjs"
+      ],
+      "tests": [
+        "tests/core.test.mjs",
+        "tests/mutation.test.mjs"
+      ],
+      "authority": "MODEL_TEST_ONLY",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-03",
+      "level": "LV-01",
+      "sources": [
+        "web/core.mjs",
+        "web/main.mjs"
+      ],
+      "tests": [
+        "tests/core.test.mjs",
+        "tests/mutation.test.mjs"
+      ],
+      "authority": "MODEL_TEST_ONLY",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-04",
+      "level": "LV-01",
+      "sources": [
+        "web/core.mjs",
+        "web/main.mjs"
+      ],
+      "tests": [
+        "tests/core.test.mjs",
+        "tests/mutation.test.mjs"
+      ],
+      "authority": "MODEL_TEST_ONLY",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-05",
+      "level": "LV-01",
+      "sources": [
+        "web/index.html",
+        "web/style.css",
+        "web/main.mjs"
+      ],
+      "tests": [],
+      "authority": "HUMAN_AND_BROWSER_REQUIRED",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-06",
+      "level": "LV-01",
+      "sources": [
+        "web/core.mjs"
+      ],
+      "tests": [
+        "tests/mutation.test.mjs"
+      ],
+      "authority": "LOCAL_SOURCE_MUTANT",
+      "browser": "NOT_ATTESTED"
+    }
+  ],
+  "narrative_state": "DRAFT_AUTHOR_UNAPPROVED",
+  "release_scope": "FULL_SIX_LEVEL_THREE_BOSS_GAME_BETA",
+  "repo_tests": [
+    "tests/contracts.test.mjs",
+    "tests/development.test.mjs"
+  ],
+  "release_gate": "Q06",
+  "interfaces": {
+    "ui": "web/index.html",
+    "logic": "web/core.mjs",
+    "interaction": "web/main.mjs",
+    "visual": "web/style.css"
+  },
+  "notes": "Every product OR and LV ID must remain mapped; every live web file must be owned by at least one requirement. No static mapping proves runtime, user approval, licensed assets, or protected hosting."
+}
