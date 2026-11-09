@@ -60,7 +60,7 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
    canal?.boss==="CH-CUSTODE IMPLEMENTED_CANDIDATE"&&canal?.second_hour==="VICTORY_ONLY"&&
    canal?.player_acceptance==="BLOCKED_EXTERNAL"&&
    canal?.browser_oracle==="tests/browser-lv-02.py"&&
-   lev?.design_status==="IMPLEMENTED_LEVEL_CANDIDATE_BOSS_NOT_IMPLEMENTED"&&
+   lev?.design_status==="IMPLEMENTED_LEVEL_AND_BOSS_CANDIDATE_NOT_PLAYER_ACCEPTED"&&
    lev?.acceptance_oracles?.length===6&&lev?.exit?.includes("restoring second hour only on VICTORY")&&
    lv02Surfaces(100).some(p=>p.moving)&&currentForceAt(620)===52&&currentForceAt(1680)===-38&&
    decodeLV02Checkpoint('{"version":1,"level":"LV-01","checkpointId":"CP-02"}')===null);
