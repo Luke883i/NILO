@@ -73,3 +73,57 @@ The images are not in this repository. A future CI browser job must produce its 
 **Protocollo di accettazione indipendente:** [PLAYTEST_PROTOCOL.md](PLAYTEST_PROTOCOL.md) definisce attività, misure, falsificatori e autorità di approvazione del primo livello; non è un'autocertificazione della gradevolezza.
 
 **Nuovo gate Q07 — gradevolezza e significato percepito:** sette sottocriteri obbligatori (identità del personaggio, affordance delle superfici, sensazione di salto/riprova, leggibilità HUD, comprensione narrativa, audio originale oppure approvazione esplicita di una beta senza audio, accettazione indipendente del giocatore). Tutti sono `BLOCKED_EXTERNAL` finché non osservati e approvati: mutazioni del modello e test del contrasto non possono chiuderli.
+
+
+## Hypothesis N0=18 — source-owned, bottom-up development (PR4)
+
+The current [DoD](../contracts/dod-v1.json) now records **one falsifiable
+18-iteration planning hypothesis**, not a completion certificate or a second
+roadmap authority. It also retains the existing 41-node AND-reticulum, the
+beta quality leaf Q07, and the terminal external governance cut. The first
+real iteration completing the **entire** accepted beta and release reticulum
+defines the eventual N*. No finite N is currently demonstrable.
+
+| Layers and bounded iterations | Existing owner to evolve first | Required counterevidence |
+| --- | --- | --- |
+| I01–I02: host/browser and input/physics | `web/main.mjs`, `web/core.mjs`, original CI/test owners | Actual HTTP-origin/CSP reload, focus, input buffering, physical mutants |
+| I03–I05: pixel rendering, characters and LV-01 acceptance | `web/art.mjs`, `web/style.css`, product contract and original playtest protocol | Full-size screenshots, visible pixel grid, blind character recognition and novice traversal |
+| I06–I13: five remaining levels and three bosses | Existing `web/core.mjs`/`web/art.mjs` plus ID mapping in `contracts/development-map.json` | Separate implemented-level tests, boss telegraphs, real wins, no false reused oracle |
+| I14–I15: narrative/audio/accessibility | `contracts/nilo-semantic-v1.json`, `web/main.mjs`, original UX protocol | Approved original story, audio rights or approved mute, alternative cues and localization |
+| I16–I17: full-game quality and supply chain | `scripts/verify.mjs`, tests, `scripts/evidence.mjs`, original CycloneDX BOM | E2E full-game replay, performance/error budgets, resolved asset rights and artifact digests |
+| I18: governed beta decision | Existing DoD, CI workflow and `docs/ENGINEERING.md` | Non-author independent reviewer, branch enforcement, release approval and rollback |
+
+**Commercial references, not borrowed code/assets:** [Celeste](https://www.celestegame.com/)
+(precise controls and player-adjustable accessibility),
+[Shovel Knight](https://www.yachtclubgames.com/games/shovel-knight-treasure-trove/)
+(readable 2D sprite animation/parallax), and
+[The Messenger](https://sabotagestudio.com/presskits/the-messenger/)
+(presentation and mechanic changes carrying narrative meaning).
+The transferred feature must have a *NILO-specific* contract, negative
+oracle and independent user/host witness. A picture similarity score is
+not a measure of fun, character originality or commercial readiness.
+
+**Evidence boundary of the original visual study:** four PR3 screenshots
+were generated from DevTools injection with an in-memory storage substitute,
+not from a normal HTTP-origin page reload. The previous ten-million vector
+campaign enumerates finite conceptual states; it is not ten million distinct
+game runs. Its original schema and byte digest are **not changed** by this
+roadmap. New screen observations must reference exact source SHA, canvas
+pixel geometry, viewport/DPR, gameplay state and honest host context.
+
+The existing `scripts/semantic-campaign.mjs` now exposes a *read-only*
+evaluation of this DoD-owned hypothesis; the canonical `scripts/verify.mjs`
+checks its coherence. Adversarial tests falsify missing source owners,
+invented N_actual, false completion guarantees and the assertion that 18
+self-reported milestones alone confer beta authority. Three unchanged
+evidence reports should trigger a **replan**, not an automatic iteration
+counter or a new orchestration engine.
+
+**No automatic PR schedule:** each stage proceeds only when its prior
+blocking cut has actually been evidenced on the exact target revision.
+A stage can take multiple PRs. A failed external reviewer, missing rights,
+absent browser witness or changed scope can make N* greater than 18 or
+indefinite. The temporary diagnostic bundle is an archival handoff proposal,
+**not** a CORA-verified portable chat bundle; use CORA's existing
+`process-run --one-run --chat-step --chat-bundle` and
+`verify-process` to generate and check that artifact for a real session.
