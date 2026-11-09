@@ -36,7 +36,7 @@ The images are not in this repository. A future CI browser job must produce its 
 | **P3 — Complex mechanics** | Levels 4–5 and Archivist boss | Negative tests for timing/accessibility, narrative semantics and no-regression replay of earlier levels | **Not implemented** |
 | **P4 — Full beta content** | Level 6, Director boss, ending and three complete boss encounters | `G_FULL_GAME` plus asset rights, novice traversal of all six levels | **Not implemented** |
 | **P5 — Beta qualification** | One exact candidate artifact, agreed target device/browser, observed full run | `Q01..Q05`; compatibility, usability/accessibility, frame/latency/error budgets, runtime/SBOM/asset receipts | **Blocked** |
-| **P6 — Controlled beta decision** | Releasable six-level game beta | `G_BETA_RELEASE = G_FULL_GAME AND Q01 AND ... AND Q06`; independent review, required host controls, distribution plan and rollback | **Blocked** |
+| **P6 — Controlled beta decision** | Releasable six-level game beta | `G_BETA_RELEASE = G_FULL_GAME AND Q01 AND ... AND Q07`; independent review, required host controls, distribution plan and rollback | **Blocked** |
 
 **Beta is the six-level game with three playable bosses**, not merely a beta-labeled demo of LV-01. The original `G_CONTRACT_DEMONSTRATED` remains stricter: it also requires the complete `G_SUPPLY_CHAIN` and `G_RELEASE` branches.
 
@@ -71,3 +71,5 @@ The images are not in this repository. A future CI browser job must produce its 
 **Prossima unità minima ad alta leva:** completare test browser effettivo su origine HTTP e persistenza reale; ottenere playtest di leggibilità; definire e approvare il sistema di direzione artistica e progressione di un intero livello prima di replicare il modello negli altri cinque. Poi elaborare jump buffering/coyote, audio originale e boss fairness con mutanti e osservazioni indipendenti.
 
 **Protocollo di accettazione indipendente:** [PLAYTEST_PROTOCOL.md](PLAYTEST_PROTOCOL.md) definisce attività, misure, falsificatori e autorità di approvazione del primo livello; non è un'autocertificazione della gradevolezza.
+
+**Nuovo gate Q07 — gradevolezza e significato percepito:** sette sottocriteri obbligatori (identità del personaggio, affordance delle superfici, sensazione di salto/riprova, leggibilità HUD, comprensione narrativa, audio originale oppure approvazione esplicita di una beta senza audio, accettazione indipendente del giocatore). Tutti sono `BLOCKED_EXTERNAL` finché non osservati e approvati: mutazioni del modello e test del contrasto non possono chiuderli.

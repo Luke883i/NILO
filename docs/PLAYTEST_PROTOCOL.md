@@ -33,3 +33,5 @@ Per ogni tester: controllo e correttezza percepita, leggibilità del livello, ri
 Registrare: tester pseudonimizzato e consenso, tester indipendente dal codice, target browser/OS, esatta revisione Git, contratto e criteri approvati, scenario, input, screenshot o registrazione autorizzata, esiti positivi e negativi, data, versioni e review. I digest SHA-256 identificano file, non autenticità dell'osservatore. Ripetere su nuovo SHA.
 
 **Gate:** OR-05 e Q03 restano `BLOCKED_EXTERNAL` fino ad accettazione indipendente documentata. Il playtest di LV-01 non dimostra `G_BETA_RELEASE` finché mancano cinque livelli, tre boss e gli altri prerequisiti AND.
+
+Per la beta completa, il protocollo deve produrre evidenze indipendenti anche per `Q07`, compresi audio oppure accettazione esplicita di un rilascio silenzioso. Il giudizio di un solo autore non sostituisce il tester esterno né un percorso completo di sei livelli.

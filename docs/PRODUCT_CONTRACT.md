@@ -35,3 +35,5 @@ La direzione artistica candidata usa pixel integer 480×270 scalati a 960×540 s
 **Problemi aperti nel prologo:** assenza di controlli touch, alternativa screen reader, riproduzione HTTP/browser su host osservato, audio, interazioni con gli NPC, pixel-font potenzialmente troppo piccolo a risoluzione ridotta, mancanza di valutazione con giocatori esterni. La resa grafica più ricca non dimostra gradevolezza o accessibilità.
 
 **Beta:** DoD non compensativo `G_BETA_RELEASE`; la qualità artistica e il divertimento richiedono osservazioni con giocatori e revisione dell'autore, non possono essere approvati automaticamente da un oracle CSS o da screenshot.
+
+**Gate mercato Q07:** non compensabile da una semplice schermata esteticamente migliorata. Richiede personaggi riconoscibili, superfici leggibili, controllo gratificante, un feedback sensoriale accettabile, comprensione della storia e accettazione esterna sulla piattaforma bersaglio. Stessa revisione Git delle prove tecniche.
