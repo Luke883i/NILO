@@ -67,3 +67,13 @@ test("PR7 input lifecycle is a falsifiable product contract, not automatic enjoy
   status.contract.gameplay.game_feel.input_continuity.user_experience_approval="PASS";
   assert(audit(status).includes("game-feel-input-continuity"));
 });
+
+test("PR8 source-level visual signals cannot self-certify beauty, accessibility or six playable acts",()=>{
+ const d=fresh(),v=d.contract.gameplay.visual_scene;
+ v.player_visual_comprehension="PASS";
+ assert(audit(d).includes("visual-scene-source-drift"));
+ const s=fresh();s.contract.gameplay.visual_scene.art_cues.pop();
+ assert(audit(s).includes("visual-scene-source-drift"));
+ const r=fresh();r.contract.gameplay.visual_scene.scaled_integer_factor=1;
+ assert(audit(r).includes("visual-scene-source-drift"));
+});

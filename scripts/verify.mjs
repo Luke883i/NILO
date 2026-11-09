@@ -5,6 +5,7 @@ import {fileURLToPath} from "node:url";
 import {validateBridge} from "./verify-development.mjs";
 import {validateIterationHypothesis} from "./semantic-campaign.mjs";
 import {CFG} from "../web/core.mjs";
+import {ART_CUES,ART_SIGNALS,ART_IDENTITY} from "../web/art.mjs";
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"..");
 const raw=p=>JSON.parse(readFileSync(resolve(ROOT,p),"utf8"));
 export const load=()=>({
@@ -34,6 +35,19 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     feel.input_continuity.buffered_short_hop_max_apex_delta_px===10&&
     feel.input_continuity.user_experience_approval==="BLOCKED_EXTERNAL"&&
     feel.input_continuity.native_browser_witness==="tests/browser-e2e.py must run against exact PR SHA");
+  const visual=contract?.gameplay?.visual_scene;
+  fail("visual-scene-source-drift",
+    visual?.id==="I03-I05-LV01-VISUAL-NARRATIVE-CANDIDATE"&&
+    visual?.status==="IMPLEMENTED_SOURCE_CANDIDATE_NOT_HUMAN_ACCEPTED"&&
+    visual?.scaled_integer_factor===2&&
+    visual?.resolution?.join("x")==="480x270"&&visual?.output_canvas?.join("x")==="960x540"&&
+    visual?.art_cues?.join(",")===ART_CUES.map(x=>x.id).join(",")&&
+    visual?.noncompensatory_signals?.join(",")===Object.keys(ART_SIGNALS).join(",")&&
+    visual?.character_roles?.join(",")===[ART_IDENTITY.playable,ART_IDENTITY.companion,ART_IDENTITY.maintenance].join(",")&&
+    visual?.player_visual_comprehension==="BLOCKED_EXTERNAL"&&
+    visual?.aesthetic_author_approval==="NOT_OBSERVED"&&
+    visual?.screen_reader_qualification==="NOT_OBSERVED"&&
+    visual?.mobile_touch_qualification==="EXPLICITLY_UNSUPPORTED");
   const chars=contract?.characters||[],levels=contract?.levels||[];
   const charIds=chars.map(x=>x.id),levelIds=levels.map(x=>x.id);
   fail("characters",chars.length===6&&distinct(charIds)&&chars.every(x=>x.name&&x.role&&x.motivation&&x.silhouette));

@@ -11,3 +11,16 @@ canvas:focus-visible{outline:4px solid #f5e4a0;outline-offset:4px}
 a{color:#f7dc8c}a:focus-visible{outline:3px solid #fff}
 @media(max-width:640px){.mobile-warning{display:block}.hud{align-items:start}.hud span{font-size:.88rem}canvas{max-width:100%}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* One scene, two reading paths: diegetic cues and concise native DOM text. */
+.scene-card{display:grid;grid-template-columns:42px minmax(0,1fr);gap:.85rem;align-items:center;
+  margin:.9rem 0 .65rem;padding:.7rem 1rem;background:#193b50;border-left:4px solid #e9b761;
+  border-radius:4px 9px 9px 4px;box-shadow:inset 0 1px #ffffff14}
+.scene-icon{display:grid;place-items:center;width:36px;height:36px;background:#e9b761;
+  color:#0a2135;font-size:1.4rem;font-weight:900;border-radius:3px}
+.scene-eyebrow{font-size:.68rem;letter-spacing:.12em;font-weight:800;color:#d7bd89;margin:0 0 .15rem}
+.scene-card h2{font-size:clamp(.9rem,1.6vw,1.12rem);letter-spacing:.03em;line-height:1.25;
+  margin:0 0 .2rem;color:#f7e7b0}
+.scene-card p:last-child{font-size:.91rem;line-height:1.42;color:#e4e9dc;margin:0}
+@media(max-width:640px){.scene-card{grid-template-columns:1fr}.scene-icon{display:none}
+  .scene-card p:last-child{font-size:.87rem}}

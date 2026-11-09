@@ -84,6 +84,9 @@ function nilo(c,state){
   px(c,x+7,y+36,8,7,ART.ink);px(c,x+18,y+36+(cycle?2:0),8,7,ART.ink);
   px(c,x-2,y+30,8,8,ART.ink);px(c,x+28,y+31,5,7,'#bdb49b');
   px(c,x+13,y+26,8,9,ART.ink);px(c,x+14,y+27,6,6,ART.teal);
+  // Winding key and directional scarf give a visible airborne/run pose.
+  if(!state.onGround){px(c,x+27,y+21,8,3,ART.brass);px(c,x-11,y+19,13,6,ART.coral);}
+  else if(run){px(c,x-13-(cycle*4),y+21,13,5,ART.coral);}
 }
 function tica(c,state){
   const x=state.x-27, y=state.y-38+Math.round(Math.sin(state.ticks/19)*2)*2;
@@ -91,6 +94,7 @@ function tica(c,state){
   px(c,x+6,y+3,4,3,ART.ink);px(c,x+12,y+7,8,4,ART.coral);
   px(c,x-19,y+3,13,7,'#a1e5cf');px(c,x-14,y-2,12,5,ART.cream);
   px(c,x-3,y+15,6,5,ART.ink);
+  if(Math.floor(state.ticks/8)%2===0){px(c,x-24,y-3,11,6,ART.cream);px(c,x+13,y-3,9,5,ART.brass);}
 }
 function checkpoint(c,state){
   const x=1250,y=348,active=state.checkpointActive;
@@ -106,6 +110,9 @@ function perno(c){
   px(c,x+8,y+5,8,8,ART.ink);px(c,x+27,y+5,8,8,ART.ink);
   px(c,x+10,y+22,23,6,ART.brass);px(c,x+18,y-14,7,8,ART.brass);
   px(c,x+7,y+35,9,10,ART.ink);px(c,x+29,y+35,9,10,ART.ink);
+  // Distinct bolt head and repair wrench: Perno is an ally, not a block.
+  px(c,x+21,y-20,4,7,ART.ink);px(c,x+15,y-23,16,5,ART.brass);
+  px(c,x-6,y+18,11,4,ART.teal);px(c,x-9,y+12,5,15,ART.brass);
 }
 function gate(c){
   const x=1952,y=361;
@@ -115,15 +122,88 @@ function gate(c){
   clock(c,x+35,y-8,15,1.8);
   px(c,x+5,y-38,62,7,ART.cream);
 }
+
+/** Narrative cues belong to the existing visual owner. Product truth stays in
+ * contracts/nilo-semantic-v1.json; tests reject a mismatch with that owner. */
+export const ART_CUES = Object.freeze([
+  Object.freeze({id:'CUE-01',from:0,until:650,role:'CH-TICA',title:'TICA · TROVA IL PRIMO SEGNATEMPO',
+    hint:'Le ore rubate sono sei. Cerca le bordature d’ottone: indicano dove puoi atterrare.'}),
+  Object.freeze({id:'CUE-02',from:650,until:1200,role:'CH-NILO',title:'NILO · ATTRAVERSA IL CORTILE',
+    hint:'Tra i tetti corre il vuoto. Salta verso i margini luminosi, non verso le facciate.'}),
+  Object.freeze({id:'CUE-03',from:1200,until:1550,role:'CH-PERNO',title:'PERNO · RIACCENDI IL SEGNATEMPO',
+    hint:'Il segnatempo custodisce il checkpoint. Il suo quadrante diventa turchese quando è attivo.'}),
+  Object.freeze({id:'CUE-04',from:1550,until:2100,role:'CH-TICA',title:'TICA · VERSO IL PORTALE',
+    hint:'Il primo arco riconsegna un’ora alla città. Le altre cinque attendono nuovi capitoli.'})
+]);
+export function sceneCue(state) {
+  if(state.phase==='COMPLETED')return Object.freeze({id:'CUE-END',role:'CH-NILO',
+    title:'PRIMA ORA RESTITUITA',hint:'Hai completato il prologo. Gli altri cinque livelli sono ancora in sviluppo.'});
+  if(state.phase==='PAUSED')return Object.freeze({id:'CUE-PAUSE',role:'CH-NILO',
+    title:'TEMPO IN PAUSA',hint:'Premi P per riprendere oppure R per ricominciare.'});
+  if(state.checkpointActive&&state.x>=1200&&state.x<1550)
+    return {...ART_CUES[2],title:'PERNO · SEGNATEMPO RIACCESO',
+      hint:'Checkpoint attivo: la posizione è salva. Raggiungi il portale per restituire la prima ora.'};
+  return ART_CUES.find(c=>state.x>=c.from&&state.x<c.until)||ART_CUES[ART_CUES.length-1];
+}
+/** Permanent silhouettes are not collision geometry. Each signal has a
+ * non-colour distinction: shape, icon/label, and scene text. */
+export const ART_SIGNALS = Object.freeze({
+  solid:{id:'SIG-SOLID',shape:'double horizontal rim with metal rivets',label:'SUPERFICIE'},
+  void:{id:'SIG-VOID',shape:'chevrons at each walkable ledge',label:'SALTA'},
+  checkpoint:{id:'SIG-CHECKPOINT',shape:'upright clock on a flag and radial sparkles',label:'SEGNATEMPO'},
+  exit:{id:'SIG-EXIT',shape:'tall gate with hourglass and double pillars',label:'PORTALE'},
+  characters:{id:'SIG-ROLES',shape:'cap and scarf; angular wing; square bolt head',label:'NILO TICA PERNO'}
+});
+function spriteLabel(c,x,y,name,color){
+  const w=name.length*7+16;
+  px(c,x-3,y-2,w+4,20,ART.ink);
+  px(c,x,y,w,16,color);
+  c.fillStyle=ART.ink;c.font='bold 12px monospace';c.fillText(name,x+7,y+12);
+}
+function ledgeCues(c,platforms,state){
+  for(let i=0;i<platforms.length-1;i++){
+    const p=platforms[i],gap=platforms[i+1].x-(p.x+p.w);
+    if(gap<=0)continue;
+    const x=p.x+p.w-33,y=p.y-35;
+    const pulse=state.phase==='PLAYING'&&Math.floor(state.ticks/18)%2===0;
+    for(let k=0;k<3;k++){
+      const sx=x+k*8;
+      px(c,sx,y+Math.abs(k-1)*3,6,4,pulse?ART.cream:ART.brass);
+      px(c,sx+4,y+5+Math.abs(k-1)*3,4,4,ART.ink);
+    }
+    // Black beneath the lip is intentionally separated from solid brass.
+    px(c,p.x+p.w-4,p.y,4,26,ART.ink);
+  }
+}
+function timeLanterns(c,state){
+  px(c,674,16,276,59,ART.ink);px(c,678,20,268,50,ART.shadow);
+  c.fillStyle=ART.cream;c.font='bold 13px monospace';
+  c.fillText('LE SEI ORE · SOLO LV-01',689,38);
+  for(let j=0;j<6;j++){
+    const x=699+j*38,active=j===0&&state.phase==='COMPLETED';
+    px(c,x,47,23,13,ART.ink);px(c,x+3,49,17,9,active?ART.teal:ART.brick);
+    if(j>0)px(c,x+10,50,3,6,ART.ink);
+  }
+}
+function nameplates(c,state){
+  const bob=(Math.floor(state.ticks/19)%2)*2;
+  spriteLabel(c,state.x-7,state.y-35,'NILO',ART.brass);
+  spriteLabel(c,Math.max(14,state.x-53),state.y-73-bob,'TICA',ART.teal);
+  if(state.camera>850||state.x>1100)spriteLabel(c,1323,326,'PERNO',ART.brass);
+}
+
 export function renderPixelWorld(c,state,cfg,platforms){
   c.clearRect(0,0,cfg.viewport,cfg.height);
   skyline(c,state.camera);
   factoryMachinery(c,state.camera);
   c.save();c.translate(-Math.floor(state.camera/2)*2,0);
   for(let i=0;i<platforms.length;i++)platform(c,platforms[i],i);
+  ledgeCues(c,platforms,state);
   arrow(c,118,366);checkpoint(c,state);perno(c);gate(c);
   nilo(c,state);tica(c,state);
+  nameplates(c,state);
   c.restore();
+  timeLanterns(c,state);
   // Dedicated in-game signage; primary accessible text remains outside canvas.
   px(c,14,13,274,56,ART.ink);px(c,16,15,270,52,'#213e56');
   c.fillStyle=ART.cream;c.font='bold 18px system-ui';

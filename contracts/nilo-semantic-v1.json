@@ -277,6 +277,56 @@
         "native_browser_witness": "tests/browser-e2e.py must run against exact PR SHA",
         "user_experience_approval": "BLOCKED_EXTERNAL"
       }
+    },
+    "visual_scene": {
+      "id": "I03-I05-LV01-VISUAL-NARRATIVE-CANDIDATE",
+      "status": "IMPLEMENTED_SOURCE_CANDIDATE_NOT_HUMAN_ACCEPTED",
+      "scope": "LV-01 original pixel art and first-hour narrative only; no full-game visual approval",
+      "source_owner": "web/art.mjs",
+      "dom_owner": "web/main.mjs",
+      "native_text_owner": "web/index.html",
+      "resolution": [
+        480,
+        270
+      ],
+      "output_canvas": [
+        960,
+        540
+      ],
+      "scaled_integer_factor": 2,
+      "art_cues": [
+        "CUE-01",
+        "CUE-02",
+        "CUE-03",
+        "CUE-04"
+      ],
+      "noncompensatory_signals": [
+        "solid",
+        "void",
+        "checkpoint",
+        "exit",
+        "characters"
+      ],
+      "character_roles": [
+        "CH-NILO",
+        "CH-TICA",
+        "CH-PERNO"
+      ],
+      "source_tests": [
+        "tests/art.test.mjs",
+        "tests/art-mutation.test.mjs"
+      ],
+      "http_browser_test": "tests/browser-e2e.py",
+      "screenshot_states": [
+        "start",
+        "checkpoint",
+        "completed",
+        "mobile-unsupported"
+      ],
+      "player_visual_comprehension": "BLOCKED_EXTERNAL",
+      "aesthetic_author_approval": "NOT_OBSERVED",
+      "screen_reader_qualification": "NOT_OBSERVED",
+      "mobile_touch_qualification": "EXPLICITLY_UNSUPPORTED"
     }
   },
   "slice": {

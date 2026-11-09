@@ -48,6 +48,8 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
   bad("bridge-model-witness",r.filter(x=>x.authority!=="HUMAN_AND_BROWSER_REQUIRED").every(x=>x.tests?.length>0)&&
     r.find(x=>x.id==="OR-06")?.tests?.includes("tests/mutation.test.mjs")&&
     r.find(x=>x.id==="OR-05")?.tests?.includes("tests/browser-e2e.py") &&
+    r.find(x=>x.id==="OR-05")?.tests?.includes("tests/art.test.mjs") &&
+    r.find(x=>x.id==="OR-05")?.tests?.includes("tests/art-mutation.test.mjs") &&
     r.find(x=>x.id==="OR-03")?.tests?.includes("tests/browser-e2e.py") &&
     r.find(x=>x.id==="OR-04")?.tests?.includes("tests/browser-e2e.py") &&
     r.find(x=>x.id==="OR-05")?.authority==="HUMAN_AND_BROWSER_REQUIRED");

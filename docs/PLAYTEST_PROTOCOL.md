@@ -35,3 +35,15 @@ Registrare: tester pseudonimizzato e consenso, tester indipendente dal codice, t
 **Gate:** OR-05 e Q03 restano `BLOCKED_EXTERNAL` fino ad accettazione indipendente documentata. Il playtest di LV-01 non dimostra `G_BETA_RELEASE` finché mancano cinque livelli, tre boss e gli altri prerequisiti AND.
 
 Per la beta completa, il protocollo deve produrre evidenze indipendenti anche per `Q07`, compresi audio oppure accettazione esplicita di un rilascio silenzioso. Il giudizio di un solo autore non sostituisce il tester esterno né un percorso completo di sei livelli.
+
+## PR8 — protocollo mirato alla comprensione visivo-narrativa
+
+La PR8 propone **quattro cue narrativi** e cinque famiglie di segnali grafici, ma non attribuisce loro qualità estetica dimostrata. L'osservazione indipendente deve conservare esattamente il browser, la viewport, la revisione Git, lo screenshot originale, il consenso e il contesto in cui il giocatore vede la scena.
+
+**Prova senza suggerimenti:** mostrare avvio LV-01 e chiedere separatamente chi sia il personaggio controllabile, chi lo accompagni, quale superficie regga il peso e cosa accada oltre il vuoto. Chiedere *prima* di leggere il testo dell'HUD, poi confrontare con la comprensione *dopo* i cue narrativi. Non suggerire le risposte.
+
+**Prova di stato:** al checkpoint chiedere di identificare Perno e il segnatempo attivato, distinguendolo dagli edifici di sfondo; all'uscita chiedere quante ore siano state restituite e se i successivi cinque livelli siano già disponibili. Una risposta errata diventa un controesempio per la semantica della scena.
+
+**Prova visiva:** acquisire screenshot e DPR al vero 960×540; a 390px verificare esplicitamente la presenza dell'avvertenza mobile non supportato, senza fingere una prova di giocabilità touch. Registrare errori di contrasto, ostruzione delle piattaforme, sovrapposizioni tra etichette e Nilo, leggibilità di personaggi e obiettivi durante l'azione e nei momenti di movimento ridotto.
+
+**Regola di accettazione:** il renderer e i cue possono essere qualificati come *implementati e controllabili* da test automatici. Identità dei personaggi percepita, piacevolezza, comprensione senza istruzioni, accessibilità assistiva, originalità/diritti e valutazione autoriale restano gate esterni. Nessun screenshot o score sintetico può promuovere Q07 a PASS.
