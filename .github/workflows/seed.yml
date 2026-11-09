@@ -89,7 +89,15 @@ jobs:
         run: python tests/browser-e2e.py --stage smoke --out /tmp/nilo-browser-smoke
       - name: Verify keyboard pause and reach checkpoint with real localStorage
         run: python tests/browser-e2e.py --stage checkpoint --out /tmp/nilo-browser-checkpoint
-      - name: Verify real reload, corruption, completion and physical storage mutant
+      - name: Verify checkpoint persists through a real reload
+        run: python tests/browser-e2e.py --stage reload --out /tmp/nilo-browser-reload
+      - name: Verify forged checkpoint is rejected after reload
+        run: python tests/browser-e2e.py --stage forged --out /tmp/nilo-browser-forged
+      - name: Verify gameplay completes from genuine saved checkpoint
+        run: python tests/browser-e2e.py --stage finish --out /tmp/nilo-browser-finish
+      - name: Verify missing module and mobile not-supported signals
+        run: python tests/browser-e2e.py --stage negative --out /tmp/nilo-browser-negative
+      - name: Kill physical checkpoint storage mutant using browser oracle
         run: python tests/browser-e2e.py --stage complete --out /tmp/nilo-browser-evidence --physical-mutant
       - name: Verify receipt scope on exact HEAD (not beta approval)
         run: |

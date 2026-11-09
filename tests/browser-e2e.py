@@ -139,11 +139,19 @@ def run(args):
             page.wait_for_function("() => typeof window.__niloReadback==='function'")
             assert state(page)["x"]==1220 and state(page)["checkpointActive"]
             report["checks"]["reload_real_storage"]="PASS_OBSERVED"
+            report["last_stage"]="reload"
+            if args.stage=="reload":
+                report["status"]="PASS_SCOPED_BROWSER_RELOAD"
+                return
             page.evaluate("key => localStorage.setItem(key,JSON.stringify({version:2,level:'LV-01',checkpointId:'CP-01'}))",STORE)
             page.reload(wait_until="load")
             page.wait_for_function("() => typeof window.__niloReadback==='function'")
             assert state(page)["x"]==48, "forged checkpoint accepted"
             report["checks"]["forged_version_refuted"]="PASS_OBSERVED"
+            report["last_stage"]="forged"
+            if args.stage=="forged":
+                report["status"]="PASS_SCOPED_BROWSER_FORGED"
+                return
             page.evaluate("([key,value]) => localStorage.setItem(key,value)",[STORE,saved])
             page.reload(wait_until="load")
             page.wait_for_function("() => typeof window.__niloReadback==='function'")
@@ -158,6 +166,10 @@ def run(args):
             assert "altri 5 capitoli non ancora disponibili" in page.locator("#hud").inner_text()
             report["checks"]["keyboard_end_to_end"]="PASS_OBSERVED"
             report["screenshots"].append(screenshot(page,out,"03-completed"))
+            report["last_stage"]="finish"
+            if args.stage=="finish":
+                report["status"]="PASS_SCOPED_BROWSER_FINISH"
+                return
             assert not report["page_errors"] and not report["failed_requests"]
             assert all(x["status"]==200 for x in report["requests"] if x["resource"] in
                  ("index.html","core.mjs","art.mjs","main.mjs","style.css"))
@@ -178,6 +190,10 @@ def run(args):
             assert page2.locator(".mobile-warning").is_visible()
             report["screenshots"].append(screenshot(page2,out,"04-mobile-unsupported"))
             report["checks"]["mobile_is_not_accepted"]="PASS_OBSERVED"
+            report["last_stage"]="negative"
+            if args.stage=="negative":
+                report["status"]="PASS_SCOPED_BROWSER_NEGATIVE"
+                return
             mobile.close()
 
             if args.physical_mutant:
@@ -219,5 +235,5 @@ if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--out",default="artifacts/browser-lv01")
     p.add_argument("--physical-mutant",action="store_true")
-    p.add_argument("--stage",choices=("smoke","checkpoint","complete"),default="complete")
+    p.add_argument("--stage",choices=("smoke","checkpoint","reload","forged","finish","negative","complete"),default="complete")
     run(p.parse_args())
