@@ -177,7 +177,16 @@ def run(args):
             if args.stage=="finish":
                 report["status"]="PASS_SCOPED_BROWSER_FINISH"
                 return
-            assert not report["page_errors"] and not report["failed_requests"]
+            report["last_stage"]="no-pageerrors"
+            assert not report["page_errors"],"uncaught browser JS errors: "+repr(report["page_errors"])
+            if args.stage=="no-pageerrors":
+                report["status"]="PASS_SCOPED_NO_PAGEERRORS"
+                return
+            report["last_stage"]="no-requestfailures"
+            assert not report["failed_requests"],"unexpected browser failed requests: "+repr(report["failed_requests"])
+            if args.stage=="no-requestfailures":
+                report["status"]="PASS_SCOPED_NO_REQUEST_FAILURES"
+                return
             assert all(x["status"]==200 for x in report["requests"] if x["resource"] in
                  ("index.html","core.mjs","art.mjs","main.mjs","style.css"))
             context.close()
@@ -289,5 +298,5 @@ if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--out",default="artifacts/browser-lv01")
     p.add_argument("--physical-mutant",action="store_true")
-    p.add_argument("--stage",choices=("smoke","checkpoint","reload","forged","finish","module-source","module-request","module-status","module-readback","module-negative","negative","complete"),default="complete")
+    p.add_argument("--stage",choices=("smoke","checkpoint","reload","forged","finish","module-source","module-request","module-status","module-readback","module-negative","no-pageerrors","no-requestfailures","negative","complete"),default="complete")
     run(p.parse_args())

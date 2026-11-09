@@ -95,6 +95,10 @@ jobs:
         run: python tests/browser-e2e.py --stage forged --out /tmp/nilo-browser-forged
       - name: Verify gameplay completes from genuine saved checkpoint
         run: python tests/browser-e2e.py --stage finish --out /tmp/nilo-browser-finish
+      - name: Assert no uncaught game JavaScript errors across reloads
+        run: python tests/browser-e2e.py --stage no-pageerrors --out /tmp/nilo-no-pageerrors
+      - name: Assert no unexpected browser network failures across reloads
+        run: python tests/browser-e2e.py --stage no-requestfailures --out /tmp/nilo-no-requestfailures
       - name: Prove missing dependency mutation is physical and isolated
         run: python tests/browser-e2e.py --stage module-source --out /tmp/nilo-module-source
       - name: Prove browser requests the missing imported dependency
