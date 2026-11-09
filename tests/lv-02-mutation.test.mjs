@@ -16,7 +16,7 @@ const cases=[
 test('five original-source LV02 mutants are killed by the independent real test',()=>{
  const tmp=mkdtempSync(join(tmpdir(),'nilo-lv02-physical-'));
  try{
-  for(const file of ['web/core.mjs','web/art.mjs','web/levels/lv-02.mjs','tests/lv-02.test.mjs']){
+  for(const file of ['web/core.mjs','web/art.mjs','web/levels/lv-02.mjs','web/levels/custode.mjs','tests/lv-02.test.mjs']){
    const dst=join(tmp,file);mkdirSync(resolve(dst,'..'),{recursive:true});cpSync(join(root,file),dst);
   }
   writeFileSync(join(tmp,'package.json'),JSON.stringify({type:'module'}));

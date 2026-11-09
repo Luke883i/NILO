@@ -7,12 +7,14 @@ const hud = document.querySelector("#hud");
 const announcement = document.querySelector("#announcement");
 const sceneTitle=document.querySelector("#scene-title");
 const sceneHint=document.querySelector("#scene-hint");
-if(!sceneTitle||!sceneHint)throw new Error("Narrative scene cues unavailable");
+const sceneChapter=document.querySelector("#scene-chapter");
+if(!sceneTitle||!sceneHint||!sceneChapter)throw new Error("Narrative scene cues unavailable");
 if (!ctx) throw new Error("Canvas2D unavailable; no false playable claim");
 const STORE = "nilo.checkpoint.v1";
 const STORE_LV02 = "nilo.checkpoint.lv02.v1";
 const controls = new Set();
 const jumpKeys=new Set(["Space","ArrowUp","KeyW"]);
+let pendingRepairPress=false;
 let pendingJumpPress=false;
 const physicalJumpHeld=()=>[...jumpKeys].some(code=>controls.has(code));
 let saved = null;
@@ -28,9 +30,10 @@ Object.defineProperty(window,"__niloReadback",{
   value:()=>Object.freeze({phase:state.phase,level:state.level,x:state.x,y:state.y,
     onGround:state.onGround,checkpointActive:state.checkpointActive,
     ticks:state.ticks,deaths:state.deaths,camera:state.camera,vy:state.vy,
-    jumpHeld:state.jumpHeld,supportId:state.supportId,currentForce:state.currentForce})
+    jumpHeld:state.jumpHeld,supportId:state.supportId,currentForce:state.currentForce,
+    boss:state.boss?{...state.boss}:null})
 });
-const keyMap = new Set(["ArrowLeft","ArrowRight","ArrowUp","KeyA","KeyD","KeyW","Space","KeyP","KeyR","KeyN"]);
+const keyMap = new Set(["ArrowLeft","ArrowRight","ArrowUp","KeyA","KeyD","KeyW","Space","KeyP","KeyR","KeyN","KeyE"]);
 function announce(text) { announcement.textContent=text; }
 window.addEventListener("keydown", e => {
   if (!keyMap.has(e.code)) return;
@@ -39,25 +42,27 @@ window.addEventListener("keydown", e => {
   if (!e.repeat && (e.code === "KeyP" || e.code === "KeyR")) {
     // Transition boundaries consume pending presses, but preserve held keys
     // until a physical release. No input may be manufactured by a restart.
-    pendingJumpPress=false;
+    pendingJumpPress=false;pendingRepairPress=false;
     state=applyAction(state,e.code,wasJumpHeld);
     announce(e.code==="KeyP"?(state.phase==="PAUSED"?"In pausa":"Gioco ripreso"):"Ricomincia dal checkpoint, se presente");
   }
   if(!e.repeat&&e.code==="KeyN"&&state.phase==="COMPLETED"&&state.level==="LV-01"){
-    pendingJumpPress=false;
+    pendingJumpPress=false;pendingRepairPress=false;
     state=applyAction(state,"KeyN",wasJumpHeld);
     savedInSession=false;lastPhase=state.phase;lastTip="";lastCue="";
     announce("LV-02: Canali dei Minuti. Il Custode sarà disponibile in una versione successiva.");
   }
   if(!e.repeat && jumpKeys.has(e.code) && !wasJumpHeld && state.phase==="PLAYING")
     pendingJumpPress=true;
+  if(!e.repeat&&e.code==='KeyE'&&state.phase==='PLAYING'&&state.level==='LV-02')
+    pendingRepairPress=true;
   controls.add(e.code);
 });
 window.addEventListener("keyup", e => controls.delete(e.code));
-window.addEventListener("blur", () => {controls.clear();pendingJumpPress=false;});
+window.addEventListener("blur", () => {controls.clear();pendingJumpPress=false;pendingRepairPress=false;});
 document.addEventListener("visibilitychange", () => {
   if(document.hidden){
-    controls.clear();pendingJumpPress=false;
+    controls.clear();pendingJumpPress=false;pendingRepairPress=false;
     if(state.phase==="PLAYING"){
       state=applyAction(state,"KeyP",false);
       announce("In pausa: finestra non attiva");
@@ -84,10 +89,10 @@ function frame(now) {
     state=step(state,{
       left:controls.has("ArrowLeft")||controls.has("KeyA"),
       right:controls.has("ArrowRight")||controls.has("KeyD"),jump,
-      jumpPressed:pendingJumpPress
+      jumpPressed:pendingJumpPress,repairPressed:pendingRepairPress
     },CFG.tick);
     // A press/release within one animation frame is delivered exactly once.
-    pendingJumpPress=false;
+    pendingJumpPress=false;pendingRepairPress=false;
     accumulator-=CFG.tick;
   }
   if(!savedInSession && state.checkpointActive){
@@ -101,11 +106,15 @@ function frame(now) {
   }
   if(lastPhase!==state.phase){lastPhase=state.phase;
     if(state.phase==="COMPLETED")announce(state.level==='LV-02'?
-      "Canali attraversati. Il Custode e la seconda ora non sono ancora disponibili.":
+      "Custode fermato. La seconda ora è stata restituita; LV-03 è in sviluppo.":
       "Prima ora restituita. Premi N per accedere ai Canali dei Minuti.");}
   const tip=state.phase==="PAUSED"?"Pausa · premi P per riprendere":
     state.level==='LV-02'?(state.phase==="COMPLETED"?
-      "LV-02 concluso · Custode e seconda ora ancora non disponibili":
+      "SECONDA ORA RESTITUITA · LV-03 in sviluppo":
+      state.phase==='DEFEATED'?"Custode · sconfitta · premi R per riprovare":
+      state.boss?.phase==='RECOVERY'?"Custode vulnerabile · premi E per riparare":
+      state.boss?.phase==='STRIKE'?"Custode · colpo di pendolo · salta o evita":
+      state.boss?.phase==='TELEGRAPH'?"Custode · pendolo in arrivo · preparati":
       state.checkpointActive?"Canali dei Minuti · checkpoint LV-02 salvato · prosegui al molo":
       "Canali dei Minuti · usa la piattaforma mobile e supera le correnti"):
     state.phase==="COMPLETED"?
@@ -118,6 +127,7 @@ function frame(now) {
   if(cue.id!==lastCue){
     lastCue=cue.id;
     sceneTitle.textContent=cue.title;
+    sceneChapter.textContent=state.level==='LV-02'?'ORA II · CANALI DEI MINUTI':'ORA I · CORTILE DELLE LANCETTE';
     sceneHint.textContent=cue.hint;
   }
   paint();requestAnimationFrame(frame);

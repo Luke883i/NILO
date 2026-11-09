@@ -19,7 +19,7 @@ export const LV02 = Object.freeze({
     Object.freeze({id:'flow-east',x:595,w:210,boost:52}),
     Object.freeze({id:'flow-west',x:1655,w:102,boost:-38})
   ]),
-  exit:'release the second hour; Custode encounter is not yet implemented'
+  exit:'defeat Custode to release second hour; gate alone is not victory'
 });
 export function movingBridge(ticks=0){
   if(!Number.isInteger(ticks)||ticks<0)throw new RangeError('nonnegative integer tick');

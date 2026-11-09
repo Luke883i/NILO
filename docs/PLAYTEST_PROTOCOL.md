@@ -42,8 +42,12 @@ La PR8 propone **quattro cue narrativi** e cinque famiglie di segnali grafici, m
 
 **Prova senza suggerimenti:** mostrare avvio LV-01 e chiedere separatamente chi sia il personaggio controllabile, chi lo accompagni, quale superficie regga il peso e cosa accada oltre il vuoto. Chiedere *prima* di leggere il testo dell'HUD, poi confrontare con la comprensione *dopo* i cue narrativi. Non suggerire le risposte.
 
-**Prova di stato:** al checkpoint chiedere di identificare Perno e il segnatempo attivato, distinguendolo dagli edifici di sfondo; all'uscita chiedere quante ore siano state restituite e se i successivi cinque livelli siano già disponibili. Una risposta errata diventa un controesempio per la semantica della scena.
+**Prova di stato:** al checkpoint chiedere di identificare Perno e il segnatempo attivato, distinguendolo dagli edifici di sfondo; all'uscita chiedere quante ore siano state restituite e quali fra i livelli successivi siano già giocabili. Una risposta errata diventa un controesempio per la semantica della scena.
 
 **Prova visiva:** acquisire screenshot e DPR al vero 960×540; a 390px verificare esplicitamente la presenza dell'avvertenza mobile non supportato, senza fingere una prova di giocabilità touch. Registrare errori di contrasto, ostruzione delle piattaforme, sovrapposizioni tra etichette e Nilo, leggibilità di personaggi e obiettivi durante l'azione e nei momenti di movimento ridotto.
 
 **Regola di accettazione:** il renderer e i cue possono essere qualificati come *implementati e controllabili* da test automatici. Identità dei personaggi percepita, piacevolezza, comprensione senza istruzioni, accessibilità assistiva, originalità/diritti e valutazione autoriale restano gate esterni. Nessun screenshot o score sintetico può promuovere Q07 a PASS.
+
+## PR10 — Playtest esterno del Custode (non ancora osservato)
+
+Il tester indipendente deve entrare in LV-02, riconoscere un preavviso *prima* del colpo, distinguere le finestre sicure, scoprire la riparazione `E`, osservare la seconda ora soltanto dopo due riparazioni e ripartire dopo sconfitta. Raccogliere separatamente comprensione senza suggerimenti, fairness percepita, leggibilità durante l'azione e capacità di completamento. Registrare errori e outcome per esatta revisione Git, browser, viewport, profilo accessibilità e consenso. **La CI browser non è osservazione indipendente del divertimento**; Q07 resta `BLOCKED_EXTERNAL`.

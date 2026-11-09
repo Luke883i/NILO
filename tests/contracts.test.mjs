@@ -77,3 +77,11 @@ test("PR8 source-level visual signals cannot self-certify beauty, accessibility 
  const r=fresh();r.contract.gameplay.visual_scene.scaled_integer_factor=1;
  assert(audit(r).includes("visual-scene-source-drift"));
 });
+
+test("PR10 declared input/states cannot drift from runtime or invent playable TITLE/FALLEN",()=>{
+ const d=load();
+ d.contract.gameplay.input.repair=[];
+ assert(audit(d).includes("runtime-controls-and-states"));
+ const another=load();another.contract.gameplay.game_state=another.contract.gameplay.game_state.filter(x=>x!=="DEFEATED");
+ assert(audit(another).includes("runtime-controls-and-states"));
+});

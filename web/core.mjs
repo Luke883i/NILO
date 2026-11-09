@@ -1,4 +1,5 @@
 import {LV02,lv02Surfaces,movingBridge,currentForceAt,decodeLV02Checkpoint,encodeLV02Checkpoint} from "./levels/lv-02.mjs";
+import {CUSTODE,initialCustode,enterCustode,advanceCustode} from "./levels/custode.mjs";
 // NILO PR1 source-only prologue. Pure deterministic simulation, no browser APIs.
 export const CFG = Object.freeze({
   width: 2100, height: 540, viewport: 960, ground: 460,
@@ -30,7 +31,7 @@ export function initialLevelState(level='LV-01',saved=null){
     return {phase:'PLAYING',level:'LV-02',x:spawn.x,y:spawn.y,vx:0,vy:0,
       onGround:true,checkpointActive:active,camera:active?1170:0,
       deaths:0,ticks:0,coyoteLeft:0,bufferLeft:0,jumpHeld:false,
-      jumpCut:false,supportId:null,currentForce:0};
+      jumpCut:false,supportId:null,currentForce:0,boss:initialCustode()};
   }
   if(level!=='LV-01')throw new RangeError('unknown level');
   return initialState(saved);
@@ -118,8 +119,20 @@ export function step(state, input = {}, dt = CFG.tick) {
     return {...fresh,deaths:state.deaths+1,ticks:state.ticks+1,jumpHeld:held};
   }
   const camera=Math.max(0,Math.min(worldWidth-CFG.viewport,x-280));
-  const phase=x>=(second?LV02.finishX:CFG.finishX)&&grounded?"COMPLETED":"PLAYING";
+  let boss=second?(state.boss??initialCustode()):undefined;
+  if(second&&boss.phase==='LOCKED'&&x>=CUSTODE.gateX&&grounded)
+    boss=enterCustode(boss);
+  else if(second&&boss.phase!=='LOCKED')
+    boss=advanceCustode(boss,{
+      inStrikeZone:x>=CUSTODE.strikeMinX&&x<=CUSTODE.strikeMaxX,
+      nearMechanism:x>=CUSTODE.repairMinX&&x<=CUSTODE.repairMaxX,
+      grounded,repairPressed:Boolean(input.repairPressed)
+    });
+  const phase=second?(boss.phase==='VICTORY'?'COMPLETED':
+    boss.phase==='DEFEAT'?'DEFEATED':'PLAYING'):
+    (x>=CFG.finishX&&grounded?'COMPLETED':'PLAYING');
   return {phase,level:second?'LV-02':'LV-01',x,y,vx,vy,onGround:grounded,
     checkpointActive,camera,deaths:state.deaths,ticks:state.ticks+1,
-    coyoteLeft,bufferLeft,jumpHeld:held,jumpCut,supportId,currentForce:flow};
+    coyoteLeft,bufferLeft,jumpHeld:held,jumpCut,supportId,currentForce:flow,
+    ...(second?{boss}:{})};
 }
