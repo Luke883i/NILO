@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {run,expected,classify,BITS} from '../scripts/semantic-campaign.mjs';
+import {run,expected,classify,BITS,validateIterationHypothesis,evaluateIterationHypothesis} from '../scripts/semantic-campaign.mjs';
+import {readFileSync} from 'node:fs';
 test('independent oracle matches derived classifier on deterministic source catalog',()=>{
  const r=run({count:30000,seed:20261109});
  assert.equal(r.enumerated,30000);
@@ -14,4 +15,38 @@ test('visible false product pass and untrusted reviewer are blocked by source or
  f[0]=9;assert.equal(expected(f)&BITS.FUTURE,BITS.FUTURE);
  f[1]=5;assert.equal(classify(f)&BITS.INPUT,BITS.INPUT);
  f[6]=4;assert.equal(classify(f)&BITS.EVIDENCE,BITS.EVIDENCE);
+});
+
+const getDod=()=>JSON.parse(readFileSync(new URL('../contracts/dod-v1.json',import.meta.url),'utf8'));
+test('N0=18 is a falsifiable hypothesis, never a beta release statement',()=>{
+ const dod=getDod(),out=evaluateIterationHypothesis(dod);
+ assert.deepEqual(validateIterationHypothesis(dod),[]);
+ assert.equal(out.N0,18);assert.equal(out.N_actual,null);
+ assert.equal(out.release_authorized,false);
+ assert.equal(out.status,'BLOCKED_EXTERNAL');
+ assert(out.blocking_leaf_ids.includes('Q07'));
+ assert(out.blocking_leaf_ids.includes('Q06'));
+});
+test('even 18 self-reported stages cannot replace real host and player witnesses',()=>{
+ const dod=getDod(),ids=dod.development_projection.steps.map(x=>x.id);
+ const out=evaluateIterationHypothesis(dod,ids);
+ assert.equal(out.reported_stages,18);
+ assert.equal(out.status,'BLOCKED_EXTERNAL');
+ assert.equal(out.N_actual,null);
+ assert.equal(out.release_authorized,false);
+});
+test('forecasts must fail if an existing source owner or negative oracle disappears',()=>{
+ const dod=getDod(),mutant=structuredClone(dod);
+ mutant.development_projection.steps[2].owners=['web/phantom-pixel-engine.mjs'];
+ assert(validateIterationHypothesis(mutant).includes('planning-oracle-or-owner-lost'));
+ const bad=structuredClone(dod);bad.development_projection.steps[11].required_dod='G_FAKE_CERTIFICATE';
+ assert(validateIterationHypothesis(bad).includes('planning-oracle-or-owner-lost'));
+});
+test('iteration counts, rewording, and missing external gates cannot forge completion',()=>{
+ const dod=getDod();dod.development_projection.N_actual=18;
+ assert(validateIterationHypothesis(dod).includes('planning-unearned-completion'));
+ const mutant=getDod();mutant.development_projection.guaranteed_completion=true;
+ assert(validateIterationHypothesis(mutant).includes('planning-false-guarantee'));
+ const stuck=evaluateIterationHypothesis(getDod(),['I02','I02','I02']);
+ assert.equal(stuck.decision,'REPLAN_STALLED_REPORTS');
 });

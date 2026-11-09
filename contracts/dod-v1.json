@@ -428,5 +428,219 @@
       ]
     }
   ],
-  "beta_goal": "G_BETA_RELEASE"
+  "beta_goal": "G_BETA_RELEASE",
+  "development_projection": {
+    "schema": "nilo.progressive-iteration-hypothesis/1",
+    "based_on": "1213f08f289832c6106c69dd9f936341bb25ccf9",
+    "N0": 18,
+    "N_actual": null,
+    "completed_iterations": 0,
+    "success_gate": "G_BETA_RELEASE",
+    "terminal_gate": "G_CONTRACT_DEMONSTRATED",
+    "status": "HYPOTHESIS_NOT_COMPLETION_SCHEDULE",
+    "guaranteed_completion": false,
+    "stop_rule": "first n at which every inherited noncompensatory beta, supply-chain and release gate has attributable observations on one exact candidate SHA plus independent authority",
+    "anti_entropy": "reuse existing product software repository owners; no second engine, CI authority, or registry",
+    "steps": [
+      {
+        "id": "I01",
+        "name": "real-origin browser",
+        "required_dod": "Q02",
+        "owners": [
+          "web/main.mjs",
+          ".github/workflows/seed.yml"
+        ],
+        "negative_oracle": "actual HTTP origin, CSP, reload, screenshot + console negative control",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I02",
+        "name": "jump and retry feel",
+        "required_dod": "Q07",
+        "owners": [
+          "web/core.mjs",
+          "tests/core.test.mjs"
+        ],
+        "negative_oracle": "coyote time, buffer, variable jump with input trace and physical mutants",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I03",
+        "name": "pixel readability and character silhouettes",
+        "required_dod": "Q07",
+        "owners": [
+          "web/art.mjs",
+          "web/style.css"
+        ],
+        "negative_oracle": "screenshot viewport and blind character/ground recognition",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I04",
+        "name": "LV-01 narrative identity",
+        "required_dod": "Q01",
+        "owners": [
+          "contracts/nilo-semantic-v1.json",
+          "web/art.mjs"
+        ],
+        "negative_oracle": "author approval plus naive player goal comprehension",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I05",
+        "name": "independent LV-01 slice",
+        "required_dod": "G_VERTICAL_SLICE",
+        "owners": [
+          "docs/PLAYTEST_PROTOCOL.md",
+          "web/main.mjs"
+        ],
+        "negative_oracle": "unassisted finish, real checkpoint reload and independent player evidence",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I06",
+        "name": "LV-02 implementation",
+        "required_dod": "F01",
+        "owners": [
+          "web/core.mjs",
+          "contracts/development-map.json"
+        ],
+        "negative_oracle": "complete route, distinct mechanic and own negative replay",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I07",
+        "name": "first boss",
+        "required_dod": "F02",
+        "owners": [
+          "web/core.mjs",
+          "web/art.mjs"
+        ],
+        "negative_oracle": "Custode encounter telegraphs and independent win/fairness test",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I08",
+        "name": "LV-03 implementation",
+        "required_dod": "F01",
+        "owners": [
+          "web/core.mjs",
+          "web/art.mjs"
+        ],
+        "negative_oracle": "full archive route with readable objectives",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I09",
+        "name": "LV-04 implementation",
+        "required_dod": "F01",
+        "owners": [
+          "web/core.mjs",
+          "web/art.mjs"
+        ],
+        "negative_oracle": "foundry timing, negative collision and recovery tests",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I10",
+        "name": "second boss",
+        "required_dod": "F02",
+        "owners": [
+          "web/core.mjs",
+          "web/art.mjs"
+        ],
+        "negative_oracle": "Archivista timed tells + non-audio fallback",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I11",
+        "name": "LV-05 implementation",
+        "required_dod": "F01",
+        "owners": [
+          "web/core.mjs",
+          "web/art.mjs"
+        ],
+        "negative_oracle": "branching route equivalence and safe return",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I12",
+        "name": "LV-06 implementation",
+        "required_dod": "F01",
+        "owners": [
+          "web/core.mjs",
+          "web/art.mjs"
+        ],
+        "negative_oracle": "final route with integrated mechanics",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I13",
+        "name": "third boss",
+        "required_dod": "F02",
+        "owners": [
+          "web/core.mjs",
+          "web/art.mjs"
+        ],
+        "negative_oracle": "Direttore multi-phase victory and defeat tests",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I14",
+        "name": "conclusion and credits",
+        "required_dod": "F03",
+        "owners": [
+          "web/main.mjs",
+          "contracts/nilo-semantic-v1.json"
+        ],
+        "negative_oracle": "author-approved complete narrative and explicit final state",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I15",
+        "name": "audio, access and localization",
+        "required_dod": "Q03",
+        "owners": [
+          "web/index.html",
+          "web/main.mjs",
+          "docs/PLAYTEST_PROTOCOL.md"
+        ],
+        "negative_oracle": "audio rights or approved silent scope and equivalent visual cues",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I16",
+        "name": "end-to-end regression quality",
+        "required_dod": "Q04",
+        "owners": [
+          "scripts/verify.mjs",
+          "tests/experience.test.mjs"
+        ],
+        "negative_oracle": "6 levels, 3 bosses, error budgets and real browser replay",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I17",
+        "name": "resolved build and rights",
+        "required_dod": "Q05",
+        "owners": [
+          "bom/nilo.cdx.json",
+          "scripts/evidence.mjs"
+        ],
+        "negative_oracle": "pinned artifact digest, complete dependencies and asset rights review",
+        "status": "PLANNED_NOT_EXECUTED"
+      },
+      {
+        "id": "I18",
+        "name": "independent beta decision",
+        "required_dod": "Q06",
+        "owners": [
+          "docs/ENGINEERING.md",
+          ".github/workflows/seed.yml"
+        ],
+        "negative_oracle": "independent reviewer, protected rules, author decision and rollback",
+        "status": "PLANNED_NOT_EXECUTED"
+      }
+    ]
+  }
 }
