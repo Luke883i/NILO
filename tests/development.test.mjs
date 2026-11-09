@@ -10,7 +10,7 @@ const base=()=>({bridge:read("contracts/development-map.json"),contract:read("co
 const fixtureFiles=["web/core.mjs","web/main.mjs","web/index.html","web/style.css","web/art.mjs",
   "tests/core.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
   "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs",
-  "tests/semantic-campaign.test.mjs","tests/experience.test.mjs",".github/workflows/seed.yml"];
+  "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/browser-e2e.py",".github/workflows/seed.yml"];
 test("current contract maps 6 levels, 6 oracles and 4 web units without asserting browser beta",()=>{
   const d=base();assert.deepEqual(validateBridge(d),[]);
   assert.equal(d.bridge.beta_authorized,false);
@@ -79,4 +79,17 @@ test("future level cannot be marked implemented by borrowing LV-01 tests",()=>{
  const d=base(),n=d.bridge.levels.find(x=>x.id==="LV-02");
  n.state="IMPLEMENTED_CANDIDATE";n.source=["web/core.mjs"];n.tests=["tests/core.test.mjs"];
  assert(validateBridge(d).includes("bridge-no-fake-levels"));
+});
+
+test("browser evidence requires real test owner and never confers UX approval",()=>{
+ const d=base();
+ assert.deepEqual(validateBridge(d),[]);
+ for(const id of ["OR-03","OR-05"]){
+   const mutant=base(),owner=mutant.bridge.requirements.find(x=>x.id===id);
+   owner.tests=owner.tests.filter(x=>x!=="tests/browser-e2e.py");
+   assert(validateBridge(mutant).length>0,id+" must have an actual browser test");
+ }
+ const falsePass=base();
+ falsePass.bridge.requirements.find(x=>x.id==="OR-05").browser="PASS_INDEPENDENT";
+ assert(validateBridge(falsePass).includes("bridge-no-runtime-promotion"));
 });

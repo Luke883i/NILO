@@ -61,6 +61,102 @@ export function evaluateIterationHypothesis(dod,reportedStages=[]) {
     interpretation:'Stage counts and reported progress do not close an AND-gate or authenticate an independent reviewer.'};
 }
 
+
+/** Seven independently specified browser/origin evidence-failure families.
+ * Each axis has two valid and eight adversarial named design states.
+ * These cases are NOT browser executions, screenshots, physical mutants,
+ * reviews or release evidence. 10^7 unique tuples, fixed bijection/seed.
+ */
+export const BROWSER_BITS=Object.freeze({
+  ORIGIN:1, INPUT:2, STORAGE:4, PIXELS:8, RECEIPT:16, NEGATIVE:32, AUTHORITY:64
+});
+const browserPreseed=[
+  ["ORIGIN",["http","modules","csp","revision"],[
+    ["dom_injection",{http:false}],["file_url",{http:false}],
+    ["module_404",{modules:false}],["script_blocked",{csp:false}],
+    ["stale_source",{revision:false}],["cached_source",{revision:false}],
+    ["external_redirect",{http:false}],["no_csp_witness",{csp:false}]]],
+  ["INPUT",["keyboard","focus","advanced","unaltered"],[
+    ["touch_only",{keyboard:false}],["lost_focus",{focus:false}],
+    ["no_player_progress",{advanced:false}],["forced_state",{unaltered:false}],
+    ["scripted_teleport",{unaltered:false}],["key_not_bound",{keyboard:false}],
+    ["blurred_tab",{focus:false}],["fake_dom_press",{unaltered:false}]]],
+  ["STORAGE",["same_origin","written","reloaded","forgery_rejected"],[
+    ["in_memory_mock",{same_origin:false}],["write_disabled",{written:false}],
+    ["no_reload",{reloaded:false}],["version2_accepted",{forgery_rejected:false}],
+    ["wrong_origin",{same_origin:false}],["stale_file",{written:false}],
+    ["injected_checkpoint",{forgery_rejected:false}],["resume_without_reload",{reloaded:false}]]],
+  ["PIXELS",["canvas","nonblank","png_digest","viewport"],[
+    ["blank_canvas",{nonblank:false}],["missing_canvas",{canvas:false}],
+    ["no_png",{png_digest:false}],["unreported_dpr",{viewport:false}],
+    ["screenshot_from_mock",{png_digest:false}],["stale_image",{png_digest:false}],
+    ["bad_viewport",{viewport:false}],["fallback_only",{canvas:false}]]],
+  ["RECEIPT",["sha","browser","logs","images"],[
+    ["head_mismatch",{sha:false}],["unknown_browser",{browser:false}],
+    ["console_not_captured",{logs:false}],["unhashed_screenshot",{images:false}],
+    ["host_not_recorded",{browser:false}],["unbound_revision",{sha:false}],
+    ["missing_errors",{logs:false}],["image_not_in_receipt",{images:false}]]],
+  ["NEGATIVE",["baseline","module_mutant","storage_mutant","reverted"],[
+    ["no_baseline",{baseline:false}],["silent_module_failure",{module_mutant:false}],
+    ["save_mutant_survives",{storage_mutant:false}],["unrestored_mutant",{reverted:false}],
+    ["inconclusive_mutant",{storage_mutant:false}],["no_negative_control",{module_mutant:false}],
+    ["mutant_before_baseline",{baseline:false}],["dirty_source_after_mutant",{reverted:false}]]],
+  ["AUTHORITY",["lv01_scope","no_human_claim","no_beta_claim","not_model_as_runtime"],[
+    ["all_levels_claim",{lv01_scope:false}],["fake_user_review",{no_human_claim:false}],
+    ["beta_self_approved",{no_beta_claim:false}],["model_as_play",{not_model_as_runtime:false}],
+    ["fake_six_bosses",{lv01_scope:false}],["self_signed_usability",{no_human_claim:false}],
+    ["synthetic_release",{no_beta_claim:false}],["test_is_playthrough",{not_model_as_runtime:false}]]]
+];
+export const BROWSER_AXES=Object.freeze(browserPreseed.map(([name,fields,mutants])=>{
+  const good=Object.fromEntries(fields.map(k=>[k,true]));
+  const values=[{id:"valid_primary",...good,expected_blocker:0},
+    {id:"valid_repeated",...good,expected_blocker:0},
+    ...mutants.map(([id,change])=>({id,...good,...change,expected_blocker:BROWSER_BITS[name]}))];
+  return Object.freeze({name,fields,values:Object.freeze(values)});
+}));
+export function expectedBrowser(vector,axes=BROWSER_AXES){
+  let result=0;for(let i=0;i<7;i++)result |= axes[i].values[vector[i]].expected_blocker;
+  return result;
+}
+export function classifyBrowser(vector,axes=BROWSER_AXES){
+  let mask=0;
+  for(let i=0;i<7;i++){
+    const a=axes[i],v=a.values[vector[i]];
+    if(!a.fields.every(f=>v[f]===true))mask|=BROWSER_BITS[a.name];
+  }
+  return mask;
+}
+export function runBrowserAdversarial({count=10_000_000,seed=20261109,axes=BROWSER_AXES}={}){
+  if(!Number.isInteger(count)||count<1||count>10_000_000||!Number.isInteger(seed))throw Error("bounded integer count/seed");
+  if(axes.length!==7||axes.some(a=>a.values.length!==10))throw Error("invalid browser scenario catalog");
+  const stride=3301,offset=((seed%10_000_000)+10_000_000)%10_000_000,vector=Array(7).fill(0);
+  let mismatches=0,checksum=2166136261,blocked=0;
+  const signatures=new Map(),killed=Object.fromEntries(Object.keys(BROWSER_BITS).map(x=>[x,0]));
+  for(let n=0;n<count;n++){
+    let x=(n*stride+offset)%10_000_000;
+    for(let k=6;k>=0;k--){vector[k]=x%10;x=Math.floor(x/10);}
+    const want=expectedBrowser(vector,axes),got=classifyBrowser(vector,axes);
+    if(want!==got)mismatches++;
+    if(want)blocked++;
+    if(!signatures.has(want))signatures.set(want,n);
+    for(const [k,bit] of Object.entries(BROWSER_BITS)){
+      if(want&bit && (got & ~bit)!==want)killed[k]++;
+    }
+    checksum=Math.imul(checksum^((want<<7)^got^n),16777619)>>>0;
+  }
+  return {schema:"nilo.browser-semantic-adversarial/1",seed,stride,offset,
+    enumerated:count,full_catalog:count===10_000_000,
+    distinct_tuples_by_decimal_bijection:true,
+    model:"SEVEN_REALISTIC_BROWSER_FAILURE_FAMILIES_FINITE_DESIGN_VECTORS_NOT_BROWSER_RUNS",
+    mismatches,blocked_vectors:blocked,distinct_failure_signatures:signatures.size,
+    novelty_in_last_100k:[...signatures.values()].filter(n=>n>=Math.max(0,count-100000)).length,
+    killed_single_bit_model_mutants:killed,checksum_u32:checksum.toString(16).padStart(8,"0"),
+    catalog_sha256:createHash("sha256").update(JSON.stringify(axes)).digest("hex"),
+    physical_mutations:0,independent_browser_runs:0,
+    beta_authorized:false,
+    interpretation:"Enumerated pre-seeded adversarial semantic hypotheses; cannot substitute for the independent Playwright physical browser check."};
+}
+
 const option=(name,fallback)=>{const a=process.argv.indexOf(name);return a<0?fallback:process.argv[a+1]};
 export function run({count=10_000_000,seed=20261109,contract=source()}={}){
  if(!Number.isInteger(count)||count<1||count>10_000_000)throw Error('count must be 1..10000000');
@@ -104,7 +200,11 @@ export function run({count=10_000_000,seed=20261109,contract=source()}={}){
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const count=Number(option('--count','10000000')),seed=Number(option('--seed','20261109'));
- const r=run({count,seed});const text=JSON.stringify(r,null,2)+'\n';
+ const r=process.argv.includes('--browser-adversarial') ?
+   runBrowserAdversarial({count,seed}) : run({count,seed});
+ const text=JSON.stringify(r,null,2)+'\n';
  const out=option('--out',null);if(out)writeFileSync(out,text);else console.log(text);
- if(r.oracle_mismatches||r.mutants.some(x=>!x.killed_vectors))process.exitCode=2;
+ if(r.schema==='nilo.semantic-campaign-result/1' ?
+   (r.oracle_mismatches||r.mutants.some(x=>!x.killed_vectors)) :
+   (r.mismatches||Object.values(r.killed_single_bit_model_mutants).some(x=>!x)))process.exitCode=2;
 }

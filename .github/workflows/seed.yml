@@ -26,10 +26,10 @@ jobs:
         run: node --test tests/core.test.mjs
       - name: Test contract, reticular DoD and S-BOM negative cases
         run: node --test tests/contracts.test.mjs tests/experience.test.mjs
-      - name: Enforce product -> software -> repository bindings on every PR
-        run: |
-          node scripts/verify-development.mjs
-          node --test tests/development.test.mjs
+      - name: Validate product software repository map
+        run: node scripts/verify-development.mjs
+      - name: Falsify bridge declarations and missing owners
+        run: node --test tests/development.test.mjs
       - name: Kill checkpoint-forgery source mutant
         env:
           NILO_MUTANT: forged-checkpoint
@@ -46,6 +46,8 @@ jobs:
         run: node --test tests/art.test.mjs tests/art-mutation.test.mjs tests/semantic-campaign.test.mjs
       - name: Exhaust pre-seeded 10M semantic design vectors (not game executions)
         run: node scripts/semantic-campaign.mjs --count 10000000 --seed 20261109 --out /tmp/nilo-semantic-10m.json
+      - name: Exhaust 10M browser-aware adversarial semantic design mutants (not browser runs)
+        run: node scripts/semantic-campaign.mjs --browser-adversarial --count 10000000 --seed 20261109 --out /tmp/nilo-browser-semantic-10m.json
       - name: Capture process-reported source hashes and SHA without self-approval
         run: |
           node scripts/evidence.mjs --out /tmp/nilo-seed-evidence.json
@@ -58,5 +60,79 @@ jobs:
           path: |
             /tmp/nilo-seed-evidence.json
             /tmp/nilo-semantic-10m.json
+            /tmp/nilo-browser-semantic-10m.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  browser-lv01:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Bind browser witness to exact source
+        run: |
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          python --version
+      - name: Install pinned test-only Playwright
+        run: python -m pip install playwright==1.57.0
+      - name: Verify GitHub-hosted Chrome browser is available
+        run: |
+          command -v google-chrome
+          google-chrome --version
+      - name: Verify real HTTP origin CSP modules and initial pixel render
+        run: python tests/browser-e2e.py --stage smoke --out /tmp/nilo-browser-smoke
+      - name: Verify keyboard pause and reach checkpoint with real localStorage
+        run: python tests/browser-e2e.py --stage checkpoint --out /tmp/nilo-browser-checkpoint
+      - name: Verify checkpoint persists through a real reload
+        run: python tests/browser-e2e.py --stage reload --out /tmp/nilo-browser-reload
+      - name: Verify forged checkpoint is rejected after reload
+        run: python tests/browser-e2e.py --stage forged --out /tmp/nilo-browser-forged
+      - name: Verify gameplay completes from genuine saved checkpoint
+        run: python tests/browser-e2e.py --stage finish --out /tmp/nilo-browser-finish
+      - name: Assert no uncaught game JavaScript errors across reloads
+        run: python tests/browser-e2e.py --stage no-pageerrors --out /tmp/nilo-no-pageerrors
+      - name: Assert no unexpected browser network failures across reloads
+        run: python tests/browser-e2e.py --stage no-requestfailures --out /tmp/nilo-no-requestfailures
+      - name: Prove missing dependency mutation is physical and isolated
+        run: python tests/browser-e2e.py --stage module-source --out /tmp/nilo-module-source
+      - name: Prove browser requests the missing imported dependency
+        run: python tests/browser-e2e.py --stage module-request --out /tmp/nilo-module-request
+      - name: Prove HTTP server returned 404 for missing module
+        run: python tests/browser-e2e.py --stage module-status --out /tmp/nilo-module-status
+      - name: Prove missing dependency prevents playable initialization
+        run: python tests/browser-e2e.py --stage module-readback --out /tmp/nilo-module-readback
+      - name: Verify missing imported module cannot produce playable state
+        run: python tests/browser-e2e.py --stage module-negative --out /tmp/nilo-module-negative
+      - name: Verify mobile screen explicitly unsupported and capture screenshot
+        run: python tests/browser-e2e.py --stage negative --out /tmp/nilo-browser-negative
+      - name: Kill physical checkpoint storage mutant using browser oracle
+        run: python tests/browser-e2e.py --stage complete --out /tmp/nilo-browser-evidence --physical-mutant
+      - name: Verify receipt scope on exact HEAD (not beta approval)
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          p=Path('/tmp/nilo-browser-evidence/browser-receipt.json')
+          r=json.loads(p.read_text())
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert r['status']=='PASS_SCOPED_BROWSER_LV01'
+          assert r['source_sha']==sha and r['browser_executed']
+          assert not r['release_authorized'] and not r['independent_player_acceptance']
+          assert len(r['screenshots'])==4
+          assert len(r['checks'])>=8
+          print('PASS_SCOPED_BROWSER_LV01 on',sha)
+          PY
+      - name: Publish screenshots, logs, environment and digest receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nilo-browser-lv01-${{ github.event.pull_request.head.sha || github.sha }}
+          path: /tmp/nilo-browser-evidence/
           if-no-files-found: warn
           retention-days: 14

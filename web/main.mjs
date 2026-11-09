@@ -12,6 +12,13 @@ try { saved = localStorage.getItem(STORE); } catch { /* unavailable storage: gam
 let state = initialState(saved);
 let last = performance.now(), accumulator=0, lastPhase=state.phase, savedInSession=state.checkpointActive;
 let lastTip="";
+/** Read-only diagnostic readback. It does not advance, override or certify game state. */
+Object.defineProperty(window,"__niloReadback",{
+  configurable:false,enumerable:false,writable:false,
+  value:()=>Object.freeze({phase:state.phase,x:state.x,y:state.y,
+    onGround:state.onGround,checkpointActive:state.checkpointActive,
+    ticks:state.ticks,deaths:state.deaths,camera:state.camera})
+});
 const keyMap = new Set(["ArrowLeft","ArrowRight","ArrowUp","KeyA","KeyD","KeyW","Space","KeyP","KeyR"]);
 function announce(text) { announcement.textContent=text; }
 window.addEventListener("keydown", e => {
