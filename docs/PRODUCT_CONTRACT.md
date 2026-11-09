@@ -37,3 +37,7 @@ La direzione artistica candidata usa pixel integer 480×270 scalati a 960×540 s
 **Beta:** DoD non compensativo `G_BETA_RELEASE`; la qualità artistica e il divertimento richiedono osservazioni con giocatori e revisione dell'autore, non possono essere approvati automaticamente da un oracle CSS o da screenshot.
 
 **Gate mercato Q07:** non compensabile da una semplice schermata esteticamente migliorata. Richiede personaggi riconoscibili, superfici leggibili, controllo gratificante, un feedback sensoriale accettabile, comprensione della storia e accettazione esterna sulla piattaforma bersaglio. Stessa revisione Git delle prove tecniche.
+
+## Current implementation boundary after PR10 (candidate, not approved)
+
+The current source implements LV-01 and LV-02 and one candidate boss, Custode del Pendolo; LV-03–LV-06 and the other two bosses remain design-only. LV-02 completion requires two physically input-triggered pendulum repairs after telegraphed strikes. Merely crossing the gate or restoring CP-02 never confers the second hour. Browser/CI witnesses are revision-bound technical observations; independent player testing, narrative/visual authorization and release are not established. Earlier descriptions of all bosses as unimplemented are historical PR3-era statements, not the current scope.

@@ -1,5 +1,38 @@
 # NILO — Engineering system, phase gates and beta boundary
 
+## Current qualified scope (PR10 candidate; history below is versioned context)
+
+Source baseline of PR10 is post-PR9 `main@6a49abf4`. The first boss, Custode del Pendolo, is now a source-implemented candidate. Its deterministic FSM lives in `web/levels/custode.mjs` and is stepped solely by `web/core.mjs`. `KeyE` is one-shot only; two physical repair windows are required for victory and hour two, two strike hits defeat, `KeyR` retries from CP-02. The original checkpoint is never a trusted historical play receipt. Source and real HTTP browser checks belong to the PR10 final SHA. Independent player fairness, author art/story approval, accessibility and beta remain blocked. Earlier PR1–PR9 status statements below describe their own historical baselines and must not be read as current implementation claims.
+
+## PR11 candidate — Archivio delle Ombre (I08), after PR10
+
+**Product property:** after actual Custode victory, LV-03 can be entered and traversed with a distinct light/shadow door mechanic. The theme is accountability for people excluded from access to time. The creative interaction and user goals need author review; a design proposal is not accepted artwork.
+
+**Owners:** evolve shared `web/core.mjs`, `web/main.mjs` and `web/art.mjs`; add only `web/levels/lv-03.mjs` as a data descriptor, `tests/lv-03.test.mjs`, original source mutants and an actual HTTP browser E2E. Extend existing product contract, bridge and one CI job; do not duplicate the engine, renderer or approval bus.
+
+**PR11 fail-closed DoD:** (1) entry only from genuine LV-02 victory, not CP-02 or a forged flag; (2) physically bounded light/shadow mechanism changes passage/collision state, with visible non-colour cues; (3) traversable deterministic route, safe restart and CP-03 independent persistence with negative cross-level records; (4) complete LV-01→LV-02→Custode→LV-03 browser route with real keyboard events and original screenshots; (5) original LV-01/LV-02/Custode regression and negative mutants all preserved; (6) no automatic third-hour award, no false user acceptance, no beta; (7) test and implementation map on the exact PR11 HEAD. Playtest comprehension and accessibility cannot be granted by CI.
+
+**Stop rule for content replication:** a technical LV-03 candidate may progress in Git, but broad cloning of boss/level patterns must incorporate independent human observations of LV-01, LV-02 and Custode, or explicitly record experience-quality debt; absence of playtests is not a synthetic PASS.
+
+## Forward PR sequence, revisable
+
+| Candidate | Scope | Gate |
+| --- | --- | --- |
+| PR11 | LV-03: Archivio delle Ombre | Light/shadow traversal and honest third-hour status |
+| PR12 | LV-04: Fonderia dei Secondi | Timed platforms, fair recovery |
+| PR13 | Archivista dei Rintocchi | Second boss, multimodal telegraph |
+| PR14 | LV-05: Bosco delle Campane | Branching and equivalent cues |
+| PR15 | LV-06: Cuore della Fabbrica | Combined mechanics |
+| PR16 | Direttore delle Ore | Final multi-phase boss |
+| PR17 | Finale and credits | Sixth hour and approved story closure |
+| PR18 | Audio, language, accessibility residuals | Previously progressive duties finally closed |
+| PR19 | Full-game regression | Six levels and three actual boss outcomes on one SHA |
+| PR20 | Reproducible artifact and rights | SBOM/asset legal review, dependency and distribution evidence |
+| PR21 | Independent beta decision | Release authority, external acceptance, rollback |
+
+PR16+PR17 and PR19+PR20 may each compress *only* when the underlying noncompensatory gates retain independent proof and a single attributable artifact/revision. No PR count or 18-stage hypothesis proves a beta release. This is a planning model, not an attestation.
+
+
 **Authority:** candidate technical development policy for PR2. [Product intent](../contracts/nilo-semantic-v1.json) owns the story and original requirements; [DoD](../contracts/dod-v1.json) owns the noncompensatory gates; [development map](../contracts/development-map.json) binds actual source/test paths to product IDs. Git + observed CI/browser/user evidence, never this prose, determine attainment.
 
 ## One system, three non-substitutable planes
