@@ -26,6 +26,8 @@ jobs:
         run: node --test tests/lv-02.test.mjs tests/lv-02-mutation.test.mjs
       - name: Verify Custode encounter contract and eight original-source physical mutants
         run: node --test tests/custode.test.mjs tests/custode-mutation.test.mjs
+      - name: Verify actual third level physical route and nine original source mutants
+        run: node --test tests/lv-03.test.mjs tests/lv-03-mutation.test.mjs
       - name: Verify narrative, requirements, DoD, BOM and source boundaries
         run: node scripts/verify.mjs
       - name: Test deterministic playable physics and checkpoint
@@ -194,6 +196,33 @@ jobs:
               assert hashlib.sha256(raw).hexdigest()==z['sha256']
           print('PASS_SCOPED_CUSTODE_BROWSER_NO_USER_APPROVAL',sha)
           PY_BOSS
+      - name: Real HTTP Chrome three-level route, contextual E, CP03 and third hour
+        run: python tests/browser-lv-03.py --out /tmp/nilo-browser-lv03
+      - name: Verify LV03 source SHA and actual PNG screenshots, no synthetic beta approval
+        run: |
+          python - <<'PY_LV03'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          p=Path('/tmp/nilo-browser-lv03/lv03-receipt.json')
+          r=json.loads(p.read_text())
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert r['source_sha']==sha and r['browser_executed']
+          assert r['status']=='PASS_SCOPED_LV03_HTTP'
+          assert not r['beta_authorized'] and not r['independent_player_acceptance']
+          assert not r['six_levels_complete']
+          assert len(r['screenshots'])==4
+          for k in ['actual_boss_gate_to_lv03','shadow_switch_player_caused',
+                    'optional_ledger_no_third_hour','real_cp03_saved',
+                    'cp03_reload_not_victory','physical_light_gate_stops_player',
+                    'two_gates_grounded_exit_hour_three']:
+              assert r['checks'][k]=='PASS_OBSERVED',k
+          for img in r['screenshots']:
+              raw=(p.parent/img['name']).read_bytes()
+              assert raw.startswith(bytes.fromhex('89504e470d0a1a0a'))
+              assert len(raw)==img['bytes'] and len(raw)>1000
+              assert hashlib.sha256(raw).hexdigest()==img['sha256']
+          print('PASS_SCOPED_LV03_HTTP',sha)
+          PY_LV03
       - name: Build the exact Git SHA static publish artifact for Render
         run: npm run build:static
       - name: E2E real HTTP Chrome and asset digests on the actual dist bytes
@@ -202,6 +231,10 @@ jobs:
         env:
           NILO_WEB_ROOT: dist
         run: python tests/browser-custode.py --out /tmp/nilo-render-static-game
+      - name: Real third-level browser replay against exact deployable static assets
+        env:
+          NILO_WEB_ROOT: dist
+        run: python tests/browser-lv-03.py --out /tmp/nilo-render-static-lv03
       - name: Check that the packaged artifact and browser observations match Git SHA
         run: |
           python - <<'PY_DELIVERY'
@@ -211,15 +244,20 @@ jobs:
           m=json.loads(Path('dist/nilo-deploy.json').read_text())
           r=json.loads(Path('/tmp/nilo-render-local/delivery-receipt.json').read_text())
           g=json.loads(Path('/tmp/nilo-render-static-game/custode-receipt.json').read_text())
-          assert m['source_commit_sha']==r['source_sha']==g['source_sha']==sha
+          h=json.loads(Path('/tmp/nilo-render-static-lv03/lv03-receipt.json').read_text())
+          assert m['source_commit_sha']==r['source_sha']==g['source_sha']==h['source_sha']==sha
           assert r['status']=='PASS_LOCAL_STATIC_RENDER_EQUIVALENT'
           assert g['status']=='PASS_SCOPED_CUSTODE_BROWSER_NO_USER_APPROVAL'
+          assert h['status']=='PASS_SCOPED_LV03_HTTP' and len(h['screenshots'])==4
+          assert not h['remote_render_observed'] and not h['beta_authorized']
           assert not r['remote_render_observed'] and not m['external_render_observed']
           assert not m['beta_authorized'] and not r['beta_authorized']
           assert r['checks']['published_files_exact_sha256']=='PASS_HTTP_OBSERVED'
           assert r['checks']['missing_module_404']=='PASS_HTTP_OBSERVED'
           assert len(r['screenshots'])==1 and len(g['screenshots'])==3
-          for p,receipt in [(Path('/tmp/nilo-render-local'),r),(Path('/tmp/nilo-render-static-game'),g)]:
+          for p,receipt in [(Path('/tmp/nilo-render-local'),r),
+                            (Path('/tmp/nilo-render-static-game'),g),
+                            (Path('/tmp/nilo-render-static-lv03'),h)]:
             for f in receipt['screenshots']:
               b=(p/f['name']).read_bytes()
               assert b.startswith(bytes.fromhex('89504e470d0a1a0a'))
@@ -270,5 +308,7 @@ jobs:
             /tmp/nilo-browser-custode/
             /tmp/nilo-render-local/
             /tmp/nilo-render-static-game/
+            /tmp/nilo-browser-lv03/
+            /tmp/nilo-render-static-lv03/
           if-no-files-found: warn
           retention-days: 14
