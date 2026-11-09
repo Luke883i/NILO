@@ -32,13 +32,14 @@ export function initialState(saved = null) {
     coyoteLeft:0, bufferLeft:0, jumpHeld:false, jumpCut:false
   };
 }
-export function applyAction(state, code) {
+export function applyAction(state, code, physicalJumpHeld=false) {
   if (code === "KeyP" && (state.phase === "PLAYING" || state.phase === "PAUSED")) {
-    return {...state, phase:state.phase === "PAUSED" ? "PLAYING" : "PAUSED"};
+    return {...state, phase:state.phase === "PAUSED" ? "PLAYING" : "PAUSED",
+      jumpHeld:Boolean(physicalJumpHeld),bufferLeft:0};
   }
   if (code === "KeyR") {
     return {...initialState(state.checkpointActive ? encodeCheckpoint() : null),
-      deaths:state.deaths};
+      deaths:state.deaths,jumpHeld:Boolean(physicalJumpHeld)};
   }
   return state;
 }
@@ -49,7 +50,7 @@ export function step(state, input = {}, dt = CFG.tick) {
   if (state.phase !== "PLAYING") return state;
   if (!Number.isFinite(dt) || dt <= 0 || dt > 1/15) throw new RangeError("bounded fixed tick required");
   const held=Boolean(input.jump);
-  const justPressed=held && !Boolean(state.jumpHeld);
+  const justPressed=Boolean(input.jumpPressed) || (held && !Boolean(state.jumpHeld));
   let coyoteLeft=state.onGround ? CFG.coyoteTicks : Math.max(0,(state.coyoteLeft ?? 0)-1);
   let bufferLeft=justPressed ? CFG.bufferTicks : Math.max(0,(state.bufferLeft ?? 0)-1);
   const vx=((input.right ? 1 : 0) - (input.left ? 1 : 0))*CFG.speed;
@@ -58,7 +59,7 @@ export function step(state, input = {}, dt = CFG.tick) {
   let jumpCut=Boolean(state.jumpCut);
   if(bufferLeft>0 && coyoteLeft>0) {
     vy=CFG.jump;grounded=false;coyoteLeft=0;bufferLeft=0;jumpCut=false;
-  } else if(!held && state.jumpHeld && vy<0 && !jumpCut) {
+  } else if(!held && vy<0 && !jumpCut) {
     vy*=CFG.jumpReleaseMultiplier;
     jumpCut=true;
   }
@@ -84,7 +85,7 @@ export function step(state, input = {}, dt = CFG.tick) {
   if(!checkpointActive && grounded && x>=CFG.checkpointX && x<=1390) checkpointActive=true;
   if(y>CFG.height+100){
     const fresh=initialState(checkpointActive?encodeCheckpoint():null);
-    return {...fresh,deaths:state.deaths+1,ticks:state.ticks+1};
+    return {...fresh,deaths:state.deaths+1,ticks:state.ticks+1,jumpHeld:held};
   }
   const camera=Math.max(0,Math.min(CFG.width-CFG.viewport,x-280));
   const phase=x>=CFG.finishX && grounded ? "COMPLETED" : "PLAYING";

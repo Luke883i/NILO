@@ -71,3 +71,60 @@ test('original six-jump LV01 route remains complete with zero deaths',()=>{
   assert.equal(s.deaths,0);
   assert.equal(s.checkpointActive,true);
 });
+
+test('RED PR6: held Space cannot cause a fresh jump after fall/respawn',()=>{
+  const fall={...initialState(),y:700,vy:120,onGround:false,coyoteLeft:0};
+  const respawn=step(fall,{jump:true});
+  assert.equal(respawn.deaths,1);
+  assert.equal(respawn.jumpHeld,true,'respawn must retain physical key latch');
+  const next=step(respawn,{jump:true});
+  assert.equal(next.vy,0,'held key is not a new keydown');
+  assert.equal(next.onGround,true);
+  const released=step(next,{jump:false});
+  assert(step(released,{jump:true}).vy<0,'fresh edge after release remains valid');
+});
+test('RED PR6: explicit held-key restart and resume are disarmed until release',()=>{
+  let restarted=applyAction(initialState(),'KeyR',true);
+  assert.equal(restarted.jumpHeld,true);
+  assert.equal(step(restarted,{jump:true}).vy,0,'restart cannot manufacture a keydown');
+  let paused=applyAction(initialState(),'KeyP',false);
+  let resumed=applyAction(paused,'KeyP',true);
+  assert.equal(resumed.jumpHeld,true);
+  assert.equal(step(resumed,{jump:true}).vy,0,'pause cannot manufacture a keydown');
+  resumed=step(resumed,{jump:false});
+  assert(step(resumed,{jump:true}).vy<0);
+});
+test('RED PR6: prelanding one-tick tap retains short-hop semantics after buffer',()=>{
+  const low=initialState();
+  const falling={...initialState(),y:409,vy:250,onGround:false,coyoteLeft:0};
+  let a=low,b=falling,minA=Infinity,minB=Infinity;
+  for(let t=0;t<35;t++){
+    a=step(a,{jump:t===0});
+    b=step(b,{jump:t===0});
+    minA=Math.min(minA,a.y);
+    minB=Math.min(minB,b.y);
+  }
+  const directHeight=418-minA;
+  const bufferedHeight=418-minB;
+  assert(directHeight>20&&bufferedHeight>20);
+  assert(Math.abs(directHeight-bufferedHeight)<=10,
+    'buffered one-tick tap launched after release must not become full-height jump: '+directHeight+' vs '+bufferedHeight);
+});
+
+test('PR7: release and repress inside a single tick is a fresh physical edge',()=>{
+  // After death the previous held key is latched; a new edge between ticks
+  // must not disappear merely because the old frame still says "held".
+  const died=step({...initialState(),y:701,vy:100,onGround:false},{jump:true});
+  assert.equal(died.jumpHeld,true);
+  const edge=step(died,{jump:false,jumpPressed:true});
+  assert(edge.vy<0,'event-sourced re-press must trigger a jump after respawn');
+  assert.equal(edge.bufferLeft,0);
+  const kept=step(edge,{jump:false,jumpPressed:false});
+  assert(kept.vy<0,'short hop is permitted, not repeated');
+});
+test('PR7: held key and repeated keydown cannot manufacture new edges',()=>{
+  let s=step(initialState(),{jump:true,jumpPressed:true});
+  for(let t=0;t<65;t++)s=step(s,{jump:true,jumpPressed:false});
+  assert.equal(s.onGround,true);
+  assert.equal(step(s,{jump:true,jumpPressed:false}).vy,0);
+});

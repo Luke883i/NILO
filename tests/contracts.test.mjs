@@ -58,3 +58,12 @@ test("an aesthetic self-certificate or missing mandatory experience criterion bl
  const f=fresh();f.dod.nodes.find(n=>n.id==="Q07").noncompensatory_subcriteria.pop();
  assert(audit(f).includes("dod-experience-quality"));
 });
+
+test("PR7 input lifecycle is a falsifiable product contract, not automatic enjoyment approval",()=>{
+  const d=fresh();
+  d.contract.gameplay.game_feel.input_continuity.buffered_short_hop_max_apex_delta_px=100;
+  assert(audit(d).includes("game-feel-input-continuity"));
+  const status=fresh();
+  status.contract.gameplay.game_feel.input_continuity.user_experience_approval="PASS";
+  assert(audit(status).includes("game-feel-input-continuity"));
+});

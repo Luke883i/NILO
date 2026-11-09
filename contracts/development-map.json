@@ -111,7 +111,8 @@
       "tests": [
         "tests/core.test.mjs",
         "tests/mutation.test.mjs",
-        "tests/feel.test.mjs"
+        "tests/feel.test.mjs",
+        "tests/browser-e2e.py"
       ],
       "authority": "MODEL_TEST_ONLY",
       "browser": "NOT_ATTESTED"

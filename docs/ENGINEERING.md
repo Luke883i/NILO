@@ -135,6 +135,69 @@ indefinite. The temporary diagnostic bundle is an archival handoff proposal,
 
 **DoD source conditions:** (1) fresh input edge makes one jump; holding cannot auto-retrigger on landing; (2) coyote grace expires after six fixed ticks; (3) a pre-landing press is consumed exactly once; (4) short and held presses produce distinguishable heights while short taps still complete the original route; (5) pause freezes timers and death/restart clear latches; (6) original six-jump route and real HTTP browser E2E remain green; (7) seven original and new physical code mutants are killed by unchanged real test assertions; (8) one million seeded semantic design hypotheses are enumerated with a second implementation, a reproducible seed and a falsifier test.
 
-**External boundary:** neither fixed-step oracle nor design-vector saturation proves ease, fun, disability accessibility, fair boss encounters or beta readiness. Q07, independent playtest and the full-game gate remain **BLOCKED_EXTERNAL**. Any visual/perceptual change is PR7's own independent slice. In PR7 validate pixel readability, animation and character silhouettes through original screenshots and real user interpretation before replicating content.
+**External boundary:** neither fixed-step oracle nor design-vector saturation proves ease, fun, disability accessibility, fair boss encounters or beta readiness. Q07, independent playtest and the full-game gate remain **BLOCKED_EXTERNAL**. Any visual/perceptual change is PR7's own independent slice. In PR8 validate pixel readability, animation and character silhouettes through original screenshots and real user interpretation before replicating content.
 
 **PR challenge to release sequencing:** separate each new boss into its own reviewable PR instead of coupling it with a whole new level; shift asset provenance, supported input, accessibility and browser E2E validation earlier and maintain them cumulatively. Eighteen semantic planning iterations are not eighteen guaranteed PRs; proposed candidate release decision moves to approximately PR21, conditional on independent evidence.
+
+
+## PR7 — input lifecycle closure and roadmap compression challenge
+
+**Source baseline:** `main@05c5d68b567ee5cc37a8aa17834f1709284f6dc7`, PR6 merged.
+This PR does not invent an input subsystem: `web/main.mjs` owns keyboard events and
+`web/core.mjs` owns the single deterministic physics state machine.
+
+**Pre-seeded RED counterexamples** (on PR6): a held key triggers a jump after a fall,
+restart or pause; a buffered short tap jumps too high; press-and-release within
+one fixed tick can disappear. The corrected path retains the physical latch at
+state transitions and a separate one-tick native event edge. The short-hop apex
+difference is bounded to **10 logical pixels**, not a subjective assertion.
+
+**PR7 DoD:** F1 no held-key autojump after physical death; F2 no restart autojump;
+F3 no pause/resume autojump; F4 direct/buffered one-tick short-hop apex parity;
+F5 native sub-tick key press replay; F6 original LV-01 six-jump completion;
+F7 existing seven plus five real core-source mutants killed, and an additional
+browser mutation of event delivery killed; F8 real-origin Chrome evidence with
+positive/negative tests and all four original PNG digests; F9 exact SHA,
+no invented independent UX or beta authority. A missing child fails the PR DoD.
+The inherited two 10M and one 1M semantic catalogs remain finite *model*
+enumerations, not physical gameplay runs.
+
+**Minimum evidence path:** original `tests/feel.test.mjs` (including PR6 RED cases)
+→ `tests/mutation.test.mjs` (physical edits in disposable copies) →
+`tests/browser-e2e.py` (native keys and source mutant on HTTP origin) →
+original workflow's source + browser jobs → independent receipt/PNG byte digest.
+Source and browser must be green on the *final* PR HEAD.
+
+### Compressed candidate PR sequence after PR7
+
+| Candidate | Scope and noncompensatory acceptance | Compression test |
+| --- | --- | --- |
+| PR8 | LV-01 visual + narrative acceptance: original pixel sprites, animation, UI affordances, storyline, source and real screenshots | **Conditional:** if art and narrative share one reviewable scene and both have separate oracles; else split |
+| PR9 | LV-02 complete | Independent level traversal |
+| PR10 | Boss 1 | Separate boss win/fairness |
+| PR11 | LV-03 complete | Independent level traversal |
+| PR12 | LV-04 complete | Independent timed hazards |
+| PR13 | Boss 2 | Telegraph and alternative cues |
+| PR14 | LV-05 complete | Alternative paths |
+| PR15 | LV-06 complete | Integrated controls |
+| PR16 | Boss 3 | Final encounter and defeat/win |
+| PR17 | Narrative ending/credits | Author-approved finished arc |
+| PR18 | Audio, language and accessibility closure | Each dimension evaluated throughout prior PRs; this closes residuals |
+| PR19 | Whole-game regression + reproducible beta artifact, SBOM, licenses | **Conditional:** single immutable source/artifact SHA with independent test and provenance gates |
+| PR20 | Independent beta decision and protected distribution | Cannot compress into author-generated CI green |
+
+The prior PR8–PR22 list contained 15 candidate PRs. This proposal has
+13 (PR8–PR20), **two fewer**, without merging bosses into levels or
+conflating beta authorization with source tests. The two proposed merges are
+rejected if either review complexity or isolated negative-oracle strength
+deteriorates. The 18-stage semantic hypothesis remains a *stopping model*,
+not an obligation to produce 18 or 20 PRs.
+
+**PR8 forward DoD:** define a single pixel grid/palette and bounded sprite
+animation in existing `web/art.mjs`; map Nilo/Tica/Perno silhouettes and
+collision-versus-visual affordance; capture actual 960x540 / 390px browser
+screenshots; use seeded transformations for occlusion, contrast, camera and
+DPR without treating similarity as beauty; test beginner comprehension,
+narrative prompts and accessible cues with external reviewers. Extend
+`docs/PLAYTEST_PROTOCOL.md` and existing art/experience tests.
+No third-party art or duplicate renderer.
