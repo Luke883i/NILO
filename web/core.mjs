@@ -2,7 +2,8 @@
 export const CFG = Object.freeze({
   width: 2100, height: 540, viewport: 960, ground: 460,
   playerWidth: 28, playerHeight: 42, speed: 235, gravity: 1450,
-  jump: -555, tick: 1 / 60, checkpointX: 1210, finishX: 1950
+  jump: -555, tick: 1 / 60, checkpointX: 1210, finishX: 1950,
+  coyoteTicks: 6, bufferTicks: 6, jumpReleaseMultiplier: 0.85
 });
 export const PLATFORMS = Object.freeze([
   {x:0,y:460,w:310}, {x:350,y:440,w:230}, {x:620,y:420,w:220},
@@ -27,7 +28,8 @@ export function initialState(saved = null) {
   return {
     phase:"PLAYING", x, y:checkpointActive ? 358 : 418,
     vx:0, vy:0, onGround:true, checkpointActive,
-    camera:checkpointActive ? 900 : 0, deaths:0, ticks:0
+    camera:checkpointActive ? 900 : 0, deaths:0, ticks:0,
+    coyoteLeft:0, bufferLeft:0, jumpHeld:false, jumpCut:false
   };
 }
 export function applyAction(state, code) {
@@ -40,35 +42,53 @@ export function applyAction(state, code) {
   }
   return state;
 }
+/** Fixed-step movement: a rising input edge starts one jump; buffered presses
+ * may trigger on landing; a ledge departure has a bounded grace period.
+ * Input is a held boolean, not a browser event or an authority assertion. */
 export function step(state, input = {}, dt = CFG.tick) {
   if (state.phase !== "PLAYING") return state;
   if (!Number.isFinite(dt) || dt <= 0 || dt > 1/15) throw new RangeError("bounded fixed tick required");
-  let vx = ((input.right ? 1 : 0) - (input.left ? 1 : 0)) * CFG.speed;
-  let x = Math.max(0, Math.min(CFG.width-CFG.playerWidth, state.x + vx*dt));
-  let vy = state.vy, grounded = state.onGround;
-  if (input.jump && grounded) { vy = CFG.jump; grounded = false; }
-  const prevBottom = state.y + CFG.playerHeight;
-  vy = Math.min(950, vy + CFG.gravity * dt);
-  let y = state.y + vy * dt;
-  if (vy >= 0) {
-    for (const p of PLATFORMS) {
-      if (x + CFG.playerWidth > p.x && x < p.x+p.w &&
-          prevBottom <= p.y + 2 && y+CFG.playerHeight >= p.y) {
-        if (y >= p.y-CFG.playerHeight && (!grounded || p.y-CFG.playerHeight < y+0.5)) {
-          y = p.y-CFG.playerHeight; vy = 0; grounded = true; break;
+  const held=Boolean(input.jump);
+  const justPressed=held && !Boolean(state.jumpHeld);
+  let coyoteLeft=state.onGround ? CFG.coyoteTicks : Math.max(0,(state.coyoteLeft ?? 0)-1);
+  let bufferLeft=justPressed ? CFG.bufferTicks : Math.max(0,(state.bufferLeft ?? 0)-1);
+  const vx=((input.right ? 1 : 0) - (input.left ? 1 : 0))*CFG.speed;
+  const x=Math.max(0,Math.min(CFG.width-CFG.playerWidth,state.x+vx*dt));
+  let y=state.y,vy=state.vy,grounded=state.onGround;
+  let jumpCut=Boolean(state.jumpCut);
+  if(bufferLeft>0 && coyoteLeft>0) {
+    vy=CFG.jump;grounded=false;coyoteLeft=0;bufferLeft=0;jumpCut=false;
+  } else if(!held && state.jumpHeld && vy<0 && !jumpCut) {
+    vy*=CFG.jumpReleaseMultiplier;
+    jumpCut=true;
+  }
+  const prevBottom=y+CFG.playerHeight;
+  vy=Math.min(950,vy+CFG.gravity*dt);
+  y+=vy*dt;
+  if(vy>=0){
+    for(const p of PLATFORMS){
+      if(x+CFG.playerWidth>p.x && x<p.x+p.w &&
+          prevBottom <= p.y + 2 && y+CFG.playerHeight>=p.y &&
+          y>=p.y-CFG.playerHeight){
+        y=p.y-CFG.playerHeight;vy=0;grounded=true;coyoteLeft=CFG.coyoteTicks;
+        // Pre-landing jump presses execute as soon as a valid platform is hit.
+        if(bufferLeft>0){
+          vy=CFG.jump;grounded=false;bufferLeft=0;coyoteLeft=0;jumpCut=false;
         }
+        break;
       }
     }
   }
-  if (vy !== 0) grounded = false;
-  let checkpointActive = state.checkpointActive;
-  if (!checkpointActive && grounded && x >= CFG.checkpointX && x <= 1390) checkpointActive=true;
-  if (y > CFG.height + 100) {
-    const fresh = initialState(checkpointActive ? encodeCheckpoint() : null);
-    return {...fresh, deaths:state.deaths+1, ticks:state.ticks+1};
+  if(vy!==0) grounded=false;
+  let checkpointActive=state.checkpointActive;
+  if(!checkpointActive && grounded && x>=CFG.checkpointX && x<=1390) checkpointActive=true;
+  if(y>CFG.height+100){
+    const fresh=initialState(checkpointActive?encodeCheckpoint():null);
+    return {...fresh,deaths:state.deaths+1,ticks:state.ticks+1};
   }
-  const camera = Math.max(0,Math.min(CFG.width-CFG.viewport,x-280));
-  const phase = x >= CFG.finishX && grounded ? "COMPLETED" : "PLAYING";
+  const camera=Math.max(0,Math.min(CFG.width-CFG.viewport,x-280));
+  const phase=x>=CFG.finishX && grounded ? "COMPLETED" : "PLAYING";
   return {phase,x,y,vx,vy,onGround:grounded,checkpointActive,camera,
-    deaths:state.deaths,ticks:state.ticks+1};
+    deaths:state.deaths,ticks:state.ticks+1,coyoteLeft,bufferLeft,
+    jumpHeld:held,jumpCut};
 }
