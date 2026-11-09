@@ -175,18 +175,36 @@ def run(args):
                  ("index.html","core.mjs","art.mjs","main.mjs","style.css"))
             context.close()
 
-            broken=browser.new_context()
-            missing=broken.new_page()
-            missing.route("**/core.mjs",lambda r:r.abort())
-            missing.goto(url,wait_until="load")
-            missing.wait_for_timeout(300)
-            assert missing.evaluate("typeof window.__niloReadback")=="undefined"
-            report["checks"]["missing_module_not_playable"]="PASS_OBSERVED"
-            report["last_stage"]="module-negative"
+            # Physical, disposable source mutant: reference a non-existent
+            # imported module. This tests real HTTP 404 and failed module
+            # evaluation, not route-pattern matching or an injected DOM.
+            with tempfile.TemporaryDirectory(prefix="nilo-missing-module-") as temp:
+                target=Path(temp)/"web"
+                shutil.copytree(ROOT/"web",target)
+                original=(target/"main.mjs").read_text("utf-8")
+                needle='from "./core.mjs"'
+                assert original.count(needle)==1,"module import mutation anchor changed"
+                (target/"main.mjs").write_text(
+                    original.replace(needle,'from "./missing-core.mjs"'),encoding="utf-8")
+                with serve(target) as missing_url:
+                    broken=browser.new_context()
+                    missing=broken.new_page()
+                    missing_responses=[]
+                    missing.on("response",lambda r:missing_responses.append(
+                        (r.status,r.url)) if "missing-core.mjs" in r.url else None)
+                    response=missing.goto(missing_url,wait_until="load",timeout=12000)
+                    assert response and response.status==200
+                    missing.wait_for_timeout(350)
+                    assert (404,missing_url.replace("index.html","missing-core.mjs")) in missing_responses, (
+                        "missing module must receive real HTTP 404: "+repr(missing_responses))
+                    assert missing.evaluate("typeof window.__niloReadback")=="undefined", (
+                        "missing original source dependency must not initialize playable state")
+                    report["checks"]["missing_module_not_playable"]="KILLED_BY_HTTP_404"
+                    report["last_stage"]="module-negative"
+                    broken.close()
             if args.stage=="module-negative":
                 report["status"]="PASS_SCOPED_BROWSER_MODULE_NEGATIVE"
                 return
-            broken.close()
 
             mobile=browser.new_context(viewport={"width":390,"height":844},device_scale_factor=1)
             page2=mobile.new_page()
