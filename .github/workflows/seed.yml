@@ -95,6 +95,14 @@ jobs:
         run: python tests/browser-e2e.py --stage forged --out /tmp/nilo-browser-forged
       - name: Verify gameplay completes from genuine saved checkpoint
         run: python tests/browser-e2e.py --stage finish --out /tmp/nilo-browser-finish
+      - name: Prove missing dependency mutation is physical and isolated
+        run: python tests/browser-e2e.py --stage module-source --out /tmp/nilo-module-source
+      - name: Prove browser requests the missing imported dependency
+        run: python tests/browser-e2e.py --stage module-request --out /tmp/nilo-module-request
+      - name: Prove HTTP server returned 404 for missing module
+        run: python tests/browser-e2e.py --stage module-status --out /tmp/nilo-module-status
+      - name: Prove missing dependency prevents playable initialization
+        run: python tests/browser-e2e.py --stage module-readback --out /tmp/nilo-module-readback
       - name: Verify missing imported module cannot produce playable state
         run: python tests/browser-e2e.py --stage module-negative --out /tmp/nilo-module-negative
       - name: Verify mobile screen explicitly unsupported and capture screenshot

@@ -193,6 +193,11 @@ def run(args):
                 assert original.count(needle)==1,"module import mutation anchor changed"
                 (target/"main.mjs").write_text(
                     original.replace(needle,'from "./missing-core.mjs"'),encoding="utf-8")
+                assert not (target/"missing-core.mjs").exists(),"negative must not create a replacement module"
+                if args.stage=="module-source":
+                    report["last_stage"]="module-source"
+                    report["status"]="PASS_SCOPED_MODULE_SOURCE_MUTANT"
+                    return
                 server_events=[]
                 with serve(target,server_events) as missing_url:
                     broken=browser.new_context()
@@ -212,9 +217,21 @@ def run(args):
                         "readback_type":reported,
                         "http_responses":server_events}
                     broken.close()
+                    report["last_stage"]="module-request"
                     assert module_requested,"browser must request the physically missing module"
+                    if args.stage=="module-request":
+                        report["status"]="PASS_SCOPED_MODULE_REQUEST"
+                        return
+                    report["last_stage"]="module-status"
                     assert module_404,"server must observe real HTTP 404 for requested dependency"
+                    if args.stage=="module-status":
+                        report["status"]="PASS_SCOPED_MODULE_STATUS"
+                        return
+                    report["last_stage"]="module-readback"
                     assert reported=="undefined","missing dependency must not initialize playable state"
+                    if args.stage=="module-readback":
+                        report["status"]="PASS_SCOPED_MODULE_READBACK"
+                        return
                     report["checks"]["missing_module_not_playable"]="KILLED_BY_HTTP_404"
                     report["last_stage"]="module-negative"
             if args.stage=="module-negative":
@@ -272,5 +289,5 @@ if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--out",default="artifacts/browser-lv01")
     p.add_argument("--physical-mutant",action="store_true")
-    p.add_argument("--stage",choices=("smoke","checkpoint","reload","forged","finish","module-negative","negative","complete"),default="complete")
+    p.add_argument("--stage",choices=("smoke","checkpoint","reload","forged","finish","module-source","module-request","module-status","module-readback","module-negative","negative","complete"),default="complete")
     run(p.parse_args())
