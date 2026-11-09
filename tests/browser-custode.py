@@ -29,6 +29,7 @@ def win(page,report):
         report['repairs'].append({'count':repair,'phase':s(page)['boss']['phase']})
     assert s(page)['phase']=='COMPLETED' and s(page)['boss']['phase']=='VICTORY'
     assert 'SECONDA ORA RESTITUITA' in page.locator('#hud').inner_text()
+    assert 'ORA II' in page.locator('#scene-chapter').inner_text()
 def run(args):
     out=Path(args.out).resolve();out.mkdir(parents=True,exist_ok=True)
     sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()

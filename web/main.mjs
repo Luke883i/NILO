@@ -7,7 +7,8 @@ const hud = document.querySelector("#hud");
 const announcement = document.querySelector("#announcement");
 const sceneTitle=document.querySelector("#scene-title");
 const sceneHint=document.querySelector("#scene-hint");
-if(!sceneTitle||!sceneHint)throw new Error("Narrative scene cues unavailable");
+const sceneChapter=document.querySelector("#scene-chapter");
+if(!sceneTitle||!sceneHint||!sceneChapter)throw new Error("Narrative scene cues unavailable");
 if (!ctx) throw new Error("Canvas2D unavailable; no false playable claim");
 const STORE = "nilo.checkpoint.v1";
 const STORE_LV02 = "nilo.checkpoint.lv02.v1";
@@ -126,6 +127,7 @@ function frame(now) {
   if(cue.id!==lastCue){
     lastCue=cue.id;
     sceneTitle.textContent=cue.title;
+    sceneChapter.textContent=state.level==='LV-02'?'ORA II · CANALI DEI MINUTI':'ORA I · CORTILE DELLE LANCETTE';
     sceneHint.textContent=cue.hint;
   }
   paint();requestAnimationFrame(frame);
