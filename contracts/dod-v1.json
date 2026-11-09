@@ -1,6 +1,6 @@
 {
   "schema": "nilo.reticular-dod/1",
-  "version": 1,
+  "version": 2,
   "root": "G_CONTRACT_DEMONSTRATED",
   "seed_goal": "G_SEED_SOURCE",
   "qualification": "ALL_GATES_NONCOMPENSATORY",
@@ -330,13 +330,84 @@
       "id": "G_CONTRACT_DEMONSTRATED",
       "kind": "AND",
       "depends_on": [
-        "G_FULL_GAME",
+        "G_BETA_RELEASE",
         "G_SUPPLY_CHAIN",
         "G_RELEASE"
       ],
       "claim": "initial six-level semantic game contract demonstrated end-to-end",
       "baseline_status": "BLOCKED",
       "authorization": "NONE"
+    },
+    {
+      "id": "Q01",
+      "kind": "LEAF",
+      "plane": "PRODUCT",
+      "claim": "Beta scope, six levels, three bosses, supported devices, exclusion boundaries and narrative approved by actual author",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "Author signs exact beta content/version/target-device matrix and safety/experience exclusions",
+      "witness": null
+    },
+    {
+      "id": "Q02",
+      "kind": "LEAF",
+      "plane": "BEHAVIOR",
+      "claim": "Playwright or equivalent real-origin browser flows cover all six levels, three boss outcomes, checkpoint reload, corruption and recovery",
+      "baseline_status": "NOT_RUN",
+      "oracle": "Test uses actual URL/module load, player input and captures video/screenshots/receipts bound to source SHA",
+      "witness": null
+    },
+    {
+      "id": "Q03",
+      "kind": "LEAF",
+      "plane": "UX_ACCESSIBILITY",
+      "claim": "Keyboard, screen reader alternative, contrast, readable mobile presentation or explicit mobile exclusion, novice player comprehension",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "Observed task completion and independent accessibility review with documented supported platforms",
+      "witness": null
+    },
+    {
+      "id": "Q04",
+      "kind": "LEAF",
+      "plane": "RELIABILITY_SECURITY",
+      "claim": "Frame pacing, input latency, crashes, persistence failure, offline behavior and third-party/network policy within approved budgets",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "Negative tests, measured p95/p99 performance, no unexplained errors or unauthorized outbound requests",
+      "witness": null
+    },
+    {
+      "id": "Q05",
+      "kind": "LEAF",
+      "plane": "PROVENANCE",
+      "claim": "Exact package/build SHA, resolved SBOM, asset origin/licenses, browser/OS observation and rollback plan",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "Reproduce artifact from exact HEAD and trace each included asset and resolved dependency with human license clearance",
+      "witness": null
+    },
+    {
+      "id": "Q06",
+      "kind": "LEAF",
+      "plane": "GOVERNANCE",
+      "claim": "Required check enforcement, independent code and product approval, distribution decision and beta release notes",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "oracle": "Read-only observed protections, non-author reviewer, release owner decision and rollback verification",
+      "witness": null
+    },
+    {
+      "id": "G_BETA_RELEASE",
+      "kind": "AND",
+      "depends_on": [
+        "G_FULL_GAME",
+        "Q01",
+        "Q02",
+        "Q03",
+        "Q04",
+        "Q05",
+        "Q06"
+      ],
+      "claim": "Releasable six-level, three-boss NILO game beta under an explicit audience/platform scope; never inferred from the seed prologue",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
     }
-  ]
+  ],
+  "beta_goal": "G_BETA_RELEASE"
 }

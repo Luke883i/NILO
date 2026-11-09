@@ -31,11 +31,12 @@ export function audit({contract,dod,chain,refs,bom,pkg}) {
     contract.slice.acceptance_oracles.some(x=>x.type==="REAL_SOURCE_MUTATION"));
   fail("effects",contract?.gameplay?.security?.includes("no telemetry")&&contract?.permissions?.not_allowed?.includes("release"));
   fail("dod-shape",dod?.schema==="nilo.reticular-dod/1"&&dod?.root==="G_CONTRACT_DEMONSTRATED"&&
-    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.authority==="NONE"&&dod?.nodes?.length===33);
+    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===40);
   const ids=(dod?.nodes||[]).map(n=>n.id),nodes=new Map((dod?.nodes||[]).map(n=>[n.id,n]));
   fail("dod-identities",distinct(ids));
-  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===8&&
-    nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_FULL_GAME,G_SUPPLY_CHAIN,G_RELEASE");
+  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===9&&
+    nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_BETA_RELEASE,G_SUPPLY_CHAIN,G_RELEASE"&&
+    nodes.get("G_BETA_RELEASE")?.depends_on?.join(",")==="G_FULL_GAME,Q01,Q02,Q03,Q04,Q05,Q06");
   const visit=new Set(),stack=new Set(),reachable=new Set();
   const walk=id=>{if(stack.has(id)){errors.push("dod-cycle");return;}if(visit.has(id))return;
     const n=nodes.get(id);if(!n){errors.push("dod-dangling:"+id);return;}
