@@ -34,12 +34,16 @@
         "web/core.mjs",
         "web/main.mjs",
         "web/art.mjs",
-        "web/index.html"
+        "web/index.html",
+        "web/levels/custode.mjs"
       ],
       "tests": [
         "tests/lv-02.test.mjs",
         "tests/lv-02-mutation.test.mjs",
-        "tests/browser-lv-02.py"
+        "tests/browser-lv-02.py",
+        "tests/custode.test.mjs",
+        "tests/custode-mutation.test.mjs",
+        "tests/browser-custode.py"
       ]
     },
     {
@@ -232,12 +236,33 @@
         "web/levels/lv-02.mjs",
         "web/core.mjs",
         "web/main.mjs",
-        "web/art.mjs"
+        "web/art.mjs",
+        "web/levels/custode.mjs"
       ],
       "tests": [
         "tests/lv-02.test.mjs",
         "tests/lv-02-mutation.test.mjs",
-        "tests/browser-lv-02.py"
+        "tests/browser-lv-02.py",
+        "tests/custode.test.mjs",
+        "tests/browser-custode.py"
+      ],
+      "authority": "HUMAN_AND_BROWSER_REQUIRED",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-LV02-06",
+      "level": "LV-02",
+      "sources": [
+        "web/levels/custode.mjs",
+        "web/levels/lv-02.mjs",
+        "web/core.mjs",
+        "web/main.mjs",
+        "web/art.mjs"
+      ],
+      "tests": [
+        "tests/custode.test.mjs",
+        "tests/custode-mutation.test.mjs",
+        "tests/browser-custode.py"
       ],
       "authority": "HUMAN_AND_BROWSER_REQUIRED",
       "browser": "NOT_ATTESTED"
@@ -253,7 +278,9 @@
     "tests/semantic-campaign.test.mjs",
     "tests/experience.test.mjs",
     "tests/lv-02.test.mjs",
-    "tests/lv-02-mutation.test.mjs"
+    "tests/lv-02-mutation.test.mjs",
+    "tests/custode.test.mjs",
+    "tests/custode-mutation.test.mjs"
   ],
   "release_gate": "Q06",
   "interfaces": {
@@ -262,5 +289,5 @@
     "interaction": "web/main.mjs",
     "visual": "web/style.css"
   },
-  "notes": "Every product OR and LV ID must remain mapped; every live web file must be owned by at least one requirement. No static mapping proves runtime, user approval, licensed assets, or protected hosting. The artistic candidate is source-tested for layering/contrast and physically mutated, but OR-05 still requires independent human/browser observation; mobile touch remains unsupported. PR9: LV-02 is an independently source-tested level candidate; Custode boss and second hour remain sealed and UX/browser authority cannot be inferred from the map."
+  "notes": "Every product OR and LV ID must remain mapped; every live web file must be owned by at least one requirement. No static mapping proves runtime, user approval, licensed assets, or protected hosting. The artistic candidate is source-tested for layering/contrast and physically mutated, but OR-05 still requires independent human/browser observation; mobile touch remains unsupported. PR9: LV-02 is an independently source-tested level candidate; Custode boss and second hour remain sealed and UX/browser authority cannot be inferred from the map. PR10: boss is a pure LV02 state machine; E repair requires actual recovery, second hour only on VICTORY. No independent player acceptance."
 }

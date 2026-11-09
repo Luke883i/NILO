@@ -136,18 +136,18 @@
     {
       "id": "LV-02",
       "title": "Canali dei Minuti",
-      "story": "Minutes diverted from the city flow through clockwork canals. Nilo crosses the locks before the sealed Custode encounter.",
+      "story": "Cross the Canals, repair the Custode pendulum during safe windows and return the second hour.",
       "mechanics": [
         "shared run/jump/collision physics",
         "time-dependent moving bridge that carries player",
         "two signed current zones",
         "strict CP-02 checkpoint and reload",
         "distinct procedural canal renderer",
-        "sealed Custode; no boss fight"
+        "Custode telegraph, grounded strike, recovery repair on E, CP-02 retry"
       ],
       "boss": "CH-CUSTODE",
-      "design_status": "IMPLEMENTED_LEVEL_CANDIDATE_BOSS_NOT_IMPLEMENTED",
-      "exit": "reach the locked Custode gate; the second hour remains sealed until the boss encounter",
+      "design_status": "IMPLEMENTED_LEVEL_AND_BOSS_CANDIDATE_NOT_PLAYER_ACCEPTED",
+      "exit": "defeat Custode by two player-caused repairs, restoring second hour only on VICTORY",
       "acceptance_oracles": [
         {
           "id": "OR-LV02-01",
@@ -171,8 +171,13 @@
         },
         {
           "id": "OR-LV02-05",
-          "claim": "art and status do not falsely report Custode defeat or hour two recovered",
+          "claim": "hour two remains unavailable until physical Custode victory",
           "type": "UNIT_AND_BROWSER_AND_HUMAN_PENDING"
+        },
+        {
+          "id": "OR-LV02-06",
+          "claim": "Custode telegraph precedes physical strike; two repair key edges during distinct recovery windows win; two actual hits defeat; retry is CP-02 and pause is frozen",
+          "type": "UNIT_AND_BROWSER_AND_PHYSICAL_MUTATION_PLAYER_PENDING"
         }
       ]
     },
@@ -358,7 +363,7 @@
       "screen_reader_qualification": "NOT_OBSERVED",
       "mobile_touch_qualification": "EXPLICITLY_UNSUPPORTED"
     },
-    "current_scope": "LV-01 and LV-02 are source-implemented candidates. Four levels and all bosses remain unimplemented.",
+    "current_scope": "LV-01 and LV-02 playable source candidates; first boss Custode implemented. Four levels and two bosses are design only; no independent playtest.",
     "lv02": {
       "id": "I06",
       "status": "IMPLEMENTED_CANDIDATE_NOT_PLAYER_ACCEPTED",
@@ -372,14 +377,37 @@
         "flow-east",
         "flow-west"
       ],
-      "boss": "CH-CUSTODE DESIGN_ONLY",
-      "second_hour": "SEALED",
+      "boss": "CH-CUSTODE IMPLEMENTED_CANDIDATE",
+      "second_hour": "VICTORY_ONLY",
       "player_acceptance": "BLOCKED_EXTERNAL",
       "browser_oracle": "tests/browser-lv-02.py",
       "source_oracles": [
         "tests/lv-02.test.mjs",
         "tests/lv-02-mutation.test.mjs"
-      ]
+      ],
+      "boss_owner": "web/levels/custode.mjs",
+      "boss_oracles": [
+        "tests/custode.test.mjs",
+        "tests/custode-mutation.test.mjs",
+        "tests/browser-custode.py"
+      ],
+      "boss_quality": "BLOCKED_EXTERNAL"
+    },
+    "custode": {
+      "id": "I07",
+      "status": "IMPLEMENTED_CANDIDATE_NOT_PLAYER_ACCEPTED",
+      "level": "LV-02",
+      "owner": "web/levels/custode.mjs",
+      "input": "KeyE one-shot repair",
+      "telegraph_ticks": 60,
+      "strike_ticks": 18,
+      "recovery_ticks": 90,
+      "required_repairs": 2,
+      "max_hits": 2,
+      "second_hour": "VICTORY_ONLY",
+      "checkpoint": "CP-02_NOT_VICTORY_RECEIPT",
+      "player_acceptance": "BLOCKED_EXTERNAL",
+      "browser_oracle": "tests/browser-custode.py"
     }
   },
   "slice": {

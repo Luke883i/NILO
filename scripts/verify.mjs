@@ -7,6 +7,7 @@ import {validateIterationHypothesis} from "./semantic-campaign.mjs";
 import {CFG} from "../web/core.mjs";
 import {LV02,lv02Surfaces,currentForceAt,decodeLV02Checkpoint} from "../web/levels/lv-02.mjs";
 import {ART_CUES,ART_SIGNALS,ART_IDENTITY} from "../web/art.mjs";
+import {CUSTODE,initialCustode,enterCustode,advanceCustode} from "../web/levels/custode.mjs";
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"..");
 const raw=p=>JSON.parse(readFileSync(resolve(ROOT,p),"utf8"));
 export const load=()=>({
@@ -56,13 +57,24 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
    canal?.status==="IMPLEMENTED_CANDIDATE_NOT_PLAYER_ACCEPTED"&&
    canal?.checkpoint_key==="nilo.checkpoint.lv02.v1"&&canal?.moving_platform===LV02.moving.id&&
    canal?.currents?.join(",")===LV02.currents.map(x=>x.id).join(",")&&
-   canal?.boss==="CH-CUSTODE DESIGN_ONLY"&&canal?.second_hour==="SEALED"&&
+   canal?.boss==="CH-CUSTODE IMPLEMENTED_CANDIDATE"&&canal?.second_hour==="VICTORY_ONLY"&&
    canal?.player_acceptance==="BLOCKED_EXTERNAL"&&
    canal?.browser_oracle==="tests/browser-lv-02.py"&&
    lev?.design_status==="IMPLEMENTED_LEVEL_CANDIDATE_BOSS_NOT_IMPLEMENTED"&&
-   lev?.acceptance_oracles?.length===5&&lev?.exit?.includes("second hour remains sealed")&&
+   lev?.acceptance_oracles?.length===6&&lev?.exit?.includes("restoring second hour only on VICTORY")&&
    lv02Surfaces(100).some(p=>p.moving)&&currentForceAt(620)===52&&currentForceAt(1680)===-38&&
    decodeLV02Checkpoint('{"version":1,"level":"LV-01","checkpointId":"CP-02"}')===null);
+  const keeper=contract?.gameplay?.custode;
+  fail("custode-source-state-boundary",
+    keeper?.id==="I07"&&keeper?.owner==="web/levels/custode.mjs"&&
+    keeper?.status==="IMPLEMENTED_CANDIDATE_NOT_PLAYER_ACCEPTED"&&
+    keeper?.telegraph_ticks===CUSTODE.telegraphTicks&&keeper?.strike_ticks===CUSTODE.strikeTicks&&
+    keeper?.recovery_ticks===CUSTODE.recoveryTicks&&
+    keeper?.required_repairs===CUSTODE.requiredRepairs&&keeper?.max_hits===CUSTODE.maxHits&&
+    keeper?.second_hour==="VICTORY_ONLY"&&keeper?.player_acceptance==="BLOCKED_EXTERNAL"&&
+    keeper?.browser_oracle==="tests/browser-custode.py"&&
+    enterCustode(initialCustode()).phase==="TELEGRAPH"&&
+    advanceCustode(initialCustode(),{repairPressed:true,grounded:true,nearMechanism:true}).repairs===0);
   const chars=contract?.characters||[],levels=contract?.levels||[];
   const charIds=chars.map(x=>x.id),levelIds=levels.map(x=>x.id);
   fail("characters",chars.length===6&&distinct(charIds)&&chars.every(x=>x.name&&x.role&&x.motivation&&x.silhouette));

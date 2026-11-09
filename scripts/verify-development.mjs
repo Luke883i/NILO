@@ -58,8 +58,14 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
     lv02?.state==="IMPLEMENTED_CANDIDATE"&&
     ["tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py"].every(t=>lv02.tests?.includes(t))&&
     lv02.source?.includes("web/levels/lv-02.mjs")&&
-    ["OR-LV02-01","OR-LV02-02","OR-LV02-03","OR-LV02-04","OR-LV02-05"].every(id=>
+    ["OR-LV02-01","OR-LV02-02","OR-LV02-03","OR-LV02-04","OR-LV02-05","OR-LV02-06"].every(id=>
       r.some(x=>x.id===id&&x.sources?.includes("web/levels/lv-02.mjs"))));
+  const bossOracle=r.find(x=>x.id==="OR-LV02-06");
+  bad("bridge-custode-witness",lv02?.source?.includes("web/levels/custode.mjs")&&
+    ["tests/custode.test.mjs","tests/custode-mutation.test.mjs","tests/browser-custode.py"]
+      .every(t=>lv02?.tests?.includes(t)&&bossOracle?.tests?.includes(t))&&
+    bossOracle?.sources?.includes("web/levels/custode.mjs")&&
+    bossOracle?.authority==="HUMAN_AND_BROWSER_REQUIRED"&&bossOracle?.browser==="NOT_ATTESTED");
   bad("bridge-narrative",bridge?.narrative_state==="DRAFT_AUTHOR_UNAPPROVED"&&contract?.goal?.human_approved===false);
   const rootAllowed=new Set([".git",".github",".gitignore","README.md","package.json","bom","contracts","docs","provenance","scripts","standards","tests","web","node_modules","artifacts","coverage",".DS_Store"]);
   bad("bridge-root-minimal",readdirSync(root).every(x=>rootAllowed.has(x)));
