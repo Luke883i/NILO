@@ -208,6 +208,11 @@
       "from": "L14",
       "to": "L08",
       "relation": "constrains_if_applicable"
+    },
+    {
+      "from": "L07",
+      "to": "L10",
+      "relation": "tests_require_exact_git_revision_and_ci_lineage"
     }
   ],
   "claims": [
