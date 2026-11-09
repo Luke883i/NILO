@@ -42,7 +42,7 @@ test('PR8 original renderer negative controls kill removed character labels, led
      ['invisible-ledge','  ledgeCues(c,surfaces,state);','  void platforms;'],
      ['missing-hours','  timeLanterns(c,state);','  void state;'],
      ['wrong-story-ending',"id:'CUE-END'","id:'CUE-FAKE'"],
-     ['premature-hour-award',"const x=699+j*38,active=(j===0&&(state.level==='LV-02'||state.phase==='COMPLETED'))||\n      (j===1&&state.level==='LV-02'&&state.boss?.phase==='VICTORY');",
+     ['premature-hour-award',"const x=699+j*38,active=(j===0&&(state.level!=='LV-01'||state.phase==='COMPLETED'))||\n      (j===1&&(state.level==='LV-03'||state.level==='LV-02'&&state.boss?.phase==='VICTORY'))||\n      (j===2&&state.level==='LV-03'&&state.phase==='COMPLETED');",
        "const x=699+j*38,active=j===0&&state.checkpointActive;"],
      ['stale-repair-prompt',"title:'PERNO · SEGNATEMPO RIACCESO'","title:'PERNO · RIACCENDI ANCORA'"]
    ];

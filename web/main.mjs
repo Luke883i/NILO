@@ -137,7 +137,7 @@ function frame(now) {
       state.checkpointActive?"Canali dei Minuti · checkpoint LV-02 salvato · prosegui al molo":
       "Canali dei Minuti · usa la piattaforma mobile e supera le correnti"):
     state.phase==="COMPLETED"?
-      "Prologo concluso · premi N per LV-02 · altri quattro livelli non disponibili":
+      "Prologo concluso · premi N per LV-02 · altri tre livelli non disponibili":
     state.checkpointActive?"Prima ora · checkpoint salvato · raggiungi il portale":
     state.x>750?"Segui il segnatempo dorato": "Prima ora · segui la freccia →";
   if(lastTip!==tip){lastTip=tip;hud.textContent="NILO · "+(state.phase==="PAUSED"?"Pausa":tip);}

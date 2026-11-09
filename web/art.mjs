@@ -186,7 +186,7 @@ export function sceneCue(state) {
     return LV02_CUES.find(c=>state.x>=c.from&&state.x<c.until)||LV02_CUES[3];
   }
   if(state.phase==='COMPLETED')return Object.freeze({id:'CUE-END',role:'CH-NILO',
-    title:'PRIMA ORA RESTITUITA',hint:'Hai restituito la prima ora. Premi N per LV-02; gli altri quattro livelli sono in sviluppo.'});
+    title:'PRIMA ORA RESTITUITA',hint:'Hai restituito la prima ora. Premi N per LV-02; gli altri tre livelli sono in sviluppo.'});
   if(state.phase==='PAUSED')return Object.freeze({id:'CUE-PAUSE',role:'CH-NILO',
     title:'TEMPO IN PAUSA',hint:'Premi P per riprendere oppure R per ricominciare.'});
   if(state.checkpointActive&&state.x>=1200&&state.x<1550)
