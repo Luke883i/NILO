@@ -132,6 +132,8 @@ jobs:
         run: python tests/browser-e2e.py --stage input-continuity --out /tmp/nilo-input-continuity --physical-mutant
       - name: Diagnostic - original six-jump route to finish before any auxiliary contexts
         run: python tests/browser-e2e.py --stage finish --out /tmp/nilo-debug-finish
+      - name: Diagnostic - original missing-module oracle before mobile
+        run: python tests/browser-e2e.py --stage module-negative --out /tmp/nilo-debug-module
       - name: Diagnostic - original module and mobile negative oracles
         run: python tests/browser-e2e.py --stage negative --out /tmp/nilo-debug-negative
       - name: Full LV01 real-origin E2E including all prior negative oracles
