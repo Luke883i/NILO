@@ -81,3 +81,29 @@ test('PR12 RED: pause, restart and fall cannot manufacture a toggle or third hou
  assert.equal(fallen.phase,'PLAYING');
  assert.equal(fallen.doorsPassed,1);
 });
+
+test('PR12 complete playable physical route: four gaps, two actual switches and optional third-hour exit',()=>{
+ let s=initialLevelState('LV-03'),idx=0;
+ const jumps=[260,760,1300,1750],switches=[false,false];
+ let gotCP=false,gotLog=false;
+ for(let t=0;t<1300&&s.phase==='PLAYING';t++){
+   const jump=idx<jumps.length&&s.onGround&&s.x>=jumps[idx];
+   if(jump)idx++;
+   const lamp1=!switches[0]&&s.onGround&&s.x>=535&&s.x<=630;
+   const lamp2=!switches[1]&&s.onGround&&s.x>=1440&&s.x<=1530;
+   const ledger=!gotLog&&s.onGround&&s.x>=1050&&s.x<=1100;
+   const interact=lamp1||lamp2||ledger;
+   if(lamp1)switches[0]=true;
+   if(lamp2)switches[1]=true;
+   s=step(s,{right:true,jump,jumpPressed:jump,interactPressed:interact});
+   gotCP ||= s.checkpointActive;
+   gotLog ||= s.archiveLog;
+ }
+ assert.equal(s.phase,'COMPLETED','actual route did not reach and open both archive gates');
+ assert.equal(s.doorsPassed,2);
+ assert.equal(s.lightMode,'LIGHT');
+ assert.equal(s.switchesUsed,2);
+ assert.equal(idx,4);
+ assert(gotCP&&gotLog&&switches.every(Boolean));
+ assert.equal(s.deaths,0);
+});
