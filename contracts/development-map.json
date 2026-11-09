@@ -48,9 +48,19 @@
     },
     {
       "id": "LV-03",
-      "state": "DESIGN_ONLY",
-      "source": [],
-      "tests": []
+      "state": "IMPLEMENTED_CANDIDATE",
+      "source": [
+        "web/levels/lv-03.mjs",
+        "web/core.mjs",
+        "web/main.mjs",
+        "web/art.mjs",
+        "web/index.html"
+      ],
+      "tests": [
+        "tests/lv-03.test.mjs",
+        "tests/lv-03-mutation.test.mjs",
+        "tests/browser-lv-03.py"
+      ]
     },
     {
       "id": "LV-04",
@@ -266,6 +276,114 @@
       ],
       "authority": "HUMAN_AND_BROWSER_REQUIRED",
       "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-LV03-01",
+      "level": "LV-03",
+      "sources": [
+        "web/levels/lv-03.mjs",
+        "web/core.mjs",
+        "web/main.mjs",
+        "web/art.mjs",
+        "web/index.html"
+      ],
+      "tests": [
+        "tests/lv-03.test.mjs",
+        "tests/lv-03-mutation.test.mjs",
+        "tests/browser-lv-03.py"
+      ],
+      "authority": "MODEL_TEST_ONLY",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-LV03-02",
+      "level": "LV-03",
+      "sources": [
+        "web/levels/lv-03.mjs",
+        "web/core.mjs",
+        "web/main.mjs",
+        "web/art.mjs",
+        "web/index.html"
+      ],
+      "tests": [
+        "tests/lv-03.test.mjs",
+        "tests/lv-03-mutation.test.mjs",
+        "tests/browser-lv-03.py"
+      ],
+      "authority": "MODEL_TEST_ONLY",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-LV03-03",
+      "level": "LV-03",
+      "sources": [
+        "web/levels/lv-03.mjs",
+        "web/core.mjs",
+        "web/main.mjs",
+        "web/art.mjs",
+        "web/index.html"
+      ],
+      "tests": [
+        "tests/lv-03.test.mjs",
+        "tests/lv-03-mutation.test.mjs",
+        "tests/browser-lv-03.py"
+      ],
+      "authority": "MODEL_TEST_ONLY",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-LV03-04",
+      "level": "LV-03",
+      "sources": [
+        "web/levels/lv-03.mjs",
+        "web/core.mjs",
+        "web/main.mjs",
+        "web/art.mjs",
+        "web/index.html"
+      ],
+      "tests": [
+        "tests/lv-03.test.mjs",
+        "tests/lv-03-mutation.test.mjs",
+        "tests/browser-lv-03.py"
+      ],
+      "authority": "MODEL_TEST_ONLY",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-LV03-05",
+      "level": "LV-03",
+      "sources": [
+        "web/levels/lv-03.mjs",
+        "web/core.mjs",
+        "web/main.mjs",
+        "web/art.mjs",
+        "web/index.html"
+      ],
+      "tests": [
+        "tests/lv-03.test.mjs",
+        "tests/lv-03-mutation.test.mjs",
+        "tests/browser-lv-03.py"
+      ],
+      "authority": "MODEL_TEST_ONLY",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-LV03-06",
+      "level": "LV-03",
+      "sources": [
+        "web/levels/lv-03.mjs",
+        "web/core.mjs",
+        "web/main.mjs",
+        "web/art.mjs",
+        "web/index.html"
+      ],
+      "tests": [
+        "tests/lv-03.test.mjs",
+        "tests/lv-03-mutation.test.mjs",
+        "tests/browser-lv-03.py"
+      ],
+      "authority": "HUMAN_AND_BROWSER_REQUIRED",
+      "browser": "NOT_ATTESTED"
     }
   ],
   "narrative_state": "DRAFT_AUTHOR_UNAPPROVED",
@@ -280,7 +398,9 @@
     "tests/lv-02.test.mjs",
     "tests/lv-02-mutation.test.mjs",
     "tests/custode.test.mjs",
-    "tests/custode-mutation.test.mjs"
+    "tests/custode-mutation.test.mjs",
+    "tests/lv-03.test.mjs",
+    "tests/lv-03-mutation.test.mjs"
   ],
   "release_gate": "Q06",
   "interfaces": {
@@ -289,7 +409,7 @@
     "interaction": "web/main.mjs",
     "visual": "web/style.css"
   },
-  "notes": "Every product OR and LV ID must remain mapped; every live web file must be owned by at least one requirement. No static mapping proves runtime, user approval, licensed assets, or protected hosting. The artistic candidate is source-tested for layering/contrast and physically mutated, but OR-05 still requires independent human/browser observation; mobile touch remains unsupported. PR9: LV-02 is an independently source-tested level candidate; Custode boss and second hour remain sealed and UX/browser authority cannot be inferred from the map. PR10: boss is a pure LV02 state machine; E repair requires actual recovery, second hour only on VICTORY. No independent player acceptance.",
+  "notes": "Every product OR and LV ID must remain mapped; every live web file must be owned by at least one requirement. No static mapping proves runtime, user approval, licensed assets, or protected hosting. The artistic candidate is source-tested for layering/contrast and physically mutated, but OR-05 still requires independent human/browser observation; mobile touch remains unsupported. PR9: LV-02 is an independently source-tested level candidate; Custode boss and second hour remain sealed and UX/browser authority cannot be inferred from the map. PR10: boss is a pure LV02 state machine; E repair requires actual recovery, second hour only on VICTORY. No independent player acceptance. PR12 physical two-mode gates, CP03 and third-hour local evidence; no independent beta or trusted win provenance.",
   "delivery": {
     "id": "I07-D",
     "authority": "SOURCE_AND_BROWSER_TESTS_NOT_EXTERNAL_ATTESTATION",
