@@ -132,6 +132,18 @@ jobs:
         run: python tests/browser-e2e.py --stage input-continuity --out /tmp/nilo-input-continuity --physical-mutant
       - name: Diagnostic - original six-jump route to finish before any auxiliary contexts
         run: python tests/browser-e2e.py --stage finish --out /tmp/nilo-debug-finish
+      - name: Diagnostic - Positive original run has no uncaught JavaScript error
+        run: python tests/browser-e2e.py --stage no-pageerrors --out /tmp/nilo-debug-no-pageerrors
+      - name: Diagnostic - Positive original run has no failed request
+        run: python tests/browser-e2e.py --stage no-requestfailures --out /tmp/nilo-debug-no-requestfailures
+      - name: Diagnostic - Disposable missing-module source mutant is real
+        run: python tests/browser-e2e.py --stage module-source --out /tmp/nilo-debug-module-source
+      - name: Diagnostic - Missing module is physically requested
+        run: python tests/browser-e2e.py --stage module-request --out /tmp/nilo-debug-module-request
+      - name: Diagnostic - Server observes real HTTP 404
+        run: python tests/browser-e2e.py --stage module-status --out /tmp/nilo-debug-module-status
+      - name: Diagnostic - Missing import prevents playable initialization
+        run: python tests/browser-e2e.py --stage module-readback --out /tmp/nilo-debug-module-readback
       - name: Diagnostic - original missing-module oracle before mobile
         run: python tests/browser-e2e.py --stage module-negative --out /tmp/nilo-debug-module
       - name: Diagnostic - original module and mobile negative oracles
