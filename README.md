@@ -1,25 +1,25 @@
 # NILO — La Fabbrica delle Ore
 
-An original 2D platform-game **candidate** and a traceability experiment: from narrative intent to gameplay, Git objects, tests, software dependencies, browser/runtime and applicable standards. The project is developed with the **CORA evidence-first method**, not by an autonomous CORA game generator.
+NILO è un **platform 2D originale in sviluppo**, con sei livelli e tre boss previsti. Oggi il prodotto dispone di **un prologo sperimentale**; gli altri cinque livelli e tutti i boss sono proposte narrative, non software giocabile.
 
-**PR1** seeds a proposed story (6 levels, 3 bosses), a falsifiable initial vertical-slice contract, a typed semantic composition graph, a design-phase CycloneDX BOM and an AND-dependency Definition of Done. Story names and characterizations are *creative drafts awaiting author approval*. A green seed test does not prove a finished or accessible game.
+| Piano | Che cos'è | Dove verificarlo |
+| --- | --- | --- |
+| **Prodotto** | Storia, personaggi, livelli, esperienza del giocatore | [Contratto creativo](contracts/nilo-semantic-v1.json) · [Descrizione](docs/PRODUCT_CONTRACT.md) |
+| **Software** | Gioco Canvas2D, fisica, checkpoint, HUD, sorgenti e test | [web/](web/) · [tests/](tests/) |
+| **Repository** | Git, DoD, tracciabilità, CI, SBOM, provenienza e decisioni | [Reticolo DoD](contracts/dod-v1.json) · [Bridge](contracts/development-map.json) · [Metodo](docs/ENGINEERING.md) |
 
-## Run and verify
+**Regola di sviluppo:** nessun comportamento dichiarato senza un collegamento obbligatorio tra requisito di prodotto, sorgente software e test/evidenza nel repository. `node scripts/verify.mjs` rifiuta le associazioni mancanti e le promozioni indebite.
 
-From the repository root with Node.js 20+ (no npm installation):
-
-```sh
-node scripts/verify.mjs
-node --test tests/*.test.mjs
-node scripts/evidence.mjs
-```
-
-If the `web/` slice exists, start a local origin and open `http://127.0.0.1:8000`:
+## Avvio e verifica
 
 ```sh
+# Dalla root del checkout: Node.js 20+, nessuna dipendenza npm runtime.
+npm run quality
 python3 -m http.server 8000 --directory web
 ```
 
-**Read by goal:** [Product / story and acceptance](docs/PRODUCT_CONTRACT.md) · [semantic-to-hardware evidence](docs/PROVENANCE.md) · [source contract](contracts/nilo-semantic-v1.json) · [backward DoD](contracts/dod-v1.json) · [normative applicability](standards/references.json).
+Apri `http://127.0.0.1:8000` in un browser autorizzato; usa **←/→ o A/D**, **Spazio/W** per saltare, **P** per la pausa, **R** per il restart. Il prologo è destinato in questa fase al **desktop con tastiera**: non sono implementati controlli touch né un'alternativa equivalente allo screen reader.
 
-**Source truth:** Git commit and observed test/CI receipts; draft prose, synthetic scenarios and standards links are not proof of real browser behavior, rights clearance, legal conformity, human approval or release authority.
+**Stato:** verifiche di sorgente e mutanti PR1 disponibili; screenshot e controlli in un harness Chromium locale sono diagnostica circoscritta, non un test browser HTTP certificato. Nessuna approvazione dell'autore, revisione umana indipendente o rilascio beta è attestata.
+
+Il **DoD beta** è `G_BETA_RELEASE`: sei livelli e tre boss realmente giocabili, test browser e UX indipendenti, build/SBOM e licenze verificabili, controlli qualità e autorizzazione esterna. Le fasi e le regole di avanzamento sono nella [guida ingegneristica](docs/ENGINEERING.md). CORA fornisce il metodo di assurance, **non** un certificato di qualità né un agente che scrive autonomamente il prodotto.

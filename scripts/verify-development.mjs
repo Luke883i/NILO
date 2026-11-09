@@ -24,7 +24,11 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
     :x.state==="DESIGN_ONLY"&&x.source?.length===0&&x.tests?.length===0));
   bad("bridge-no-runtime-promotion",r.every(x=>["MODEL_TEST_ONLY","LOCAL_SOURCE_MUTANT","HUMAN_AND_BROWSER_REQUIRED"].includes(x.authority)
     &&x.browser==="NOT_ATTESTED"&&x.level==="LV-01"));
-  const live=new Set(readdirSync(resolve(root,"web"),{withFileTypes:true}).filter(x=>x.isFile()).map(x=>"web/"+x.name));
+  const enumerate=(dir,pre="")=>readdirSync(dir,{withFileTypes:true}).flatMap(e=>{
+    const rel=pre+e.name,full=resolve(dir,e.name);
+    return e.isDirectory()?enumerate(full,rel+"/"):e.isFile()?["web/"+rel]:[];
+  });
+  const live=new Set(enumerate(resolve(root,"web")));
   const sources=new Set(r.flatMap(x=>x.sources||[]));
   const allSources=new Set([...sources,...l.flatMap(x=>x.source||[])]);
   bad("bridge-source-coverage",[...live].every(x=>sources.has(x))&&[...allSources].every(x=>live.has(x)));

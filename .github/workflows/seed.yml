@@ -26,6 +26,10 @@ jobs:
         run: node --test tests/core.test.mjs
       - name: Test contract, reticular DoD and S-BOM negative cases
         run: node --test tests/contracts.test.mjs
+      - name: Enforce product -> software -> repository bindings on every PR
+        run: |
+          node scripts/verify-development.mjs
+          node --test tests/development.test.mjs
       - name: Kill checkpoint-forgery source mutant
         env:
           NILO_MUTANT: forged-checkpoint
