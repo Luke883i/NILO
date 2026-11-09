@@ -9,7 +9,7 @@ const root=fileURLToPath(new URL('../',import.meta.url));
 test('physical contrast regression in actual pixel-art source is killed by original art test',()=>{
  const dir=mkdtempSync(join(tmpdir(),'nilo-pixel-mutant-'));
  try{
-  mkdirSync(join(dir,'web'));mkdirSync(join(dir,'tests'));
+  mkdirSync(join(dir,'web'));mkdirSync(join(dir,'tests'));mkdirSync(join(dir,'web','levels'));
   for(const file of ['web/art.mjs','web/core.mjs','web/levels/lv-02.mjs','tests/art.test.mjs']){
    writeFileSync(join(dir,file),readFileSync(resolve(root,file)));
   }
@@ -28,8 +28,8 @@ test('physical contrast regression in actual pixel-art source is killed by origi
 test('PR8 original renderer negative controls kill removed character labels, ledge signals, six-hour readback and story cues',()=>{
  const dir=mkdtempSync(join(tmpdir(),'nilo-art-semantic-mutants-'));
  try {
-   mkdirSync(join(dir,'web'));mkdirSync(join(dir,'tests'));
-   for(const file of ['web/art.mjs','web/core.mjs','tests/art.test.mjs'])
+   mkdirSync(join(dir,'web'));mkdirSync(join(dir,'tests'));mkdirSync(join(dir,'web','levels'));
+   for(const file of ['web/art.mjs','web/core.mjs','web/levels/lv-02.mjs','tests/art.test.mjs'])
      writeFileSync(join(dir,file),readFileSync(resolve(root,file)));
    writeFileSync(join(dir,'package.json'),JSON.stringify({type:'module'}));
    const env={...process.env};delete env.NODE_TEST_CONTEXT;
