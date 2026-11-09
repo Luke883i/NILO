@@ -49,6 +49,7 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
     r.find(x=>x.id==="OR-06")?.tests?.includes("tests/mutation.test.mjs")&&
     r.find(x=>x.id==="OR-05")?.tests?.includes("tests/browser-e2e.py") &&
     r.find(x=>x.id==="OR-03")?.tests?.includes("tests/browser-e2e.py") &&
+    r.find(x=>x.id==="OR-04")?.tests?.includes("tests/browser-e2e.py") &&
     r.find(x=>x.id==="OR-05")?.authority==="HUMAN_AND_BROWSER_REQUIRED");
   bad("bridge-narrative",bridge?.narrative_state==="DRAFT_AUTHOR_UNAPPROVED"&&contract?.goal?.human_approved===false);
   const rootAllowed=new Set([".git",".github",".gitignore","README.md","package.json","bom","contracts","docs","provenance","scripts","standards","tests","web","node_modules","artifacts","coverage",".DS_Store"]);

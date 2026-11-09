@@ -29,6 +29,11 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     feel.coyote_ticks===CFG.coyoteTicks&&feel.buffer_ticks===CFG.bufferTicks&&
     feel.short_hop_velocity_multiplier===CFG.jumpReleaseMultiplier&&
     feel.external_player_acceptance==="BLOCKED_EXTERNAL");
+  fail("game-feel-input-continuity",feel?.input_continuity?.event_model?.includes("fixed tick")&&
+    feel.input_continuity.transient_short_press?.includes("preserved")&&
+    feel.input_continuity.buffered_short_hop_max_apex_delta_px===10&&
+    feel.input_continuity.user_experience_approval==="BLOCKED_EXTERNAL"&&
+    feel.input_continuity.native_browser_witness==="tests/browser-e2e.py must run against exact PR SHA");
   const chars=contract?.characters||[],levels=contract?.levels||[];
   const charIds=chars.map(x=>x.id),levelIds=levels.map(x=>x.id);
   fail("characters",chars.length===6&&distinct(charIds)&&chars.every(x=>x.name&&x.role&&x.motivation&&x.silhouette));

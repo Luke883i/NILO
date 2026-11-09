@@ -93,3 +93,9 @@ test("browser evidence requires real test owner and never confers UX approval",(
  falsePass.bridge.requirements.find(x=>x.id==="OR-05").browser="PASS_INDEPENDENT";
  assert(validateBridge(falsePass).includes("bridge-no-runtime-promotion"));
 });
+
+test("PR7 browser input witness may not be silently removed from pause/restart oracle",()=>{
+ const x=base(),or=x.bridge.requirements.find(r=>r.id==="OR-04");
+ or.tests=or.tests.filter(t=>t!=="tests/browser-e2e.py");
+ assert(validateBridge(x).includes("bridge-model-witness"));
+});

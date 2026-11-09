@@ -263,7 +263,20 @@
         "tests/mutation.test.mjs",
         "tests/browser-e2e.py"
       ],
-      "external_player_acceptance": "BLOCKED_EXTERNAL"
+      "external_player_acceptance": "BLOCKED_EXTERNAL",
+      "input_continuity": {
+        "owner": "web/main.mjs + web/core.mjs; no second event engine",
+        "event_model": "native keyboard events delivered to fixed tick once; sampled held-state is separately preserved",
+        "transient_short_press": "preserved across event-loop frames until one simulation step",
+        "held_key_boundaries": [
+          "death respawn",
+          "KeyR restart",
+          "KeyP pause and resume"
+        ],
+        "buffered_short_hop_max_apex_delta_px": 10,
+        "native_browser_witness": "tests/browser-e2e.py must run against exact PR SHA",
+        "user_experience_approval": "BLOCKED_EXTERNAL"
+      }
     }
   },
   "slice": {
