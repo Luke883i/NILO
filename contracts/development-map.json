@@ -145,7 +145,8 @@
     "tests/development.test.mjs",
     "tests/art.test.mjs",
     "tests/art-mutation.test.mjs",
-    "tests/semantic-campaign.test.mjs"
+    "tests/semantic-campaign.test.mjs",
+    "tests/experience.test.mjs"
   ],
   "release_gate": "Q06",
   "interfaces": {

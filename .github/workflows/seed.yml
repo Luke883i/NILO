@@ -25,7 +25,7 @@ jobs:
       - name: Test deterministic playable physics and checkpoint
         run: node --test tests/core.test.mjs
       - name: Test contract, reticular DoD and S-BOM negative cases
-        run: node --test tests/contracts.test.mjs
+        run: node --test tests/contracts.test.mjs tests/experience.test.mjs
       - name: Enforce product -> software -> repository bindings on every PR
         run: |
           node scripts/verify-development.mjs

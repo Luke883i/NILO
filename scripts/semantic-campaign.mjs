@@ -41,7 +41,12 @@ export function run({count=10_000_000,seed=20261109,contract=source()}={}){
    const e=expected(vector,contract),actual=classify(vector,contract);
    if(e!==actual)mismatches++;
    if(e!==0)unqualified++;
-   for(const k of mutantNames)if((e&BITS[k])!==0)killed[k]++;
+   // Finite-model mutation: suppress one classifier bit and compare its
+   // actual mutated outcome with the separately declared expected mask.
+   for(const k of mutantNames){
+     const mutated=actual & ~BITS[k];
+     if((e&BITS[k])!==0 && mutated!==e)killed[k]++;
+   }
    if(!firstSeen.has(e)){firstSeen.set(e,n);novelty.push({case:n,signature:e});}
    hash=Math.imul(hash ^ ((e<<7)^actual^n),16777619)>>>0;
  }
@@ -53,7 +58,7 @@ export function run({count=10_000_000,seed=20261109,contract=source()}={}){
    model:'SEVEN_AXIS_PRESEEDED_HYPOTHETICAL_DESIGN_VECTORS_NOT_GAME_EXECUTIONS',
    oracle_mismatches:mismatches,nonzero_blocker_vectors:unqualified,
    distinct_normalized_signatures:firstSeen.size,
-   mutants:mutantNames.map(id=>({id,inject:'suppress_missing_obligation_flag',killed_vectors:killed[id],survivors_in_scope:0})),
+   mutants:mutantNames.map(id=>({id,inject:'classifier_bit_suppression_compared_to_reference_mask',killed_vectors:killed[id],survivors_in_scope:0})),
    novelty_in_final_100k:newInTail,bounded_tail_plateau:newInTail===0&&count>100_000,
    checksum_u32:hash.toString(16).padStart(8,'0'),catalog_sha256:catalogDigest,
    elapsed_ms:Math.round(performance.now()-start),
