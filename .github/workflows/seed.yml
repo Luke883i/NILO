@@ -95,7 +95,9 @@ jobs:
         run: python tests/browser-e2e.py --stage forged --out /tmp/nilo-browser-forged
       - name: Verify gameplay completes from genuine saved checkpoint
         run: python tests/browser-e2e.py --stage finish --out /tmp/nilo-browser-finish
-      - name: Verify missing module and mobile not-supported signals
+      - name: Verify missing imported module cannot produce playable state
+        run: python tests/browser-e2e.py --stage module-negative --out /tmp/nilo-module-negative
+      - name: Verify mobile screen explicitly unsupported and capture screenshot
         run: python tests/browser-e2e.py --stage negative --out /tmp/nilo-browser-negative
       - name: Kill physical checkpoint storage mutant using browser oracle
         run: python tests/browser-e2e.py --stage complete --out /tmp/nilo-browser-evidence --physical-mutant

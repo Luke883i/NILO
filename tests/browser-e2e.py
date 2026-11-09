@@ -182,6 +182,10 @@ def run(args):
             missing.wait_for_timeout(300)
             assert missing.evaluate("typeof window.__niloReadback")=="undefined"
             report["checks"]["missing_module_not_playable"]="PASS_OBSERVED"
+            report["last_stage"]="module-negative"
+            if args.stage=="module-negative":
+                report["status"]="PASS_SCOPED_BROWSER_MODULE_NEGATIVE"
+                return
             broken.close()
 
             mobile=browser.new_context(viewport={"width":390,"height":844},device_scale_factor=1)
@@ -235,5 +239,5 @@ if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--out",default="artifacts/browser-lv01")
     p.add_argument("--physical-mutant",action="store_true")
-    p.add_argument("--stage",choices=("smoke","checkpoint","reload","forged","finish","negative","complete"),default="complete")
+    p.add_argument("--stage",choices=("smoke","checkpoint","reload","forged","finish","module-negative","negative","complete"),default="complete")
     run(p.parse_args())
