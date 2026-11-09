@@ -59,6 +59,8 @@ test('PR8: rendered start, checkpoint and completion preserve visible roles and 
  const initial=recording(initialState());
  const labels=initial.filter(x=>x.kind==='fillText').map(x=>String(x.args[0]));
  assert(labels.includes('NILO')&&labels.includes('TICA'));
+ const birdLabel=initial.find(x=>x.kind==='fillText'&&x.args[0]==='TICA');
+ assert(birdLabel.args[1]>=20,'start-scene Tica name must not be clipped by the left viewport edge');
  assert(labels.some(x=>x.includes('LE SEI ORE')));
  assert(labels.some(x=>x.includes('PROLOGO')));
  const edge=initial.filter(x=>x.kind==='fillRect').some(x=>{

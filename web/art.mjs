@@ -185,7 +185,7 @@ function timeLanterns(c,state){
 function nameplates(c,state){
   const bob=(Math.floor(state.ticks/19)%2)*2;
   spriteLabel(c,state.x-7,state.y-35,'NILO',ART.brass);
-  spriteLabel(c,state.x-53,state.y-73-bob,'TICA',ART.teal);
+  spriteLabel(c,Math.max(14,state.x-53),state.y-73-bob,'TICA',ART.teal);
   if(state.camera>850||state.x>1100)spriteLabel(c,1323,326,'PERNO',ART.brass);
 }
 
