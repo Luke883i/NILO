@@ -1,0 +1,332 @@
+{
+  "schema": "nilo.semantic-contract/1",
+  "version": "0.1.0-seed",
+  "authority": "DRAFT_CREATIVE_PROPOSAL_REQUIRES_AUTHOR_REVIEW",
+  "origin": {
+    "project": "NILO — La Fabbrica delle Ore",
+    "repository": "https://github.com/Luke883i/NILO",
+    "source": "https://github.com/Luke883i/cora/blob/8fddf346a4bd6ed28fdf22db39e69504d6b15adf/docs/CONTINUOUS_DEVELOPMENT.md",
+    "source_heading": "LEVEL demonstration: Local Evidence, Verifiable Engineering Lifecycle",
+    "interpretation": "CORA defines a proposed game and proof method, not a completed game or a full narrative bible."
+  },
+  "goal": {
+    "id": "G_GAME",
+    "claim": "A new player can complete an original six-level 2D platform story, overcome three bosses, observe persistent checkpoints, receive accessible feedback and trace gameplay and assets to accepted requirements and independently witnessed execution.",
+    "acceptance": "G_CONTRACT_DEMONSTRATED",
+    "human_approved": false
+  },
+  "story": {
+    "id": "STORY-01",
+    "status": "PROPOSED_NOT_AUTHOR_APPROVED",
+    "setting": "Ramecittà, a town where the Factory of Hours distributes time to everyone",
+    "premise": "The clock apprentice Nilo discovers that six hours have been locked away; reclaiming them requires restoring the factory without taking time from anyone else.",
+    "theme": "Time is shared; power over time must be accountable.",
+    "conflict": "The Director of Hours hoards the six hours, transforming citizens' routines into rigid schedules.",
+    "story_arc": [
+      "Curiosity at the factory gate",
+      "A clock that runs only for the powerful",
+      "Uncovering the cost of stolen minutes",
+      "Choosing repairs instead of revenge",
+      "Giving citizens control of their time",
+      "Restoring the shared clock"
+    ],
+    "ending": "The factory belongs to its citizens; Nilo learns to repair systems, not to control people.",
+    "nonclaims": [
+      "No existing published franchise or protected character assets are licensed by this draft.",
+      "Creative originality and trademark clearance require human review."
+    ]
+  },
+  "characters": [
+    {
+      "id": "CH-NILO",
+      "name": "Nilo",
+      "role": "playable apprentice",
+      "motivation": "restore six missing hours without becoming a new timekeeper",
+      "silhouette": "small oval cap, triangular scarf, round watch",
+      "palette": [
+        "#f6c653",
+        "#27647a"
+      ],
+      "interaction": "runs, jumps, carries a winding key",
+      "voice": "text-only draft"
+    },
+    {
+      "id": "CH-TICA",
+      "name": "Tica",
+      "role": "clockwork bird / guide",
+      "motivation": "record fair changes to the factory",
+      "silhouette": "angular brass wings, circular face",
+      "palette": [
+        "#c88e3d",
+        "#dcefd8"
+      ],
+      "interaction": "tutorial and non-blocking hint",
+      "voice": "text-only draft"
+    },
+    {
+      "id": "CH-PERNO",
+      "name": "Perno",
+      "role": "maintenance automaton / ally",
+      "motivation": "recover the factory repair log",
+      "silhouette": "square body and bolt head",
+      "palette": [
+        "#7894a4",
+        "#2b3c4a"
+      ],
+      "interaction": "reveals repairable passages",
+      "voice": "text-only draft"
+    },
+    {
+      "id": "CH-CUSTODE",
+      "name": "Custode del Pendolo",
+      "role": "boss 1",
+      "motivation": "obey locked schedules",
+      "silhouette": "tall pendulum coat",
+      "palette": [
+        "#624c8e",
+        "#ed8f58"
+      ],
+      "interaction": "telegraphed swing / safe window",
+      "voice": "none"
+    },
+    {
+      "id": "CH-ARCHIVISTA",
+      "name": "Archivista dei Rintocchi",
+      "role": "boss 2",
+      "motivation": "preserve an unchangeable timetable",
+      "silhouette": "stacked clock-face cloak",
+      "palette": [
+        "#573f69",
+        "#b99db9"
+      ],
+      "interaction": "rhythmic archive hazards",
+      "voice": "none"
+    },
+    {
+      "id": "CH-DIRETTORE",
+      "name": "Direttore delle Ore",
+      "role": "antagonist / boss 3",
+      "motivation": "monopolize who may spend time",
+      "silhouette": "towering clock hands and key",
+      "palette": [
+        "#263d61",
+        "#d66f47"
+      ],
+      "interaction": "three-phase final encounter, review before development",
+      "voice": "none"
+    }
+  ],
+  "levels": [
+    {
+      "id": "LV-01",
+      "title": "Cortile delle Lancette",
+      "story": "first missing hour; learn the controls",
+      "mechanics": [
+        "run",
+        "jump",
+        "camera",
+        "solid collisions",
+        "checkpoint",
+        "HUD"
+      ],
+      "boss": null,
+      "design_status": "SEED_PROLOGUE_IMPLEMENTATION_CANDIDATE",
+      "exit": "reach the right-side arch"
+    },
+    {
+      "id": "LV-02",
+      "title": "Canali dei Minuti",
+      "story": "discover how minutes are diverted",
+      "mechanics": [
+        "moving platforms",
+        "current zones",
+        "boss telegraph"
+      ],
+      "boss": "CH-CUSTODE",
+      "design_status": "DESIGN_ONLY",
+      "exit": "release hour two"
+    },
+    {
+      "id": "LV-03",
+      "title": "Archivio delle Ombre",
+      "story": "read who lost access to time",
+      "mechanics": [
+        "light/shadow doors",
+        "optional collectible"
+      ],
+      "boss": null,
+      "design_status": "DESIGN_ONLY",
+      "exit": "release hour three"
+    },
+    {
+      "id": "LV-04",
+      "title": "Fonderia dei Secondi",
+      "story": "repair a factory mechanism",
+      "mechanics": [
+        "timed platforms",
+        "rhythmic cues plus visual alternatives"
+      ],
+      "boss": "CH-ARCHIVISTA",
+      "design_status": "DESIGN_ONLY",
+      "exit": "release hour four"
+    },
+    {
+      "id": "LV-05",
+      "title": "Bosco delle Campane",
+      "story": "make decisions with Tica and Perno",
+      "mechanics": [
+        "branching safe routes",
+        "auditory cues mirrored visually"
+      ],
+      "boss": null,
+      "design_status": "DESIGN_ONLY",
+      "exit": "release hour five"
+    },
+    {
+      "id": "LV-06",
+      "title": "Cuore della Fabbrica",
+      "story": "return time to its citizens",
+      "mechanics": [
+        "recombined mechanics",
+        "three-phase boss",
+        "ending"
+      ],
+      "boss": "CH-DIRETTORE",
+      "design_status": "DESIGN_ONLY",
+      "exit": "shared time restored"
+    }
+  ],
+  "gameplay": {
+    "genre": "original 2D side-scrolling platformer",
+    "view": "side-on 960x540 logical pixels",
+    "seed_engine": "native HTML canvas with ES modules; no external gameplay engine",
+    "input": {
+      "left": [
+        "ArrowLeft",
+        "KeyA"
+      ],
+      "right": [
+        "ArrowRight",
+        "KeyD"
+      ],
+      "jump": [
+        "Space",
+        "ArrowUp",
+        "KeyW"
+      ],
+      "pause": [
+        "KeyP"
+      ],
+      "restart": [
+        "KeyR"
+      ]
+    },
+    "physics": {
+      "tick_seconds": 0.016666666666666666,
+      "gravity": 1450,
+      "run_speed": 235,
+      "jump_velocity": -555
+    },
+    "game_state": [
+      "TITLE",
+      "PLAYING",
+      "PAUSED",
+      "FALLEN",
+      "COMPLETED"
+    ],
+    "checkpoint": {
+      "storage": "localStorage",
+      "key": "nilo.checkpoint.v1",
+      "format": "{version:1,level:'LV-01',checkpointId:'CP-01'}",
+      "must_survive_reload": true,
+      "nonpersonal": true
+    },
+    "security": "no backend, no cookies, no telemetry, no requested permissions, no outbound requests",
+    "accessibility_targets": [
+      "keyboard-only flow",
+      "visible control instructions",
+      "pause",
+      "visual cues without audio dependency",
+      "reduced-motion preference",
+      "manual contrast and screen-reader assessment before release"
+    ]
+  },
+  "slice": {
+    "id": "SLICE-01",
+    "goal": "one playable prologue with movement, camera, collisions, checkpoint persistence, HUD and finish",
+    "excluded": [
+      "boss fights",
+      "six completed levels",
+      "final art/audio",
+      "shipping release"
+    ],
+    "acceptance_oracles": [
+      {
+        "id": "OR-01",
+        "claim": "moving right advances Nilo and scrolls the camera",
+        "type": "UNIT_AND_BROWSER"
+      },
+      {
+        "id": "OR-02",
+        "claim": "player does not fall through platforms on collision",
+        "type": "UNIT_AND_BROWSER"
+      },
+      {
+        "id": "OR-03",
+        "claim": "activated checkpoint survives reload and resumes without invalid values",
+        "type": "UNIT_AND_BROWSER"
+      },
+      {
+        "id": "OR-04",
+        "claim": "pause freezes movement, restart resets only transient state",
+        "type": "UNIT_AND_BROWSER"
+      },
+      {
+        "id": "OR-05",
+        "claim": "visible HUD and instructions support an external user completing the prologue",
+        "type": "BROWSER_AND_HUMAN"
+      },
+      {
+        "id": "OR-06",
+        "claim": "a deliberately broken checkpoint write fails the negative oracle",
+        "type": "REAL_SOURCE_MUTATION"
+      }
+    ]
+  },
+  "permissions": {
+    "allowed": [
+      "create PR1 seed files and source-only tests in authorized NILO repository",
+      "local browser/manual play with operator consent"
+    ],
+    "not_allowed": [
+      "merge",
+      "release",
+      "deploy",
+      "read private user data",
+      "network telemetry",
+      "claim legal compliance or accessibility certification"
+    ]
+  },
+  "risks": [
+    {
+      "id": "RISK-LIC",
+      "title": "asset ownership and rights",
+      "state": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "RISK-A11Y",
+      "title": "accessibility target not user-tested",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "RISK-PROVENANCE",
+      "title": "browser, host, OS and hardware not attested",
+      "state": "BLOCKED_EXTERNAL"
+    },
+    {
+      "id": "RISK-RELEASE",
+      "title": "independent code review and required checks unverified",
+      "state": "BLOCKED_EXTERNAL"
+    }
+  ]
+}

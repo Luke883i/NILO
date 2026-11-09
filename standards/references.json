@@ -1,0 +1,84 @@
+{
+  "schema": "nilo.normative-register/1",
+  "status": "ENGINEERING_SCOPE_ASSESSMENT_NOT_LEGAL_OPINION",
+  "references": [
+    {
+      "id": "STD-CDX",
+      "kind": "technical-standard",
+      "name": "CycloneDX",
+      "edition": "1.7 (ECMA-424 2nd edition 2025)",
+      "uri": "https://cyclonedx.org/docs/1.7/json/",
+      "usage": "design-phase software components",
+      "applicability": "SELECTED_FORMAT",
+      "text_sha256": null,
+      "conformance": "NOT_INDEPENDENTLY_VALIDATED"
+    },
+    {
+      "id": "STD-SPDX",
+      "kind": "technical-standard",
+      "name": "SPDX Specification",
+      "edition": "3.0.1",
+      "uri": "https://spdx.github.io/spdx-spec/v3.0/",
+      "usage": "alternative representation for license/software inventory",
+      "applicability": "REFERENCE_ONLY",
+      "text_sha256": null,
+      "conformance": "NOT_CLAIMED"
+    },
+    {
+      "id": "STD-SLSA",
+      "kind": "framework",
+      "name": "SLSA build provenance",
+      "edition": "1.2",
+      "uri": "https://slsa.dev/spec/v1.2/provenance",
+      "usage": "source/build provenance model",
+      "applicability": "GUIDANCE",
+      "text_sha256": null,
+      "conformance": "NO_LEVEL_CLAIM"
+    },
+    {
+      "id": "STD-WCAG",
+      "kind": "accessibility-guideline",
+      "name": "WCAG",
+      "edition": "2.2",
+      "uri": "https://www.w3.org/TR/WCAG22/",
+      "usage": "keyboard, visuals, instructions, accessibility AA design target",
+      "applicability": "DESIGN_TARGET_NOT_A_LEGAL_SCOPE_DETERMINATION",
+      "text_sha256": null,
+      "conformance": "NOT_TESTED"
+    },
+    {
+      "id": "LAW-EAA",
+      "kind": "eu-directive",
+      "name": "Directive (EU) 2019/882",
+      "edition": "2019/882",
+      "uri": "https://eur-lex.europa.eu/eli/dir/2019/882/oj",
+      "usage": "screen applicability for commercial distribution/services; do not presume all video games covered",
+      "applicability": "REVIEW_REQUIRED",
+      "text_sha256": null,
+      "conformance": "NOT_ASSESSED"
+    },
+    {
+      "id": "LAW-GDPR",
+      "kind": "eu-regulation",
+      "name": "Regulation (EU) 2016/679",
+      "edition": "2016/679",
+      "uri": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+      "usage": "reassess if personal data, telemetry, accounts, online features are introduced",
+      "applicability": "CONDITIONAL_SCOPE_REVIEW",
+      "text_sha256": null,
+      "conformance": "NOT_ASSESSED"
+    },
+    {
+      "id": "RULE-PEGI",
+      "kind": "classification-framework",
+      "name": "PEGI age rating",
+      "edition": "current rules at release date",
+      "uri": "https://pegi.info/",
+      "usage": "human age/content classification before distribution where applicable",
+      "applicability": "RELEASE_DECISION",
+      "text_sha256": null,
+      "conformance": "NOT_ASSESSED"
+    }
+  ],
+  "policy": "External normative text hashes remain null until exact identified bytes are legally acquired and independently hashed; a URL or citation is not a document integrity receipt. Compliance claims require jurisdiction, applicability, assessor and real test evidence."
+}
