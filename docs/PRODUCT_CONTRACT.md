@@ -41,3 +41,7 @@ La direzione artistica candidata usa pixel integer 480×270 scalati a 960×540 s
 ## Current implementation boundary after PR10 (candidate, not approved)
 
 The current source implements LV-01 and LV-02 and one candidate boss, Custode del Pendolo; LV-03–LV-06 and the other two bosses remain design-only. LV-02 completion requires two physically input-triggered pendulum repairs after telegraphed strikes. Merely crossing the gate or restoring CP-02 never confers the second hour. Browser/CI witnesses are revision-bound technical observations; independent player testing, narrative/visual authorization and release are not established. Earlier descriptions of all bosses as unimplemented are historical PR3-era statements, not the current scope.
+
+## PR12 — Archivio delle Ombre (implementation candidate)
+
+LV-03 adds two physically collidable light/shadow doors with opposing conditions, one-shot contextual E switches, an optional ledger (not required to win), and a strict CP-03 checkpoint. The third hour lights only after physically crossing both doors and reaching the grounded exit. Checkpoints are local user-controlled resume records, **not** authenticated previous victories. This is a source/browser candidate, not author-approved story, independent novice comprehension, accessible equivalent, live Render proof or beta.

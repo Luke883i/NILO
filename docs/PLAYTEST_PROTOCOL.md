@@ -51,3 +51,7 @@ La PR8 propone **quattro cue narrativi** e cinque famiglie di segnali grafici, m
 ## PR10 — Playtest esterno del Custode (non ancora osservato)
 
 Il tester indipendente deve entrare in LV-02, riconoscere un preavviso *prima* del colpo, distinguere le finestre sicure, scoprire la riparazione `E`, osservare la seconda ora soltanto dopo due riparazioni e ripartire dopo sconfitta. Raccogliere separatamente comprensione senza suggerimenti, fairness percepita, leggibilità durante l'azione e capacità di completamento. Registrare errori e outcome per esatta revisione Git, browser, viewport, profilo accessibilità e consenso. **La CI browser non è osservazione indipendente del divertimento**; Q07 resta `BLOCKED_EXTERNAL`.
+
+## PR12 external protocol — luce/ombra (not observed)
+
+A novice should complete LV-01, LV-02 and Custode, then independently infer why each LV-03 door blocks movement, discover E at the nearby lamp, identify the switch mode by shape and text beyond colour, distinguish the optional ledger from the main objective, reload CP-03 and complete the third-hour exit. Record exact Git SHA, viewport, browser, observation consent, unassisted completion, wrong toggles and comprehension errors. An automated Chrome replay cannot replace this independent Q07 evidence.
