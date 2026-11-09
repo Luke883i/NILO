@@ -3,6 +3,7 @@ import {readFileSync, existsSync} from "node:fs";
 import {resolve,dirname} from "node:path";
 import {fileURLToPath} from "node:url";
 import {validateBridge} from "./verify-development.mjs";
+import {validateIterationHypothesis} from "./semantic-campaign.mjs";
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"..");
 const raw=p=>JSON.parse(readFileSync(resolve(ROOT,p),"utf8"));
 export const load=()=>({
@@ -73,6 +74,7 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
   for(const p of ["web/core.mjs","web/main.mjs","web/index.html","docs/PRODUCT_CONTRACT.md","docs/PROVENANCE.md"])
     fail("missing-source:"+p,existsSync(resolve(ROOT,p)));
   errors.push(...validateBridge({bridge,contract,dod},ROOT));
+  errors.push(...validateIterationHypothesis(dod));
   return [...new Set(errors)].sort();
 }
 export function verify() {
