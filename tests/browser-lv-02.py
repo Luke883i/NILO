@@ -58,7 +58,7 @@ def run(args):
             assert 'premi N per LV-02' in page.locator('#hud').inner_text()
             page.keyboard.press('n')
             page.wait_for_function('() => window.__niloReadback().level==="LV-02"',timeout=2500)
-            assert 'ORA II' in page.locator('#scene-chapter').inner_text()
+            page.wait_for_function('() => document.querySelector("#scene-chapter")?.textContent.includes("ORA II")',timeout=3000)
             assert not state(page)['checkpointActive']
             report['checks']['lv01_gated_transition']='PASS_OBSERVED'
             report['browser_executed']=True
