@@ -20,6 +20,8 @@ jobs:
         run: |
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
           node --version
+      - name: Verify physical LV02 game route, independent CP02 and five source mutants
+        run: node --test tests/lv-02.test.mjs tests/lv-02-mutation.test.mjs
       - name: Verify narrative, requirements, DoD, BOM and source boundaries
         run: node scripts/verify.mjs
       - name: Test deterministic playable physics and checkpoint
@@ -132,6 +134,34 @@ jobs:
         run: python tests/browser-e2e.py --stage input-continuity --out /tmp/nilo-input-continuity --physical-mutant
       - name: Full LV01 real-origin E2E including all prior negative oracles
         run: python tests/browser-e2e.py --stage complete --out /tmp/nilo-browser-evidence --physical-mutant
+      - name: Execute real-origin LV01 to LV02 route, CP02 reload and canal source mutants
+        run: python tests/browser-lv-02.py --out /tmp/nilo-browser-lv02 --physical-mutant
+      - name: Independently verify LV02 source-bound receipt and four PNG digests
+        run: |
+          python - <<'PY_LV02'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          folder=Path('/tmp/nilo-browser-lv02')
+          r=json.loads((folder/'lv02-browser-receipt.json').read_text())
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert r['source_sha']==sha and r['browser_executed']
+          assert r['status']=='PASS_SCOPED_TWO_LEVEL_BROWSER_NO_BOSS'
+          assert not r['beta_authorized'] and not r['independent_player_acceptance']
+          assert not r['six_levels_complete'] and not r['custode_implemented']
+          assert len(r['screenshots'])==4 and r['pixel_grid']['mismatches']==0
+          assert r['checks']['lv02_playthrough']=='PASS_OBSERVED'
+          assert r['checks']['forged_cp02_rejected']=='PASS_OBSERVED'
+          assert r['checks']['mutant_frozen-bridge']=='KILLED_BY_BROWSER_ORACLE'
+          assert r['checks']['mutant_disabled-current']=='KILLED_BY_BROWSER_ORACLE'
+          for z in r['screenshots']:
+              filename=z['name'];assert Path(filename).name==filename
+              data=(folder/filename).read_bytes()
+              assert data.startswith(bytes.fromhex('89504e470d0a1a0a'))
+              assert len(data)==z['bytes'] and len(data)>1000
+              assert hashlib.sha256(data).hexdigest()==z['sha256']
+              assert hashlib.sha256(data+b'X').hexdigest()!=z['sha256']
+          print('PASS_SCOPED_TWO_LEVEL_BROWSER_NO_BOSS',sha)
+          PY_LV02
       - name: Verify receipt scope on exact HEAD (not beta approval)
         run: |
           python - <<'PY'
@@ -170,6 +200,8 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: nilo-browser-lv01-${{ github.event.pull_request.head.sha || github.sha }}
-          path: /tmp/nilo-browser-evidence/
+          path: |
+            /tmp/nilo-browser-evidence/
+            /tmp/nilo-browser-lv02/
           if-no-files-found: warn
           retention-days: 14

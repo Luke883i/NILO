@@ -16,6 +16,8 @@
     "verify:bridge": "node scripts/verify-development.mjs",
     "assurance:semantic": "node scripts/semantic-campaign.mjs --count 10000000 --seed 20261109",
     "test:browser": "python tests/browser-e2e.py --out artifacts/browser-lv01 --physical-mutant",
-    "assurance:feel": "node scripts/semantic-campaign.mjs --feel-adversarial --count 1000000 --seed 20261109"
+    "assurance:feel": "node scripts/semantic-campaign.mjs --feel-adversarial --count 1000000 --seed 20261109",
+    "test:lv02": "node --test tests/lv-02.test.mjs tests/lv-02-mutation.test.mjs",
+    "test:browser:lv02": "python tests/browser-lv-02.py --out artifacts/browser-lv02 --physical-mutant"
   }
 }
