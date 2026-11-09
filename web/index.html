@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <meta name="theme-color" content="#10273e">
+  <title>NILO — La Fabbrica delle Ore · Prologo</title>
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./main.mjs"></script>
+</head>
+<body>
+<main>
+  <header><p class="eyebrow">NILO · LV-01 · PROLOGO SPERIMENTALE</p>
+    <h1>La Fabbrica delle Ore</h1>
+    <p>Nilo cerca le ore rubate. Attraversa il cortile, riattiva un checkpoint e raggiungi il portale.</p></header>
+  <section aria-label="Videogioco 2D, controllabile da tastiera">
+    <canvas id="game" width="960" height="540" tabindex="0"
+       aria-label="Campo di gioco: frecce o A/D per muoversi, spazio per saltare, P pausa, R ricomincia. Rappresentazione principalmente visiva; accessibilità non ancora qualificata.">
+       La versione canvas richiede un browser con Canvas2D. La versione testuale completa non è ancora implementata.
+    </canvas>
+    <div class="hud"><strong id="hud">Stato: gioco pronto</strong><span id="hint">← → / A D muovi · Spazio salta · P pausa · R ricomincia</span></div>
+    <p id="announcement" class="announcer" aria-live="polite">Il gioco è pronto.</p>
+    <p class="caution">Slice candidato: gameplay non ancora qualificato con utenti e screen reader. Nessuna telemetria o dipendenza remota.</p>
+  </section>
+  <footer><a href="https://github.com/Luke883i/NILO">Sorgente del progetto</a> · Contratto narrativo e licenze in revisione</footer>
+</main>
+</body></html>
