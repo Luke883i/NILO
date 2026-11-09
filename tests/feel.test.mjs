@@ -71,3 +71,42 @@ test('original six-jump LV01 route remains complete with zero deaths',()=>{
   assert.equal(s.deaths,0);
   assert.equal(s.checkpointActive,true);
 });
+
+test('RED PR6: held Space cannot cause a fresh jump after fall/respawn',()=>{
+  const fall={...initialState(),y:700,vy:120,onGround:false,coyoteLeft:0};
+  const respawn=step(fall,{jump:true});
+  assert.equal(respawn.deaths,1);
+  assert.equal(respawn.jumpHeld,true,'respawn must retain physical key latch');
+  const next=step(respawn,{jump:true});
+  assert.equal(next.vy,0,'held key is not a new keydown');
+  assert.equal(next.onGround,true);
+  const released=step(next,{jump:false});
+  assert(step(released,{jump:true}).vy<0,'fresh edge after release remains valid');
+});
+test('RED PR6: explicit held-key restart and resume are disarmed until release',()=>{
+  let restarted=applyAction(initialState(),'KeyR',true);
+  assert.equal(restarted.jumpHeld,true);
+  assert.equal(step(restarted,{jump:true}).vy,0,'restart cannot manufacture a keydown');
+  let paused=applyAction(initialState(),'KeyP',false);
+  let resumed=applyAction(paused,'KeyP',true);
+  assert.equal(resumed.jumpHeld,true);
+  assert.equal(step(resumed,{jump:true}).vy,0,'pause cannot manufacture a keydown');
+  resumed=step(resumed,{jump:false});
+  assert(step(resumed,{jump:true}).vy<0);
+});
+test('RED PR6: prelanding one-tick tap retains short-hop semantics after buffer',()=>{
+  const low=initialState();
+  const falling={...initialState(),y:409,vy:250,onGround:false,coyoteLeft:0};
+  let a=low,b=falling,minA=Infinity,minB=Infinity;
+  for(let t=0;t<35;t++){
+    a=step(a,{jump:t===0});
+    b=step(b,{jump:t===0});
+    minA=Math.min(minA,a.y);
+    minB=Math.min(minB,b.y);
+  }
+  const directHeight=418-minA;
+  const bufferedHeight=418-minB;
+  assert(directHeight>20&&bufferedHeight>20);
+  assert(Math.abs(directHeight-bufferedHeight)<=10,
+    'buffered one-tick tap launched after release must not become full-height jump: '+directHeight+' vs '+bufferedHeight);
+});
