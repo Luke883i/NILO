@@ -8,7 +8,7 @@ const root=new URL('../',import.meta.url);
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const sha=raw=>createHash('sha256').update(raw).digest('hex');
 const pkg=()=>JSON.parse(read('package.json'));
-const currentSha=()=>spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim();
+const currentSha=()=>process.env.RENDER_GIT_COMMIT||spawnSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).stdout.trim();
 test('P0 RED: Codespaces forwards private HTTP port 8000 and game start is one command',()=>{
  const d=JSON.parse(read('.devcontainer/devcontainer.json'));
  assert.deepEqual(d.forwardPorts,[8000]);
