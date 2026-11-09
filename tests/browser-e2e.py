@@ -84,6 +84,95 @@ def screenshot(page,out,name):
     blob=target.read_bytes()
     return {"name":target.name,"sha256":hashlib.sha256(blob).hexdigest(),"bytes":len(blob)}
 
+def quick_pulse(browser,url,tries=25):
+    """Prove keydown and keyup arrived in one fixed-tick interval, on a true HTTP origin."""
+    ctx=browser.new_context(viewport={"width":1280,"height":900})
+    page=ctx.new_page()
+    try:
+        for attempt in range(tries):
+            loaded(page,url)
+            before=state(page)["ticks"]
+            page.keyboard.down("Space")
+            page.keyboard.up("Space")
+            after=state(page)["ticks"]
+            if before!=after:
+                continue  # events straddled frames; not a valid sub-tick witness
+            page.wait_for_function("tick => window.__niloReadback().ticks>tick",
+                                   arg=after,timeout=2000)
+            actual=state(page)
+            return {"attempt":attempt+1,"ticks_before":before,"ticks_after":after,
+                    "registered_jump":actual["vy"]<0,"state":actual}
+        raise AssertionError("No same-tick native keydown/keyup witness in "+str(tries)+" attempts")
+    finally:
+        ctx.close()
+
+def verify_input_lifecycle(browser,url,report,physical_mutant):
+    ctx=browser.new_context(viewport={"width":1280,"height":900})
+    page=ctx.new_page()
+    try:
+        loaded(page,url)
+        # Physically hold the key through a real fall; no direct state injection.
+        page.keyboard.down("Space")
+        page.keyboard.down("ArrowRight")
+        page.wait_for_function("() => window.__niloReadback().deaths>=1",timeout=15000)
+        page.keyboard.up("ArrowRight")
+        page.wait_for_timeout(130)
+        after_death=state(page)
+        assert after_death["onGround"] and after_death["vy"]==0, (
+            "held Space must not auto-jump after respawn: "+repr(after_death))
+        page.keyboard.up("Space")
+        page.keyboard.press("r")
+        report["checks"]["held_respawn_not_retriggered"]="PASS_OBSERVED"
+
+        # Restart while physically holding Space cannot manufacture a fresh edge.
+        page.keyboard.down("Space")
+        page.keyboard.press("r")
+        page.wait_for_timeout(150)
+        restarted=state(page)
+        assert restarted["onGround"] and restarted["vy"]==0 and restarted["jumpHeld"], (
+            "held restart generated spurious jump: "+repr(restarted))
+        page.keyboard.up("Space")
+        report["checks"]["held_restart_not_retriggered"]="PASS_OBSERVED"
+
+        # A press made while paused is disarmed when resumed, until key release.
+        page.keyboard.press("r")
+        page.keyboard.press("p")
+        assert state(page)["phase"]=="PAUSED"
+        page.keyboard.down("Space")
+        page.keyboard.press("p")
+        page.wait_for_timeout(150)
+        resumed=state(page)
+        assert resumed["phase"]=="PLAYING" and resumed["onGround"] and resumed["vy"]==0, (
+            "held paused input triggered a jump on resume: "+repr(resumed))
+        page.keyboard.up("Space")
+        page.keyboard.press("Space",delay=45)
+        page.wait_for_function("() => window.__niloReadback().vy<0",timeout=2000)
+        report["checks"]["paused_key_requires_new_edge"]="PASS_OBSERVED"
+    finally:
+        ctx.close()
+
+    witness=quick_pulse(browser,url)
+    report["subtick_witness"]={"attempt":witness["attempt"],
+                               "ticks_before":witness["ticks_before"],
+                               "ticks_after":witness["ticks_after"]}
+    assert witness["registered_jump"],"sub-tick physical press and release was silently lost"
+    report["checks"]["subtick_keydown_keyup"]="PASS_OBSERVED"
+
+    if physical_mutant:
+        with tempfile.TemporaryDirectory(prefix="nilo-input-mutant-") as temp:
+            target=Path(temp)/"web"
+            shutil.copytree(ROOT/"web",target)
+            original=(target/"main.mjs").read_text(encoding="utf-8")
+            needle="pendingJumpPress=true;"
+            assert original.count(needle)==1,"actual keyboard-queue mutation anchor drifted"
+            (target/"main.mjs").write_text(
+                original.replace(needle,"pendingJumpPress=false;"),encoding="utf-8")
+            with serve(target) as mutant_url:
+                victim=quick_pulse(browser,mutant_url)
+                assert not victim["registered_jump"],(
+                    "real browser source mutant survived: event queue removal")
+                report["checks"]["physical_subtick_queue_mutant"]="KILLED_BY_BROWSER_ORACLE"
+
 def run(args):
     out=Path(args.out).resolve()
     out.mkdir(parents=True,exist_ok=True)
@@ -119,6 +208,12 @@ def run(args):
             report["last_stage"]="smoke"
             if args.stage=="smoke":
                 report["status"]="PASS_SCOPED_BROWSER_SMOKE"
+                return
+            verify_input_lifecycle(browser,url,report,args.physical_mutant)
+            if args.stage=="input-continuity":
+                report["last_stage"]="input-continuity"
+                report["status"]="PASS_SCOPED_INPUT_CONTINUITY"
+                browser.close()
                 return
 
             page.keyboard.press("p")
@@ -298,5 +393,5 @@ if __name__=="__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--out",default="artifacts/browser-lv01")
     p.add_argument("--physical-mutant",action="store_true")
-    p.add_argument("--stage",choices=("smoke","checkpoint","reload","forged","finish","module-source","module-request","module-status","module-readback","module-negative","no-pageerrors","no-requestfailures","negative","complete"),default="complete")
+    p.add_argument("--stage",choices=("input-continuity","smoke","checkpoint","reload","forged","finish","module-source","module-request","module-status","module-readback","module-negative","no-pageerrors","no-requestfailures","negative","complete"),default="complete")
     run(p.parse_args())
