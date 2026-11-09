@@ -110,3 +110,21 @@ test('RED PR6: prelanding one-tick tap retains short-hop semantics after buffer'
   assert(Math.abs(directHeight-bufferedHeight)<=10,
     'buffered one-tick tap launched after release must not become full-height jump: '+directHeight+' vs '+bufferedHeight);
 });
+
+test('PR7: release and repress inside a single tick is a fresh physical edge',()=>{
+  // After death the previous held key is latched; a new edge between ticks
+  // must not disappear merely because the old frame still says "held".
+  const died=step({...initialState(),y:701,vy:100,onGround:false},{jump:true});
+  assert.equal(died.jumpHeld,true);
+  const edge=step(died,{jump:false,jumpPressed:true});
+  assert(edge.vy<0,'event-sourced re-press must trigger a jump after respawn');
+  assert.equal(edge.bufferLeft,0);
+  const kept=step(edge,{jump:false,jumpPressed:false});
+  assert(kept.vy<0,'short hop is permitted, not repeated');
+});
+test('PR7: held key and repeated keydown cannot manufacture new edges',()=>{
+  let s=step(initialState(),{jump:true,jumpPressed:true});
+  for(let t=0;t<65;t++)s=step(s,{jump:true,jumpPressed:false});
+  assert.equal(s.onGround,true);
+  assert.equal(step(s,{jump:true,jumpPressed:false}).vy,0);
+});

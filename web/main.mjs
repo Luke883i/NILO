@@ -69,7 +69,8 @@ function frame(now) {
     const jump=physicalJumpHeld()||pendingJumpPress;
     state=step(state,{
       left:controls.has("ArrowLeft")||controls.has("KeyA"),
-      right:controls.has("ArrowRight")||controls.has("KeyD"),jump
+      right:controls.has("ArrowRight")||controls.has("KeyD"),jump,
+      jumpPressed:pendingJumpPress
     },CFG.tick);
     // A press/release within one animation frame is delivered exactly once.
     pendingJumpPress=false;

@@ -50,7 +50,7 @@ export function step(state, input = {}, dt = CFG.tick) {
   if (state.phase !== "PLAYING") return state;
   if (!Number.isFinite(dt) || dt <= 0 || dt > 1/15) throw new RangeError("bounded fixed tick required");
   const held=Boolean(input.jump);
-  const justPressed=held && !Boolean(state.jumpHeld);
+  const justPressed=Boolean(input.jumpPressed) || (held && !Boolean(state.jumpHeld));
   let coyoteLeft=state.onGround ? CFG.coyoteTicks : Math.max(0,(state.coyoteLeft ?? 0)-1);
   let bufferLeft=justPressed ? CFG.bufferTicks : Math.max(0,(state.bufferLeft ?? 0)-1);
   const vx=((input.right ? 1 : 0) - (input.left ? 1 : 0))*CFG.speed;
