@@ -15,15 +15,21 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
   bad("bridge-mobile-truth",bridge?.mobile_touch==="NOT_IMPLEMENTED"&&bridge?.supported_surface==="DESKTOP_KEYBOARD_CANDIDATE");
   bad("bridge-beta",bridge?.beta_goal===dod?.beta_goal&&bridge?.release_scope==="FULL_SIX_LEVEL_THREE_BOSS_GAME_BETA"&&
     (dod?.nodes||[]).some(x=>x.id===bridge.beta_goal&&x.kind==="AND"));
-  const levels=contract?.levels||[],oracles=contract?.slice?.acceptance_oracles||[];
+  const levels=contract?.levels||[],oracles=[...(contract?.slice?.acceptance_oracles||[]),...levels.flatMap(x=>x.acceptance_oracles||[])];
   const l=bridge?.levels||[],r=bridge?.requirements||[];
   bad("bridge-levels",l.length===levels.length&&uniq(l.map(x=>x.id))&&levels.every(x=>l.some(y=>y.id===x.id)));
   bad("bridge-oracles",r.length===oracles.length&&uniq(r.map(x=>x.id))&&oracles.every(x=>r.some(y=>y.id===x.id)));
-  bad("bridge-no-fake-levels",l.every(x=>x.id==="LV-01"
-    ?x.state==="IMPLEMENTED_CANDIDATE"&&x.source?.length>0&&x.tests?.length>0
-    :x.state==="DESIGN_ONLY"&&x.source?.length===0&&x.tests?.length===0));
+  bad("bridge-no-fake-levels",l.every(x=>{
+    if(x.state==="DESIGN_ONLY") return x.source?.length===0&&x.tests?.length===0;
+    if(x.state!=="IMPLEMENTED_CANDIDATE"||!x.source?.length||!x.tests?.length) return false;
+    if(x.id==="LV-01")return x.source.includes("web/core.mjs")&&x.tests.includes("tests/core.test.mjs");
+    // Every subsequent level has a dedicated source and test identity; a
+    // reused generic physics test cannot make a new level "implemented".
+    const slug=x.id.toLowerCase();
+    return x.source.includes("web/levels/"+slug+".mjs")&&x.tests.includes("tests/"+slug+".test.mjs");
+  }));
   bad("bridge-no-runtime-promotion",r.every(x=>["MODEL_TEST_ONLY","LOCAL_SOURCE_MUTANT","HUMAN_AND_BROWSER_REQUIRED"].includes(x.authority)
-    &&x.browser==="NOT_ATTESTED"&&x.level==="LV-01"));
+    &&x.browser==="NOT_ATTESTED"&&levels.some(l=>l.id===x.level)));
   const enumerate=(dir,pre="")=>readdirSync(dir,{withFileTypes:true}).flatMap(e=>{
     const rel=pre+e.name,full=resolve(dir,e.name);
     return e.isDirectory()?enumerate(full,rel+"/"):e.isFile()?["web/"+rel]:[];
@@ -39,6 +45,8 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
     r.find(x=>x.id==="OR-06")?.tests?.includes("tests/mutation.test.mjs")&&
     r.find(x=>x.id==="OR-05")?.tests?.length===0);
   bad("bridge-narrative",bridge?.narrative_state==="DRAFT_AUTHOR_UNAPPROVED"&&contract?.goal?.human_approved===false);
+  const rootAllowed=new Set([".git",".github",".gitignore","README.md","package.json","bom","contracts","docs","provenance","scripts","standards","tests","web","node_modules","artifacts","coverage",".DS_Store"]);
+  bad("bridge-root-minimal",readdirSync(root).every(x=>rootAllowed.has(x)));
   bad("bridge-core-oracle",existsSync(resolve(root,".github/workflows/seed.yml"))&&
     bridge?.repo_tests?.includes("tests/development.test.mjs"));
   return [...new Set(errors)].sort();

@@ -59,3 +59,24 @@ test("an unowned nested web file physically added to a disposable repository fai
       "new nested product code must have an OR owner in the same PR");
   }finally{rmSync(tmp,{recursive:true,force:true});}
 });
+
+test("the root must not become a second undocumented source owner",()=>{
+  const root=fileURLToPath(new URL("../",import.meta.url));
+  const tmp=mkdtempSync(join(tmpdir(),"nilo-root-drift-"));
+  try {
+    for(const f of ["web/core.mjs","web/main.mjs","web/index.html","web/style.css",
+      "tests/core.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
+      "tests/development.test.mjs",".github/workflows/seed.yml"]){
+      const dest=join(tmp,f);mkdirSync(join(dest,".."),{recursive:true});cpSync(join(root,f),dest);
+    }
+    const d=base();
+    assert.deepEqual(validateBridge(d,tmp),[]);
+    mkdirSync(join(tmp,"new-unregistered-engine"));
+    assert(validateBridge(d,tmp).includes("bridge-root-minimal"));
+  }finally{rmSync(tmp,{recursive:true,force:true});}
+});
+test("future level cannot be marked implemented by borrowing LV-01 tests",()=>{
+ const d=base(),n=d.bridge.levels.find(x=>x.id==="LV-02");
+ n.state="IMPLEMENTED_CANDIDATE";n.source=["web/core.mjs"];n.tests=["tests/core.test.mjs"];
+ assert(validateBridge(d).includes("bridge-no-fake-levels"));
+});
