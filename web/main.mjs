@@ -1,9 +1,12 @@
 import {CFG, PLATFORMS, initialState, applyAction, step, encodeCheckpoint} from "./core.mjs";
-import {renderPixelWorld} from "./art.mjs";
+import {renderPixelWorld,sceneCue} from "./art.mjs";
 const canvas = document.querySelector("#game");
 const ctx = canvas?.getContext("2d");
 const hud = document.querySelector("#hud");
 const announcement = document.querySelector("#announcement");
+const sceneTitle=document.querySelector("#scene-title");
+const sceneHint=document.querySelector("#scene-hint");
+if(!sceneTitle||!sceneHint)throw new Error("Narrative scene cues unavailable");
 if (!ctx) throw new Error("Canvas2D unavailable; no false playable claim");
 const STORE = "nilo.checkpoint.v1";
 const controls = new Set();
@@ -14,7 +17,7 @@ let saved = null;
 try { saved = localStorage.getItem(STORE); } catch { /* unavailable storage: gameplay degrades safely */ }
 let state = initialState(saved);
 let last = performance.now(), accumulator=0, lastPhase=state.phase, savedInSession=state.checkpointActive;
-let lastTip="";
+let lastTip="",lastCue="";
 /** Read-only diagnostic readback. It does not advance, override or certify game state. */
 Object.defineProperty(window,"__niloReadback",{
   configurable:false,enumerable:false,writable:false,
@@ -88,6 +91,12 @@ function frame(now) {
     state.x>750?"Segui il segnatempo dorato": "Prima ora · segui la freccia →";
   if(lastTip!==tip){lastTip=tip;hud.textContent="NILO · "+(state.phase==="PAUSED"?"Pausa":tip);}
 
+  const cue=sceneCue(state);
+  if(cue.id!==lastCue){
+    lastCue=cue.id;
+    sceneTitle.textContent=cue.title;
+    sceneHint.textContent=cue.hint;
+  }
   paint();requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
