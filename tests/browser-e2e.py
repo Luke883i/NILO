@@ -209,8 +209,8 @@ def run(args):
             if args.stage=="smoke":
                 report["status"]="PASS_SCOPED_BROWSER_SMOKE"
                 return
-            verify_input_lifecycle(browser,url,report,args.physical_mutant)
             if args.stage=="input-continuity":
+                verify_input_lifecycle(browser,url,report,args.physical_mutant)
                 report["last_stage"]="input-continuity"
                 report["status"]="PASS_SCOPED_INPUT_CONTINUITY"
                 browser.close()
@@ -377,6 +377,10 @@ def run(args):
                         assert mutant.evaluate("localStorage.getItem('nilo.checkpoint.v1')") is None, "mutant survived"
                         report["checks"]["real_checkpoint_write_mutant"]="KILLED_BY_BROWSER_ORACLE"
                         mctx.close()
+            # Execute auxiliary test contexts only after the original player
+            # session is complete. Secondary contexts may hide the original
+            # tab, whose visibility handler intentionally pauses gameplay.
+            verify_input_lifecycle(browser,url,report,args.physical_mutant)
             browser.close()
             report["last_stage"]="complete"
             report["status"]="PASS_SCOPED_BROWSER_LV01"
