@@ -95,3 +95,13 @@ test("PR11 release gate cannot bypass remote Render and actual Codespace witness
  mutate(d=>{d.dod.nodes.find(n=>n.id==="DL08").baseline_status="PASS"},"delivery-no-external-laundering");
  mutate(d=>{d.contract.delivery.render.remote_deployment="PASS"},"delivery-source-truth");
 });
+
+test("PR12 archive physical source and complete AND chain cannot be laundered",()=>{
+ let d=fresh();d.contract.gameplay.lv03.third_hour="POSITION_ONLY";
+ assert(audit(d).includes("lv03-boundary"));
+ d=fresh();d.dod.nodes.find(x=>x.id==="G_FULL_GAME").depends_on=
+   d.dod.nodes.find(x=>x.id==="G_FULL_GAME").depends_on.filter(x=>x!=="G_LV03_PR12");
+ assert(audit(d).includes("dod-AND"));
+ d=fresh();d.dod.nodes.find(x=>x.id==="L3_07").baseline_status="PASS";
+ assert(audit(d).includes("lv03-no-self-approved-gates"));
+});

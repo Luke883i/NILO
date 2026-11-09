@@ -11,7 +11,8 @@ const fixtureFiles=["web/core.mjs","web/main.mjs","web/index.html","web/style.cs
   "tests/core.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
   "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs",
   "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py",
-  "web/levels/lv-02.mjs","web/levels/custode.mjs","tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py",
+  "web/levels/lv-02.mjs","web/levels/lv-03.mjs","web/levels/custode.mjs",
+  "tests/lv-03.test.mjs","tests/lv-03-mutation.test.mjs","tests/browser-lv-03.py","tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py",
   "tests/custode.test.mjs","tests/custode-mutation.test.mjs","tests/browser-custode.py",
   ".github/workflows/seed.yml",".github/workflows/render-live.yml",
   ".devcontainer/devcontainer.json","render.yaml","package.json",
@@ -19,14 +20,14 @@ const fixtureFiles=["web/core.mjs","web/main.mjs","web/index.html","web/style.cs
 test("current contract maps boss oracles and six levels without asserting beta",()=>{
   const d=base();assert.deepEqual(validateBridge(d),[]);
   assert.equal(d.bridge.beta_authorized,false);
-  assert.equal(d.bridge.levels.filter(x=>x.state==="DESIGN_ONLY").length,4);
+  assert.equal(d.bridge.levels.filter(x=>x.state==="DESIGN_ONLY").length,3);
 });
 test("product change without software and repository binding fails closed",()=>{
   const d=base();d.contract.slice.acceptance_oracles.push({id:"OR-07"});
   assert(validateBridge(d).includes("bridge-oracles"));
 });
 test("mislabeled implemented level without tested source is rejected",()=>{
-  const d=base();d.bridge.levels[2].state="IMPLEMENTED_CANDIDATE";
+  const d=base();d.bridge.levels[3].state="IMPLEMENTED_CANDIDATE";
   assert(validateBridge(d).includes("bridge-no-fake-levels"));
 });
 test("source changes may not bypass product requirements",()=>{
@@ -138,4 +139,16 @@ test("PR11 delivery owners cannot be dropped or promoted to beta",()=>{
   assert(validateBridge(d).includes("bridge-delivery"));
   const e=base();e.bridge.delivery.tests=[];
   assert(validateBridge(e).includes("bridge-delivery"));
+});
+
+test("PR12 owner and browser receipts never silently disappear or self-authorize",()=>{
+ for(const file of ["web/levels/lv-03.mjs","tests/lv-03.test.mjs","tests/lv-03-mutation.test.mjs","tests/browser-lv-03.py"]){
+   const d=base(),lv=d.bridge.levels.find(x=>x.id==="LV-03");
+   const or=d.bridge.requirements.find(x=>x.id==="OR-LV03-06");
+   lv.source=lv.source.filter(x=>x!==file);lv.tests=lv.tests.filter(x=>x!==file);
+   or.sources=or.sources.filter(x=>x!==file);or.tests=or.tests.filter(x=>x!==file);
+   assert(validateBridge(d).includes("bridge-lv03-witness"),file);
+ }
+ const d=base();d.bridge.requirements.find(x=>x.id==="OR-LV03-06").browser="PASS";
+ assert(validateBridge(d).includes("bridge-no-runtime-promotion"));
 });
