@@ -48,7 +48,7 @@ test('PR8: four story beats follow real position; pause and completion override 
  assert.equal(sceneCue({...initialState(),phase:'PAUSED'}).id,'CUE-PAUSE');
  const ending=sceneCue({...initialState(),phase:'COMPLETED'});
  assert.equal(ending.id,'CUE-END');
- assert.match(ending.hint,/cinque livelli.*sviluppo/i,'not-yet-playable levels remain explicit');
+ assert.match(ending.hint,/quattro livelli.*sviluppo/i,'not-yet-playable levels remain explicit');
  assert(ART_CUES.every(x=>x.title&&x.hint&&x.role.startsWith('CH-')));
 });
 test('PR8: solid, void, checkpoint, exit and role signals are independently identifiable declarations',()=>{
