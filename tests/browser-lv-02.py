@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Real HTTP Chrome LV01->LV02. No boss, independent UX or beta authority."""
+"""Real HTTP Chrome LV01->LV02 boss gate, without claiming victory or UX acceptance."""
 import argparse,hashlib,importlib.util,json,platform,subprocess,shutil,tempfile
 from pathlib import Path
 from importlib.metadata import version
@@ -26,7 +26,11 @@ def jump_route(page,goals,bridge_screenshot=None):
     return trace
 def finish(page):
     page.keyboard.down('ArrowRight')
-    try:page.wait_for_function('() => window.__niloReadback().phase==="COMPLETED"',timeout=10000)
+    try:
+        if state(page)['level']=='LV-01':
+            page.wait_for_function('() => window.__niloReadback().phase==="COMPLETED"',timeout=10000)
+        else:
+            page.wait_for_function('() => window.__niloReadback().boss?.phase==="TELEGRAPH"',timeout=10000)
     finally:page.keyboard.up('ArrowRight')
 def geometry(page):
     return page.evaluate("""async()=>{const a=await import('./levels/lv-02.mjs');
@@ -36,9 +40,9 @@ def run(args):
     out=Path(args.out).resolve();out.mkdir(parents=True,exist_ok=True)
     sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
     report={'schema':'nilo.lv02-real-browser/1','source_sha':sha,
-     'scope':'REAL_HTTP_ORIGIN_LV01_TO_LV02_NO_BOSS',
+     'scope':'REAL_HTTP_ORIGIN_LV01_TO_LV02_BOSS_GATE_NOT_VICTORY',
      'browser_executed':False,'independent_player_acceptance':False,
-     'beta_authorized':False,'six_levels_complete':False,'custode_implemented':False,
+     'beta_authorized':False,'six_levels_complete':False,'custode_implemented':True,'boss_victory_observed':False,
      'host':platform.platform(),'playwright_version':version('playwright'),
      'checks':{},'screenshots':[],'errors':[]}
     try:
@@ -91,8 +95,8 @@ def run(args):
             report['lv02_after_reload']=jump_route(page,L2[5:])
             finish(page)
             assert state(page)['level']=='LV-02' and state(page)['deaths']==0
-            assert 'Custode' in page.locator('#scene-hint').inner_text()
-            assert 'ancora non disponibili' in page.locator('#hud').inner_text()
+            assert 'CUSTODE' in page.locator('#scene-title').inner_text()
+            assert state(page)['boss']['repairs']==0 and state(page)['phase']=='PLAYING'
             report['screenshots'].append(old.screenshot(page,out,'04-completed'))
             report['checks']['lv02_playthrough']='PASS_OBSERVED'
             if args.physical_mutant:
@@ -112,7 +116,7 @@ def run(args):
                             report['checks']['mutant_'+name]='KILLED_BY_BROWSER_ORACLE'
                             other.close()
             assert not report['errors'],('uncaught JS errors',report['errors'])
-            report['status']='PASS_SCOPED_TWO_LEVEL_BROWSER_NO_BOSS'
+            report['status']='PASS_SCOPED_TWO_LEVEL_GATE_NOT_BOSS_VICTORY'
             ctx.close();browser.close()
     except Exception as e:
         report['status']='FAIL';report['error']=str(e)
