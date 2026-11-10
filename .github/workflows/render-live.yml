@@ -37,6 +37,10 @@ jobs:
         env:
           NILO_URL: ${{ inputs.render_url || vars.NILO_RENDER_URL }}
         run: python tests/browser-custode.py --out /tmp/nilo-render-live-game
+      - name: Observe live LV01 -> LV02 -> Custode -> LV03 and checkpoint
+        env:
+          NILO_URL: ${{ inputs.render_url || vars.NILO_RENDER_URL }}
+        run: python tests/browser-lv-03.py --expected-sha "$TARGET_SHA" --out /tmp/nilo-render-live-lv03
       - name: Verify external observation scope and SHA
         run: |
           python - <<'PY'
@@ -44,12 +48,16 @@ jobs:
           from pathlib import Path
           r=json.loads(Path('/tmp/nilo-render-live/delivery-receipt.json').read_text())
           g=json.loads(Path('/tmp/nilo-render-live-game/custode-receipt.json').read_text())
+          h=json.loads(Path('/tmp/nilo-render-live-lv03/lv03-receipt.json').read_text())
+          assert h['status']=='PASS_SCOPED_LV03_REMOTE' and h['remote_render_observed']
           assert r['status']=='PASS_REMOTE_RENDER_SHA_SCOPED' and r['remote_render_observed'] and r['browser_executed']
-          assert r['source_sha']==g['source_sha']==os.environ['TARGET_SHA']
+          assert r['source_sha']==g['source_sha']==h['source_sha']==os.environ['TARGET_SHA']
           assert g['status']=='PASS_SCOPED_CUSTODE_BROWSER_NO_USER_APPROVAL'
           assert not r['beta_authorized'] and not g['beta_authorized']
-          assert len(r['screenshots'])==1 and len(g['screenshots'])==3
-          for folder,receipt in [(Path('/tmp/nilo-render-live'),r),(Path('/tmp/nilo-render-live-game'),g)]:
+          assert len(r['screenshots'])==1 and len(g['screenshots'])==3 and len(h['screenshots'])==4
+          for folder,receipt in [(Path('/tmp/nilo-render-live'),r),
+                                  (Path('/tmp/nilo-render-live-game'),g),
+                                  (Path('/tmp/nilo-render-live-lv03'),h)]:
             for item in receipt['screenshots']:
               blob=(folder/item['name']).read_bytes()
               assert blob.startswith(bytes.fromhex('89504e470d0a1a0a'))
@@ -64,5 +72,6 @@ jobs:
           path: |
             /tmp/nilo-render-live/
             /tmp/nilo-render-live-game/
+            /tmp/nilo-render-live-lv03/
           if-no-files-found: warn
           retention-days: 14

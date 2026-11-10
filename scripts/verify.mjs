@@ -8,6 +8,7 @@ import {CFG} from "../web/core.mjs";
 import {LV02,lv02Surfaces,currentForceAt,decodeLV02Checkpoint} from "../web/levels/lv-02.mjs";
 import {ART_CUES,ART_SIGNALS,ART_IDENTITY} from "../web/art.mjs";
 import {CUSTODE,initialCustode,enterCustode,advanceCustode} from "../web/levels/custode.mjs";
+import {LV03,archiveDoorOpen,decodeLV03Checkpoint} from "../web/levels/lv-03.mjs";
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),"..");
 const raw=p=>JSON.parse(readFileSync(resolve(ROOT,p),"utf8"));
 export const load=()=>({
@@ -75,6 +76,18 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     keeper?.browser_oracle==="tests/browser-custode.py"&&
     enterCustode(initialCustode()).phase==="TELEGRAPH"&&
     advanceCustode(initialCustode(),{repairPressed:true,grounded:true,nearMechanism:true}).repairs===0);
+  const a=contract?.gameplay?.lv03,l=contract?.levels?.find(x=>x.id==="LV-03");
+  fail("lv03-boundary",a?.id==="I08"&&a?.status==="IMPLEMENTED_CANDIDATE_NOT_PLAYER_ACCEPTED"&&
+    a?.level_owner==="web/levels/lv-03.mjs"&&a?.checkpoint_key==="nilo.checkpoint.lv03.v1"&&
+    a?.doors?.join(",")===LV03.doors.map(x=>x.id).join(",")&&
+    a?.modes?.join(",")==="LIGHT,SHADOW"&&
+    a?.third_hour==="TWO_DOORS_AND_GROUNDED_EXIT_ONLY"&&
+    a?.player_acceptance==="BLOCKED_EXTERNAL"&&a?.beta_authorized===false&&
+    a?.browser_oracle==="tests/browser-lv-03.py"&&
+    l?.design_status==="IMPLEMENTED_CANDIDATE_NOT_PLAYER_ACCEPTED"&&l?.acceptance_oracles?.length===6&&
+    archiveDoorOpen(LV03.doors[0],"LIGHT")===false&&archiveDoorOpen(LV03.doors[0],"SHADOW")&&
+    archiveDoorOpen(LV03.doors[1],"LIGHT")&&archiveDoorOpen(LV03.doors[1],"SHADOW")===false&&
+    decodeLV03Checkpoint('{"version":1,"level":"LV-02","checkpointId":"CP-03"}')===null);
   const chars=contract?.characters||[],levels=contract?.levels||[];
   const charIds=chars.map(x=>x.id),levelIds=levels.map(x=>x.id);
   fail("characters",chars.length===6&&distinct(charIds)&&chars.every(x=>x.name&&x.role&&x.motivation&&x.silhouette));
@@ -86,16 +99,21 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     contract.slice.acceptance_oracles.some(x=>x.type==="REAL_SOURCE_MUTATION"));
   fail("effects",contract?.gameplay?.security?.includes("no telemetry")&&contract?.permissions?.not_allowed?.includes("release"));
   fail("dod-shape",dod?.schema==="nilo.reticular-dod/1"&&dod?.root==="G_CONTRACT_DEMONSTRATED"&&
-    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===52);
+    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===62);
   const ids=(dod?.nodes||[]).map(n=>n.id),nodes=new Map((dod?.nodes||[]).map(n=>[n.id,n]));
   fail("dod-identities",distinct(ids));
-  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===12&&
+  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===13&&
     nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_BETA_RELEASE,G_SUPPLY_CHAIN,G_RELEASE"&&
     nodes.get("G_BETA_RELEASE")?.depends_on?.join(",")==="G_FULL_GAME,Q01,Q02,Q03,Q04,Q05,Q06,Q07"&&
     nodes.get("G_RELEASE")?.depends_on?.join(",")==="R01,R02,R03,G_DELIVERY_PR11"&&
     nodes.get("G_DELIVERY_PR11")?.depends_on?.join(",")==="G_CODESPACES_P0,G_RENDER_P1"&&
     nodes.get("G_CODESPACES_P0")?.depends_on?.join(",")==="DL01,DL02,DL03,DL04"&&
-    nodes.get("G_RENDER_P1")?.depends_on?.join(",")==="DL05,DL06,DL07,DL08");
+    nodes.get("G_RENDER_P1")?.depends_on?.join(",")==="DL05,DL06,DL07,DL08"&&
+    nodes.get("G_FULL_GAME")?.depends_on?.includes("G_LV03_PR12")&&
+    nodes.get("G_LV03_PR12")?.depends_on?.join(",")==="L3_00,L3_01,L3_02,L3_03,L3_04,L3_05,L3_06,L3_07,L3_08");
+  fail("lv03-no-self-approved-gates",["L3_00","L3_01","L3_02","L3_03","L3_04","L3_05","L3_06","L3_07","L3_08"].every(id=>
+    nodes.get(id)?.baseline_status==="NOT_VERIFIED"&&nodes.get(id)?.witness===null)&&
+    nodes.get("G_LV03_PR12")?.authorization==="NONE");
   const delivery=contract?.delivery;
   fail("delivery-source-truth",delivery?.id==="I07-D"&&
    delivery?.codespaces?.port===8000&&delivery?.codespaces?.host==="0.0.0.0"&&

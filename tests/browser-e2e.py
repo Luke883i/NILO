@@ -302,7 +302,7 @@ def run(args):
             report["checks"]["keyboard_end_to_end"]="PASS_OBSERVED"
             page.wait_for_function("() => document.querySelector('#scene-title')?.textContent?.includes('PRIMA ORA RESTITUITA')")
             report["visual_scene_completed"]=scene_text(page)
-            assert "quattro livelli" in report["visual_scene_completed"]["hint"].lower()
+            assert "tre livelli" in report["visual_scene_completed"]["hint"].lower()
             report["checks"]["visual_narrative_finish"]="PASS_OBSERVED"
             report["screenshots"].append(screenshot(page,out,"03-completed"))
             report["last_stage"]="finish"

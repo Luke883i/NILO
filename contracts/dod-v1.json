@@ -5,7 +5,7 @@
   "seed_goal": "G_SEED_SOURCE",
   "qualification": "ALL_GATES_NONCOMPENSATORY",
   "authority": "NONE",
-  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt. PR11 extends the RELEASE branch noncompensatorily: source-and-local tests do not confer Codespace forwarding or an actual Render deploy. The external leaves DL02 and DL08 remain BLOCKED_EXTERNAL until observed.",
+  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt. PR11 extends the RELEASE branch noncompensatorily: source-and-local tests do not confer Codespace forwarding or an actual Render deploy. The external leaves DL02 and DL08 remain BLOCKED_EXTERNAL until observed. PR12 adds nine obligations under G_FULL_GAME; technical tests cannot override Q07, DL02 or DL08.",
   "nodes": [
     {
       "id": "I01",
@@ -294,7 +294,8 @@
         "F01",
         "F02",
         "F03",
-        "A01"
+        "A01",
+        "G_LV03_PR12"
       ],
       "claim": "accepted six-level / three-boss game",
       "baseline_status": "BLOCKED",
@@ -534,6 +535,105 @@
         "G_RENDER_P1"
       ],
       "claim": "product is actually accessible in both declared delivery environments",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "L3_00",
+      "kind": "LEAF",
+      "plane": "LV03",
+      "claim": "baseline CI exact SHA",
+      "oracle": "falsifiable source and actual HTTP browser, no human approval",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "L3_01",
+      "kind": "LEAF",
+      "plane": "LV03",
+      "claim": "Custode victory gates LV03",
+      "oracle": "falsifiable source and actual HTTP browser, no human approval",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "L3_02",
+      "kind": "LEAF",
+      "plane": "LV03",
+      "claim": "physical opposite gate collisions",
+      "oracle": "falsifiable source and actual HTTP browser, no human approval",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "L3_03",
+      "kind": "LEAF",
+      "plane": "LV03",
+      "claim": "one-shot grounded E at lamps",
+      "oracle": "falsifiable source and actual HTTP browser, no human approval",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "L3_04",
+      "kind": "LEAF",
+      "plane": "LV03",
+      "claim": "traversable deterministic level",
+      "oracle": "falsifiable source and actual HTTP browser, no human approval",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "L3_05",
+      "kind": "LEAF",
+      "plane": "LV03",
+      "claim": "strict local CP03, no win authority",
+      "oracle": "falsifiable source and actual HTTP browser, no human approval",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "L3_06",
+      "kind": "LEAF",
+      "plane": "LV03",
+      "claim": "third hour needs both doors and exit",
+      "oracle": "falsifiable source and actual HTTP browser, no human approval",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "L3_07",
+      "kind": "LEAF",
+      "plane": "LV03",
+      "claim": "pixel/DOM cues match physics",
+      "oracle": "falsifiable source and actual HTTP browser, no human approval",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "L3_08",
+      "kind": "LEAF",
+      "plane": "LV03",
+      "claim": "real static E2E, source mutants and regressions",
+      "oracle": "falsifiable source and actual HTTP browser, no human approval",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "G_LV03_PR12",
+      "kind": "AND",
+      "depends_on": [
+        "L3_00",
+        "L3_01",
+        "L3_02",
+        "L3_03",
+        "L3_04",
+        "L3_05",
+        "L3_06",
+        "L3_07",
+        "L3_08"
+      ],
+      "claim": "third playable level is technical candidate, not independently accepted",
       "baseline_status": "BLOCKED",
       "authorization": "NONE"
     }

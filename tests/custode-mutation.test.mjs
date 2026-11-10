@@ -19,7 +19,7 @@ const mutants=[
 test('eight physical original-source Custode mutations are killed by independent tests',()=>{
  const tmp=mkdtempSync(join(tmpdir(),'nilo-custode-mutants-'));
  try{
-  for(const file of ['web/core.mjs','web/levels/lv-02.mjs','web/levels/custode.mjs','tests/custode.test.mjs']){
+  for(const file of ['web/core.mjs','web/levels/lv-02.mjs','web/levels/lv-03.mjs','web/levels/custode.mjs','tests/custode.test.mjs']){
    const dst=join(tmp,file);mkdirSync(resolve(dst,'..'),{recursive:true});cpSync(join(root,file),dst);
   }
   writeFileSync(join(tmp,'package.json'),JSON.stringify({type:'module'}));

@@ -35,6 +35,8 @@ test("all original and game-feel real-source mutations are killed by independent
      readFileSync(resolve(root,"web/levels/lv-02.mjs"),"utf8"));
    writeFileSync(join(tmp,"web","levels","custode.mjs"),
      readFileSync(resolve(root,"web/levels/custode.mjs"),"utf8"));
+   writeFileSync(join(tmp,"web","levels","lv-03.mjs"),
+     readFileSync(resolve(root,"web/levels/lv-03.mjs"),"utf8"));
    writeFileSync(join(tmp,"tests/core.test.mjs"),sourceTests);
    writeFileSync(join(tmp,"tests/feel.test.mjs"),feelTests);
    const target=join(tmp,"web/core.mjs");

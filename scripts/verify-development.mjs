@@ -66,6 +66,14 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
       .every(t=>lv02?.tests?.includes(t)&&bossOracle?.tests?.includes(t))&&
     bossOracle?.sources?.includes("web/levels/custode.mjs")&&
     bossOracle?.authority==="HUMAN_AND_BROWSER_REQUIRED"&&bossOracle?.browser==="NOT_ATTESTED");
+  const archive=l.find(x=>x.id==="LV-03");
+  bad("bridge-lv03-witness",archive?.state==="IMPLEMENTED_CANDIDATE"&&
+    archive?.source?.includes("web/levels/lv-03.mjs")&&
+    ["tests/lv-03.test.mjs","tests/lv-03-mutation.test.mjs","tests/browser-lv-03.py"].every(t=>archive?.tests?.includes(t))&&
+    ["OR-LV03-01","OR-LV03-02","OR-LV03-03","OR-LV03-04","OR-LV03-05","OR-LV03-06"].every(id=>
+      r.some(x=>x.id===id&&x.sources?.includes("web/levels/lv-03.mjs")&&
+        x.tests?.includes("tests/browser-lv-03.py")&&x.browser==="NOT_ATTESTED"))&&
+    r.find(x=>x.id==="OR-LV03-06")?.authority==="HUMAN_AND_BROWSER_REQUIRED");
   const delivery=bridge?.delivery,prodDelivery=contract?.delivery;
   bad("bridge-delivery",delivery?.id==="I07-D"&&delivery?.id===prodDelivery?.id&&
     delivery?.authority==="SOURCE_AND_BROWSER_TESTS_NOT_EXTERNAL_ATTESTATION"&&

@@ -1,5 +1,5 @@
 /** LV-02 is data for the original NILO core, not a second engine.
- * The Custode boss remains DESIGN_ONLY and outside this slice.
+ * The Custode is wired in the shared core; only canal geometry lives here.
  * Distances are logical Canvas2D pixels and ticks use the shared 60Hz clock. */
 export const LV02 = Object.freeze({
   id:'LV-02',title:'Canali dei Minuti',width:2360,finishX:2190,

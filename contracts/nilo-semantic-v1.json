@@ -184,14 +184,50 @@
     {
       "id": "LV-03",
       "title": "Archivio delle Ombre",
-      "story": "read who lost access to time",
+      "story": "Read who lost access to time through a physical light/shadow archive and restore hour three",
       "mechanics": [
-        "light/shadow doors",
-        "optional collectible"
+        "two physical opposite light/shadow doors",
+        "one-shot grounded KeyE at lamp switches",
+        "CP-03 strict checkpoint and reload",
+        "optional archive ledger",
+        "shared run/jump/collision/camera",
+        "non-colour gate shape and text cues"
       ],
       "boss": null,
-      "design_status": "DESIGN_ONLY",
-      "exit": "release hour three"
+      "design_status": "IMPLEMENTED_CANDIDATE_NOT_PLAYER_ACCEPTED",
+      "exit": "cross both physical doors and reach archive exit; ledger optional, third hour awarded on COMPLETED only",
+      "acceptance_oracles": [
+        {
+          "id": "OR-LV03-01",
+          "claim": "transition-from-Custode-victory",
+          "type": "SOURCE_MUTATION_BROWSER"
+        },
+        {
+          "id": "OR-LV03-02",
+          "claim": "physical-opposite-shadow-gates",
+          "type": "SOURCE_MUTATION_BROWSER"
+        },
+        {
+          "id": "OR-LV03-03",
+          "claim": "one-shot-contextual-E",
+          "type": "SOURCE_MUTATION_BROWSER"
+        },
+        {
+          "id": "OR-LV03-04",
+          "claim": "CP03-strict-local-reload",
+          "type": "SOURCE_MUTATION_BROWSER"
+        },
+        {
+          "id": "OR-LV03-05",
+          "claim": "optional-ledger-independent-victory",
+          "type": "SOURCE_MUTATION_BROWSER"
+        },
+        {
+          "id": "OR-LV03-06",
+          "claim": "visual-and-static-HTTP-E2E",
+          "type": "BROWSER_AND_HUMAN_PENDING"
+        }
+      ]
     },
     {
       "id": "LV-04",
@@ -368,7 +404,7 @@
       "screen_reader_qualification": "NOT_OBSERVED",
       "mobile_touch_qualification": "EXPLICITLY_UNSUPPORTED"
     },
-    "current_scope": "LV-01 and LV-02 playable source candidates; first boss Custode implemented. Four levels and two bosses are design only; no independent playtest.",
+    "current_scope": "LV-01 LV-02 (Custode) LV-03 candidates; LV-04 LV-05 LV-06 and two bosses are design-only; independent user beta approval absent",
     "lv02": {
       "id": "I06",
       "status": "IMPLEMENTED_CANDIDATE_NOT_PLAYER_ACCEPTED",
@@ -417,7 +453,33 @@
     "design_only_states": [
       "TITLE",
       "FALLEN"
-    ]
+    ],
+    "lv03": {
+      "id": "I08",
+      "status": "IMPLEMENTED_CANDIDATE_NOT_PLAYER_ACCEPTED",
+      "level_owner": "web/levels/lv-03.mjs",
+      "shared_logic": "web/core.mjs",
+      "shared_view": "web/art.mjs",
+      "checkpoint_key": "nilo.checkpoint.lv03.v1",
+      "doors": [
+        "shadow-door",
+        "light-door"
+      ],
+      "modes": [
+        "LIGHT",
+        "SHADOW"
+      ],
+      "contextual_interact": "KeyE_EDGE_GROUNDED_NEAR_LAMP",
+      "optional_collectible": "archive-ledger_NOT_REQUIRED",
+      "third_hour": "TWO_DOORS_AND_GROUNDED_EXIT_ONLY",
+      "player_acceptance": "BLOCKED_EXTERNAL",
+      "browser_oracle": "tests/browser-lv-03.py",
+      "source_oracles": [
+        "tests/lv-03.test.mjs",
+        "tests/lv-03-mutation.test.mjs"
+      ],
+      "beta_authorized": false
+    }
   },
   "slice": {
     "id": "SLICE-01",
