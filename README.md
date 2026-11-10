@@ -1,3 +1,12 @@
+<!-- programme-header:v2 -->
+> **ROA Research Programme · A-OSP ecosystem** — [Author & programme hub](https://github.com/Luke883i/academics) · [ROA theory](https://github.com/Luke883i/ROA) · [CORA assurance](https://github.com/Luke883i/cora). Every repository is independently readable. Membership does not imply formal derivation, shared runtime, scientific validation, certification, or production readiness. Repository-local code, evidence, and governance remain authoritative.
+
+## Independent entrypoint
+
+**Purpose:** an original 2D platform game and a case study of *integrated sequential multi-abstraction engineering*: narrative intent and UX, mechanics and state, executable game source, reproducible browser behavior, mutation-based falsification, deployment and release obligations remain linked without treating any single level as proof of the others. Two candidate levels are documented; the remaining beta scope and independent playtesting remain open. **Provisional CORA-Score:** Dev_CORA **4/5** · Bonifica_CORA **2/5**; [rubric](https://github.com/Luke883i/cora/blob/main/docs/CORA_SCORE.md).
+
+---
+
 # NILO — La Fabbrica delle Ore
 
 NILO è un **platform narrativo 2D originale in sviluppo**: un viaggio per restituire sei ore rubate, con identità pixel art propria, sei livelli e tre boss previsti. Oggi il prodotto dispone di **tre livelli candidati sperimentali (LV-01, LV-02, LV-03)** e un boss candidato (Custode). LV-04–LV-06 e due boss rimangono design, non gioco funzionante.
