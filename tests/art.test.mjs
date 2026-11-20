@@ -41,6 +41,11 @@ function recording(state){
 }
 test('PR8: four story beats follow real position; pause and completion override movement',()=>{
  assert.deepEqual(ART_CUES.map(x=>x.id),['CUE-01','CUE-02','CUE-03','CUE-04']);
+ // The native HTTP browser smoke requires the original solid-surface cue;
+ // NILO NEXT additionally teaches combat without erasing that affordance.
+ assert.match(ART_CUES[0].hint,/ottone/i);
+ assert.match(ART_CUES[0].hint,/\bJ\b/);
+ assert.match(ART_CUES[0].hint,/automi/i);
  for(const [x,id] of [[48,'CUE-01'],[649,'CUE-01'],[650,'CUE-02'],[1199,'CUE-02'],[1200,'CUE-03'],[1549,'CUE-03'],[1550,'CUE-04'],[2050,'CUE-04']])
    assert.equal(sceneCue({...initialState(),x}).id,id);
  assert.match(sceneCue({...initialState(),x:1250,checkpointActive:true}).title,/RIACCESO/);

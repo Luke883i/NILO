@@ -174,7 +174,7 @@ function gate(c){
  * contracts/nilo-semantic-v1.json; tests reject a mismatch with that owner. */
 export const ART_CUES = Object.freeze([
   Object.freeze({id:'CUE-01',from:0,until:650,role:'CH-TICA',title:'TICA · TROVA IL PRIMO SEGNATEMPO',
-    hint:'Usa J per lanciare un Impulso. Puoi anche saltare sugli automi. Cerca i Frammenti d’Ora.'}),
+    hint:'Le bordature d’ottone indicano dove atterrare. Premi J per lanciare un Impulso agli automi; raccogli i Frammenti d’Ora.'}),
   Object.freeze({id:'CUE-02',from:650,until:1200,role:'CH-NILO',title:'NILO · ATTRAVERSA IL CORTILE',
     hint:'Supera i vuoti, schiva gli automi o disarmali con J. I Frammenti premiano l’esplorazione.'}),
   Object.freeze({id:'CUE-03',from:1200,until:1550,role:'CH-PERNO',title:'PERNO · RIACCENDI IL SEGNATEMPO',
