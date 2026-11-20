@@ -26,7 +26,8 @@
         "tests/core.test.mjs",
         "tests/mutation.test.mjs",
         "tests/action.test.mjs",
-        "tests/action-mutation.test.mjs"
+        "tests/action-mutation.test.mjs",
+        "tests/browser-action.py"
       ]
     },
     {
@@ -186,7 +187,8 @@
       ],
       "tests": [
         "tests/action.test.mjs",
-        "tests/action-mutation.test.mjs"
+        "tests/action-mutation.test.mjs",
+        "tests/browser-action.py"
       ],
       "authority": "HUMAN_AND_BROWSER_REQUIRED",
       "browser": "NOT_ATTESTED"
@@ -420,7 +422,8 @@
     "tests/custode.test.mjs",
     "tests/custode-mutation.test.mjs",
     "tests/lv-03.test.mjs",
-    "tests/lv-03-mutation.test.mjs"
+    "tests/lv-03-mutation.test.mjs",
+    "tests/browser-action.py"
   ],
   "release_gate": "Q06",
   "interfaces": {

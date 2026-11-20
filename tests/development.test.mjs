@@ -10,7 +10,7 @@ const base=()=>({bridge:read("contracts/development-map.json"),contract:read("co
 const fixtureFiles=["web/action.mjs","web/core.mjs","web/main.mjs","web/index.html","web/style.css","web/art.mjs",
   "tests/core.test.mjs","tests/action.test.mjs","tests/action-mutation.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
   "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs",
-  "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py",
+  "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py","tests/browser-action.py",
   "web/levels/lv-02.mjs","web/levels/lv-03.mjs","web/levels/custode.mjs",
   "tests/lv-03.test.mjs","tests/lv-03-mutation.test.mjs","tests/browser-lv-03.py","tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py",
   "tests/custode.test.mjs","tests/custode-mutation.test.mjs","tests/browser-custode.py",
@@ -151,4 +151,13 @@ test("PR12 owner and browser receipts never silently disappear or self-authorize
  }
  const d=base();d.bridge.requirements.find(x=>x.id==="OR-LV03-06").browser="PASS";
  assert(validateBridge(d).includes("bridge-no-runtime-promotion"));
+});
+
+
+test("S01 browser action witness cannot be dropped from OR-07 without failing the bridge",()=>{
+  const x=base();x.bridge.requirements.find(r=>r.id==="OR-07").tests=
+    x.bridge.requirements.find(r=>r.id==="OR-07").tests.filter(t=>t!=="tests/browser-action.py");
+  assert(validateBridge(x).includes("bridge-action-s01"));
+  const y=base();y.bridge.requirements.find(r=>r.id==="OR-07").browser="PASS";
+  assert(validateBridge(y).includes("bridge-no-runtime-promotion"));
 });

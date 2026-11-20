@@ -74,6 +74,14 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
       r.some(x=>x.id===id&&x.sources?.includes("web/levels/lv-03.mjs")&&
         x.tests?.includes("tests/browser-lv-03.py")&&x.browser==="NOT_ATTESTED"))&&
     r.find(x=>x.id==="OR-LV03-06")?.authority==="HUMAN_AND_BROWSER_REQUIRED");
+  const a7=r.find(x=>x.id==="OR-07"),lv01=l.find(x=>x.id==="LV-01");
+  bad("bridge-action-s01",a7?.level==="LV-01"&&a7?.authority==="HUMAN_AND_BROWSER_REQUIRED"&&
+    a7.browser==="NOT_ATTESTED"&&a7.sources?.includes("web/action.mjs")&&
+    a7.sources?.includes("web/main.mjs")&&
+    ["tests/action.test.mjs","tests/action-mutation.test.mjs","tests/browser-action.py"].every(t=>
+      a7.tests?.includes(t)&&lv01?.tests?.includes(t))&&
+    contract?.gameplay?.action_preview?.browser_oracle==="tests/browser-action.py"&&
+    contract.gameplay.action_preview?.playtest_accepted===false);
   const delivery=bridge?.delivery,prodDelivery=contract?.delivery;
   bad("bridge-delivery",delivery?.id==="I07-D"&&delivery?.id===prodDelivery?.id&&
     delivery?.authority==="SOURCE_AND_BROWSER_TESTS_NOT_EXTERNAL_ATTESTATION"&&

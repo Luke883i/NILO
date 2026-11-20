@@ -492,7 +492,8 @@
       "playtest_accepted": false,
       "browser_http": "NOT_ATTESTED",
       "author_approved": false,
-      "beta_authorized": false
+      "beta_authorized": false,
+      "browser_oracle": "tests/browser-action.py"
     }
   },
   "slice": {
