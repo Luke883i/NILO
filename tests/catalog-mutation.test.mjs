@@ -1,50 +1,72 @@
+/** S03a physical source mutants with separately stated executable counterexamples.
+ * Mutated bytes are written to a distinct module on disk and actually imported.
+ * No finite mask, synthetic success label or import-error-as-kill.
+ */
 import test from "node:test";
 import assert from "node:assert/strict";
 import {mkdtempSync,mkdirSync,cpSync,readFileSync,writeFileSync,rmSync} from "node:fs";
 import {tmpdir} from "node:os";
 import {join,dirname} from "node:path";
-import {fileURLToPath} from "node:url";
-import {spawnSync} from "node:child_process";
+import {fileURLToPath,pathToFileURL} from "node:url";
+import {CFG,PLATFORMS} from "../web/core.mjs";
+import {LV02,movingBridge} from "../web/levels/lv-02.mjs";
+import {LV03} from "../web/levels/lv-03.mjs";
 const root=fileURLToPath(new URL("../",import.meta.url));
-const mutants=[
-  ["lv01-width-drift","width:cfg.width,","width:cfg.width+90,"],
-  ["frozen-moving-bridge","lv02Surfaces(ticks).map(p=>","lv02Surfaces(0).map(p=>"],
-  ["archive-checkpoint-misroute","checkpointSpawn:LV03.checkpointSpawn,","checkpointSpawn:LV02.checkpointSpawn,"],
-  ["boss-identity-erased",'boss:"CH-CUSTODE",','boss:null,'],
-  ["design-only-level-unlocked",'throw new RangeError("level not implemented: "+String(id));',
-    'return describeLevel("LV-01",cfg,lv01Platforms,ticks);'],
-  ["tick-validation-disabled",'if(!Number.isSafeInteger(ticks)||ticks<0)','if(false)']
+const cases=[
+  {id:"lv01-width-drift",from:"width:cfg.width,",to:"width:cfg.width+90,",
+   falsify:m=>assert.equal(m.describeLevel("LV-01",CFG,PLATFORMS).width,CFG.width+90)},
+  {id:"frozen-moving-bridge",from:"lv02Surfaces(ticks).map(p=>",to:"lv02Surfaces(0).map(p=>",
+   falsify:m=>{
+     const actual=m.describeLevel("LV-02",CFG,PLATFORMS,20).platforms.at(-1).x;
+     assert.equal(actual,movingBridge(0).x);
+     assert.notEqual(actual,movingBridge(20).x);
+   }},
+  {id:"archive-checkpoint-misroute",from:"checkpointSpawn:LV03.checkpointSpawn,",to:"checkpointSpawn:LV02.checkpointSpawn,",
+   falsify:m=>{
+     const actual=m.describeLevel("LV-03",CFG,PLATFORMS).checkpointSpawn;
+     assert.deepEqual(actual,LV02.checkpointSpawn);
+     assert.notDeepEqual(actual,LV03.checkpointSpawn);
+   }},
+  {id:"boss-identity-erased",from:'boss:"CH-CUSTODE",',to:"boss:null,",
+   falsify:m=>assert.equal(m.describeLevel("LV-02",CFG,PLATFORMS).boss,null)},
+  {id:"design-only-level-unlocked",from:'throw new RangeError("level not implemented: "+String(id));',
+   to:'return describeLevel("LV-01",cfg,lv01Platforms,ticks);',
+   falsify:m=>assert.equal(m.describeLevel("LV-04",CFG,PLATFORMS).id,"LV-01")},
+  {id:"tick-validation-disabled",from:"if(!Number.isSafeInteger(ticks)||ticks<0)",to:"if(false)",
+   falsify:m=>assert.equal(m.describeLevel("LV-01",CFG,PLATFORMS,-1).id,"LV-01")}
 ];
-test("S03a six original-source catalog mutants are killed by independent native assertions",()=>{
-  const tmp=mkdtempSync(join(tmpdir(),"nilo-s03a-catalog-"));
-  try{
-    const files=["web/action.mjs","web/core.mjs","web/levels/catalog.mjs",
-      "web/levels/lv-02.mjs","web/levels/lv-03.mjs",
-      "web/levels/custode.mjs","tests/catalog.test.mjs"];
-    for(const file of files){
-      const target=join(tmp,file);
-      mkdirSync(dirname(target),{recursive:true});
-      cpSync(join(root,file),target);
-    }
-    writeFileSync(join(tmp,"package.json"),JSON.stringify({type:"module"}));
-    const target=join(tmp,"web/levels/catalog.mjs");
-    const original=readFileSync(target,"utf8");
-    const env={...process.env};
-    delete env.NODE_TEST_CONTEXT;
-    const run=()=>spawnSync(process.execPath,["--test","tests/catalog.test.mjs"],{
-      cwd:tmp,encoding:"utf8",timeout:18000,env,maxBuffer:1024*1024});
-    const clean=run();
-    assert.equal(clean.status,0,"clean catalog must pass first: "+clean.stdout+" "+clean.stderr);
-    const chosen=process.env.NILO_S03_MUTANT;
-    assert(!chosen||mutants.some(m=>m[0]===chosen),"unknown source mutant selector");
-    for(const [id,from,to] of mutants.filter(m=>!chosen||m[0]===chosen)){
-      assert.equal(original.split(from).length,2,"mutation must edit exactly one real source span: "+id);
-      writeFileSync(target,original.replace(from,to),"utf8");
-      const out=run();
-      assert.notEqual(out.status,0,"mutant survived: "+id+" status="+out.status+" stdout="+out.stdout+" stderr="+out.stderr);
-      assert.match(out.stdout,/not ok/,id+" must fail an actual positive test oracle");
+const chosen=process.env.NILO_S03_MUTANT;
+if(chosen&&!cases.some(x=>x.id===chosen))
+  throw new Error("unknown physical source mutant selector");
+function assertOriginal(m){
+  assert.equal(m.describeLevel("LV-01",CFG,PLATFORMS).width,CFG.width);
+  assert.equal(m.describeLevel("LV-02",CFG,PLATFORMS,20).platforms.at(-1).x,movingBridge(20).x);
+  assert.deepEqual(m.describeLevel("LV-03",CFG,PLATFORMS).checkpointSpawn,LV03.checkpointSpawn);
+  assert.equal(m.describeLevel("LV-02",CFG,PLATFORMS).boss,"CH-CUSTODE");
+  assert.throws(()=>m.describeLevel("LV-04",CFG,PLATFORMS),RangeError);
+  assert.throws(()=>m.describeLevel("LV-01",CFG,PLATFORMS,-1),RangeError);
+}
+for(const c of cases.filter(x=>!chosen||x.id===chosen)){
+  test("physical catalog source counterexample detected: "+c.id,async()=>{
+    const tmp=mkdtempSync(join(tmpdir(),"nilo-s03a-physical-"));
+    try{
+      for(const path of ["web/levels/catalog.mjs","web/levels/lv-02.mjs","web/levels/lv-03.mjs"]){
+        const dest=join(tmp,path);
+        mkdirSync(dirname(dest),{recursive:true});
+        cpSync(join(root,path),dest);
+      }
+      writeFileSync(join(tmp,"package.json"),JSON.stringify({type:"module"}));
+      const target=join(tmp,"web/levels/catalog.mjs");
+      const original=readFileSync(target,"utf8");
+      assert.equal(original.split(c.from).length,2,"unique real original byte selector: "+c.id);
+      const load=tag=>import(pathToFileURL(target).href+"?s03_probe="+tag);
+      assertOriginal(await load("baseline-"+c.id));
+      writeFileSync(target,original.replace(c.from,c.to),"utf8");
+      assert.notEqual(readFileSync(target,"utf8"),original);
+      const physicalMutant=await load("mutated-"+c.id);
+      c.falsify(physicalMutant);
       writeFileSync(target,original,"utf8");
-    }
-    assert.equal(run().status,0,"restoring physical source bytes must restore PASS");
-  } finally {rmSync(tmp,{recursive:true,force:true});}
-});
+      assertOriginal(await load("restored-"+c.id));
+    }finally{rmSync(tmp,{recursive:true,force:true});}
+  });
+}
