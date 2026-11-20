@@ -105,3 +105,16 @@ test("PR12 archive physical source and complete AND chain cannot be laundered",(
  d=fresh();d.dod.nodes.find(x=>x.id==="L3_07").baseline_status="PASS";
  assert(audit(d).includes("lv03-no-self-approved-gates"));
 });
+
+
+test("S01 combat AND gate cannot be bypassed by missing leaves or synthetic human PASS",()=>{
+  let x=fresh();x.dod.nodes.find(n=>n.id==="G_FULL_GAME").depends_on=
+    x.dod.nodes.find(n=>n.id==="G_FULL_GAME").depends_on.filter(x=>x!=="G_LV01_ACTION_S01");
+  assert(audit(x).includes("dod-AND"));
+  x=fresh();x.dod.nodes.find(n=>n.id==="A7_04").baseline_status="PASS";
+  assert(audit(x).includes("s01-action-gate"));
+  x=fresh();x.dod.nodes.find(n=>n.id==="A7_03").witness="invented";
+  assert(audit(x).includes("s01-action-gate"));
+  x=fresh();x.dod.nodes.find(n=>n.id==="G_LV01_ACTION_S01").depends_on.pop();
+  assert(audit(x).includes("s01-action-gate"));
+});

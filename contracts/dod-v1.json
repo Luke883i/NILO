@@ -5,7 +5,7 @@
   "seed_goal": "G_SEED_SOURCE",
   "qualification": "ALL_GATES_NONCOMPENSATORY",
   "authority": "NONE",
-  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt. PR11 extends the RELEASE branch noncompensatorily: source-and-local tests do not confer Codespace forwarding or an actual Render deploy. The external leaves DL02 and DL08 remain BLOCKED_EXTERNAL until observed. PR12 adds nine obligations under G_FULL_GAME; technical tests cannot override Q07, DL02 or DL08.",
+  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt. PR11 extends the RELEASE branch noncompensatorily: source-and-local tests do not confer Codespace forwarding or an actual Render deploy. The external leaves DL02 and DL08 remain BLOCKED_EXTERNAL until observed. PR12 adds nine obligations under G_FULL_GAME; technical tests cannot override Q07, DL02 or DL08. S01 adds source/native HTTP/physical mutation and independent novice gates for OR-07; no self-issued PASS.",
   "nodes": [
     {
       "id": "I01",
@@ -295,7 +295,8 @@
         "F02",
         "F03",
         "A01",
-        "G_LV03_PR12"
+        "G_LV03_PR12",
+        "G_LV01_ACTION_S01"
       ],
       "claim": "accepted six-level / three-boss game",
       "baseline_status": "BLOCKED",
@@ -634,6 +635,65 @@
         "L3_08"
       ],
       "claim": "third playable level is technical candidate, not independently accepted",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "A7_00",
+      "kind": "LEAF",
+      "plane": "SOURCE",
+      "claim": "KeyJ and combat source/test owners remain linked",
+      "oracle": "bridge OR-07 and explicit source CI test commands",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "A7_01",
+      "kind": "LEAF",
+      "plane": "BEHAVIOR",
+      "claim": "native HTTP physically pressed J kills one enemy",
+      "oracle": "Playwright KeyJ and read-only state/HUD corroboration",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "A7_02",
+      "kind": "LEAF",
+      "plane": "BEHAVIOR",
+      "claim": "pickup, no ghost shot, pause, retry, reload and level gate are conserved",
+      "oracle": "browser real keyboard, native storage, phase and HUD assertions",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "A7_03",
+      "kind": "LEAF",
+      "plane": "BEHAVIOR",
+      "claim": "original source mutations are killed by actual HTTP browser oracle",
+      "oracle": "mutate real main.mjs attack queue/source in isolated server and capture counterexample",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "A7_04",
+      "kind": "LEAF",
+      "plane": "UX",
+      "claim": "independent novice understands J and recognizes damage/reward feedback",
+      "oracle": "external novice playtest and accountable author review",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "witness": null
+    },
+    {
+      "id": "G_LV01_ACTION_S01",
+      "kind": "AND",
+      "depends_on": [
+        "A7_00",
+        "A7_01",
+        "A7_02",
+        "A7_03",
+        "A7_04"
+      ],
+      "claim": "LV01 action behavior qualified technically and by external novice, without beta authority",
       "baseline_status": "BLOCKED",
       "authorization": "NONE"
     }

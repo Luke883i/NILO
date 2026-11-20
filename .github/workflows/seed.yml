@@ -144,6 +144,43 @@ jobs:
         run: python tests/browser-e2e.py --stage input-continuity --out /tmp/nilo-input-continuity --physical-mutant
       - name: Full LV01 real-origin E2E including all prior negative oracles
         run: python tests/browser-e2e.py --stage complete --out /tmp/nilo-browser-evidence --physical-mutant
+      - name: S01 native HTTP action, pickup, pause and physical source mutation witnesses
+        run: python tests/browser-action.py --out /tmp/nilo-browser-action --expected-sha "${{ github.event.pull_request.head.sha || github.sha }}" --physical-mutants
+      - name: S01 independently check action receipt, negative mutants and screenshot digests
+        run: |
+          python - <<'PY_S01'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          folder=Path('/tmp/nilo-browser-action')
+          receipt=json.loads((folder/'action-receipt.json').read_text())
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert receipt['source_sha']==sha and receipt['status']=='PASS_SCOPED_S01_BROWSER'
+          assert receipt['browser_executed'] and receipt['scope']=='LV01_NATIVE_HTTP_CHROME_ACTION_ONLY'
+          assert not receipt['independent_player_acceptance'] and not receipt['beta_authorized']
+          assert not receipt['real_render_host_observed'] and not receipt['rights_approved']
+          assert receipt['origin'].startswith('http://127.0.0.1:')
+          expected={
+            'no_ghost_shot_before_key':'PASS_HTTP_OBSERVED',
+            'no_skip_on_key_n':'PASS_HTTP_OBSERVED',
+            'physical_pickup_and_hud':'PASS_HTTP_OBSERVED',
+            'physical_j_kills_sentry_once':'PASS_HTTP_OBSERVED',
+            'no_double_kill':'PASS_HTTP_OBSERVED',
+            'paused_j_disarmed_on_resume':'PASS_HTTP_OBSERVED',
+            'restart_restores_combat_and_pickups':'PASS_HTTP_OBSERVED',
+            'reload_does_not_claim_previous_combat':'PASS_HTTP_OBSERVED',
+            'no_browser_page_errors_or_failed_requests':'PASS_HTTP_OBSERVED',
+            'source_mutant_ghost_shot':'KILLED_BY_BROWSER_ORACLE',
+            'source_mutant_lost_j_edge':'KILLED_BY_BROWSER_ORACLE'
+          }
+          for key,value in expected.items(): assert receipt['checks'].get(key)==value,(key,receipt['checks'].get(key))
+          assert len(receipt['screenshots'])==2
+          for png in receipt['screenshots']:
+            data=(folder/png['name']).read_bytes()
+            assert data.startswith(bytes.fromhex('89504e470d0a1a0a'))
+            assert len(data)==png['bytes'] and hashlib.sha256(data).hexdigest()==png['sha256']
+            assert hashlib.sha256(data+b'X').hexdigest()!=png['sha256']
+          print('PASS_SCOPED_S01_NATIVE_HTTP',sha)
+          PY_S01
       - name: Execute real-origin LV01 to LV02 route, CP02 reload and canal source mutants
         run: python tests/browser-lv-02.py --out /tmp/nilo-browser-lv02 --physical-mutant
       - name: Independently verify LV02 source-bound receipt and four PNG digests
@@ -308,6 +345,7 @@ jobs:
           name: nilo-browser-lv01-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             /tmp/nilo-browser-evidence/
+            /tmp/nilo-browser-action/
             /tmp/nilo-browser-lv02/
             /tmp/nilo-browser-custode/
             /tmp/nilo-render-local/

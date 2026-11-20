@@ -99,10 +99,10 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     contract.slice.acceptance_oracles.some(x=>x.type==="REAL_SOURCE_MUTATION"));
   fail("effects",contract?.gameplay?.security?.includes("no telemetry")&&contract?.permissions?.not_allowed?.includes("release"));
   fail("dod-shape",dod?.schema==="nilo.reticular-dod/1"&&dod?.root==="G_CONTRACT_DEMONSTRATED"&&
-    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===62);
+    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===68);
   const ids=(dod?.nodes||[]).map(n=>n.id),nodes=new Map((dod?.nodes||[]).map(n=>[n.id,n]));
   fail("dod-identities",distinct(ids));
-  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===13&&
+  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===14&&
     nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_BETA_RELEASE,G_SUPPLY_CHAIN,G_RELEASE"&&
     nodes.get("G_BETA_RELEASE")?.depends_on?.join(",")==="G_FULL_GAME,Q01,Q02,Q03,Q04,Q05,Q06,Q07"&&
     nodes.get("G_RELEASE")?.depends_on?.join(",")==="R01,R02,R03,G_DELIVERY_PR11"&&
@@ -110,7 +110,18 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     nodes.get("G_CODESPACES_P0")?.depends_on?.join(",")==="DL01,DL02,DL03,DL04"&&
     nodes.get("G_RENDER_P1")?.depends_on?.join(",")==="DL05,DL06,DL07,DL08"&&
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_LV03_PR12")&&
+    nodes.get("G_FULL_GAME")?.depends_on?.includes("G_LV01_ACTION_S01")&&
     nodes.get("G_LV03_PR12")?.depends_on?.join(",")==="L3_00,L3_01,L3_02,L3_03,L3_04,L3_05,L3_06,L3_07,L3_08");
+  const actionLeafIds=["A7_00","A7_01","A7_02","A7_03","A7_04"];
+  fail("s01-action-gate",nodes.get("G_LV01_ACTION_S01")?.kind==="AND"&&
+    nodes.get("G_LV01_ACTION_S01")?.depends_on?.join(",")==actionLeafIds.join(",")&&
+    nodes.get("G_LV01_ACTION_S01")?.authorization==="NONE"&&
+    nodes.get("G_LV01_ACTION_S01")?.baseline_status==="BLOCKED"&&
+    actionLeafIds.every(id=>nodes.get(id)?.kind==="LEAF"&&nodes.get(id)?.witness===null&&
+      nodes.get(id)?.baseline_status===(id==="A7_04"?"BLOCKED_EXTERNAL":"NOT_VERIFIED"))&&
+    contract?.gameplay?.action_preview?.browser_oracle==="tests/browser-action.py"&&
+    contract.gameplay.action_preview?.browser_http==="NOT_ATTESTED"&&
+    contract.gameplay.action_preview?.playtest_accepted===false);
   fail("lv03-no-self-approved-gates",["L3_00","L3_01","L3_02","L3_03","L3_04","L3_05","L3_06","L3_07","L3_08"].every(id=>
     nodes.get(id)?.baseline_status==="NOT_VERIFIED"&&nodes.get(id)?.witness===null)&&
     nodes.get("G_LV03_PR12")?.authorization==="NONE");
