@@ -14,7 +14,7 @@ function record(state){
    if(k==="restore")return()=>{Object.assign(t,stack.pop());ops.push({name:k,args:[]});};
    if(["arc","ellipse","fillRect","strokeRect","rect","clip","fill","stroke",
      "translate","rotate","moveTo","lineTo","fillText","beginPath","closePath"].includes(k))
-      return (...args)=>ops.push({name:k,args,color:t.fillStyle,stroke:t.strokeStyle});
+      return (...args)=>ops.push({name:k,args,color:typeof t.fillStyle==="object"?"native-gradient":t.fillStyle,stroke:t.strokeStyle});
    return t[k];
  }});
  const before=JSON.stringify(state);
