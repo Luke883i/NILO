@@ -64,6 +64,10 @@ jobs:
         run: node --test tests/entity-blueprint.test.mjs
       - name: S03b seven physically materialized entity source mutants and counterexamples
         run: node --test tests/entity-blueprint-mutation.test.mjs
+      - name: G1-V0 native 960x540 visual scene, physical visual state and legacy fallback
+        run: node --test tests/golden-minute.test.mjs
+      - name: G1-V0 eight physical source mutations with independent visual counterexamples
+        run: node --test tests/golden-minute-mutation.test.mjs
       - name: Verify narrative, requirements, DoD, BOM and source boundaries
         run: node scripts/verify.mjs
       - name: Test deterministic playable physics and checkpoint
@@ -174,6 +178,36 @@ jobs:
           google-chrome --version
       - name: Smoke - real HTTP origin, modules and pixel rendering
         run: python tests/browser-e2e.py --stage smoke --out /tmp/nilo-browser-smoke
+      - name: G1-V0 Chrome native pixel comparison, reversible legacy and real source mutant
+        run: python tests/browser-golden.py --out /tmp/nilo-browser-golden --expected-sha "${{ github.event.pull_request.head.sha || github.sha }}" --physical-mutant
+      - name: G1-V0 independently audit visual receipt, negative mutant, PNG bytes and SHA
+        run: |
+          python - <<'PY_GOLDEN'
+          import json,hashlib,subprocess
+          from pathlib import Path
+          folder=Path('/tmp/nilo-browser-golden')
+          receipt=json.loads((folder/'golden-receipt.json').read_text())
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert receipt['source_sha']==sha and receipt['status']=='PASS_SCOPED_G1V0_BROWSER'
+          assert receipt['scope']=='G1V0_LV01_FIRST_SCENE_VISUAL_ONLY'
+          assert receipt['browser_executed'] and receipt['origin_type']=='ACTUAL_HTTP_LOOPBACK'
+          assert not receipt['author_approved'] and not receipt['player_accepted']
+          assert not receipt['rights_approved'] and not receipt['release_authorized']
+          assert not receipt['external_render_observed']
+          assert receipt['checks']['real_native_color_detail']=='PASS_HTTP_OBSERVED'
+          assert receipt['checks']['native_960x540_distinct_from_legacy']=='PASS_HTTP_OBSERVED'
+          assert receipt['checks']['legacy_fallback_preserved']=='PASS_HTTP_OBSERVED'
+          assert receipt['checks']['source_mutant_removed_native_draw']=='KILLED_BY_BROWSER_ORACLE'
+          assert receipt['golden']['distinct']>=receipt['legacy']['distinct']+10
+          assert receipt['golden']['fnv32']!=receipt['legacy']['fnv32']
+          assert len(receipt['screenshots'])==2
+          for image in receipt['screenshots']:
+              data=(folder/image['name']).read_bytes()
+              assert data.startswith(bytes.fromhex('89504e470d0a1a0a'))
+              assert len(data)==image['bytes'] and len(data)>1000
+              assert hashlib.sha256(data).hexdigest()==image['sha256']
+          print('PASS_SCOPED_G1V0_VISUAL_NOT_HUMAN_APPROVED',sha)
+          PY_GOLDEN
       - name: Input lifecycle - native events, real respawn, pause and physical queue mutant
         run: python tests/browser-e2e.py --stage input-continuity --out /tmp/nilo-input-continuity --physical-mutant
       - name: Full LV01 real-origin E2E including all prior negative oracles
@@ -380,6 +414,7 @@ jobs:
           path: |
             /tmp/nilo-browser-evidence/
             /tmp/nilo-browser-action/
+            /tmp/nilo-browser-golden/
             /tmp/nilo-browser-lv02/
             /tmp/nilo-browser-custode/
             /tmp/nilo-render-local/

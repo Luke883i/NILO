@@ -115,6 +115,23 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
     en?.tests?.includes("tests/browser-action.py")&&
     l.filter(x=>["LV-04","LV-05","LV-06"].includes(x.id))
       .every(x=>x.state==="DESIGN_ONLY"&&x.source?.length===0&&x.tests?.length===0));
+  const golden=r.find(x=>x.id==="OR-10"),goldenDecl=contract?.golden_minute_v0;
+  bad("bridge-golden-minute-v0",goldenDecl?.source_owner==="web/golden-minute.mjs"&&
+    goldenDecl?.consumer_owner==="web/main.mjs"&&
+    goldenDecl?.visual_mode_default==="GOLDEN_MINUTE_CANDIDATE"&&
+    goldenDecl?.author_art_approval==="BLOCKED_EXTERNAL"&&
+    goldenDecl?.beta_authorized===false&&
+    golden?.level==="LV-01"&&golden?.authority==="HUMAN_AND_BROWSER_REQUIRED"&&
+    golden?.browser==="NOT_ATTESTED"&&
+    ["web/golden-minute.mjs","web/main.mjs","web/art.mjs","web/core.mjs"].every(x=>
+      golden.sources?.includes(x))&&
+    lv01?.source?.includes("web/golden-minute.mjs")&&
+    ["tests/golden-minute.test.mjs","tests/golden-minute-mutation.test.mjs","tests/browser-golden.py"].every(x=>
+      golden.tests?.includes(x)&&lv01?.tests?.includes(x)&&bridge?.repo_tests?.includes(x))&&
+    golden.tests?.includes("tests/browser-e2e.py")&&
+    golden.tests?.includes("tests/browser-action.py")&&
+    ["LV-04","LV-05","LV-06"].every(x=>
+      l.find(z=>z.id===x)?.state==="DESIGN_ONLY"));
   const delivery=bridge?.delivery,prodDelivery=contract?.delivery;
   bad("bridge-delivery",delivery?.id==="I07-D"&&delivery?.id===prodDelivery?.id&&
     delivery?.authority==="SOURCE_AND_BROWSER_TESTS_NOT_EXTERNAL_ATTESTATION"&&

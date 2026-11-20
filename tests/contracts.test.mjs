@@ -153,3 +153,20 @@ test("S03b source-owned entities cannot bypass human or runtime AND leaves",()=>
   assert(audit(d).includes("s03b-entity-contract"));
 });
 
+test("G1-V0 native visuals cannot bypass original author or beta gates",()=>{
+  let d=fresh();
+  d.dod.nodes.find(x=>x.id==="G_FULL_GAME").depends_on=
+    d.dod.nodes.find(x=>x.id==="G_FULL_GAME").depends_on.filter(x=>x!=="G_GOLDEN_MINUTE_V0");
+  assert(audit(d).includes("dod-AND"));
+  d=fresh();d.dod.nodes.find(x=>x.id==="V0_05").baseline_status="PASS";
+  assert(audit(d).includes("g1v0-AND-gate"));
+  d=fresh();d.dod.nodes.find(x=>x.id==="V0_03").witness="fake-browser";
+  assert(audit(d).includes("g1v0-AND-gate"));
+  d=fresh();d.dod.nodes.find(x=>x.id==="G_GOLDEN_MINUTE_V0").depends_on.pop();
+  assert(audit(d).includes("g1v0-AND-gate"));
+  d=fresh();d.contract.golden_minute_v0.native_resolution=[480,270];
+  assert(audit(d).includes("g1v0-visual-contract"));
+  d=fresh();d.contract.golden_minute_v0.release_authorized=true;
+  assert(audit(d).includes("g1v0-visual-contract"));
+});
+

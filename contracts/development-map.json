@@ -21,7 +21,8 @@
         "web/index.html",
         "web/style.css",
         "web/action.mjs",
-        "web/levels/catalog.mjs"
+        "web/levels/catalog.mjs",
+        "web/golden-minute.mjs"
       ],
       "tests": [
         "tests/core.test.mjs",
@@ -32,7 +33,10 @@
         "tests/catalog.test.mjs",
         "tests/catalog-mutation.test.mjs",
         "tests/entity-blueprint.test.mjs",
-        "tests/entity-blueprint-mutation.test.mjs"
+        "tests/entity-blueprint-mutation.test.mjs",
+        "tests/golden-minute.test.mjs",
+        "tests/golden-minute-mutation.test.mjs",
+        "tests/browser-golden.py"
       ]
     },
     {
@@ -455,6 +459,25 @@
       ],
       "authority": "MODEL_TEST_ONLY",
       "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-10",
+      "level": "LV-01",
+      "sources": [
+        "web/golden-minute.mjs",
+        "web/main.mjs",
+        "web/art.mjs",
+        "web/core.mjs"
+      ],
+      "tests": [
+        "tests/golden-minute.test.mjs",
+        "tests/golden-minute-mutation.test.mjs",
+        "tests/browser-golden.py",
+        "tests/browser-e2e.py",
+        "tests/browser-action.py"
+      ],
+      "authority": "HUMAN_AND_BROWSER_REQUIRED",
+      "browser": "NOT_ATTESTED"
     }
   ],
   "narrative_state": "DRAFT_AUTHOR_UNAPPROVED",
@@ -476,7 +499,10 @@
     "tests/catalog.test.mjs",
     "tests/catalog-mutation.test.mjs",
     "tests/entity-blueprint.test.mjs",
-    "tests/entity-blueprint-mutation.test.mjs"
+    "tests/entity-blueprint-mutation.test.mjs",
+    "tests/golden-minute.test.mjs",
+    "tests/golden-minute-mutation.test.mjs",
+    "tests/browser-golden.py"
   ],
   "release_gate": "Q06",
   "interfaces": {

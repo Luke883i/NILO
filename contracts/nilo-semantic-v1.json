@@ -550,6 +550,11 @@
         "id": "OR-09",
         "type": "REAL_SOURCE_MUTATION",
         "claim": "LV01 enemies and fragments are uniquely identified immutable source blueprints, instantiated into independent mutable runtime state without changing attack or collectible behavior. LV02/03 and design-only worlds are not made combat-ready by a catalog declaration."
+      },
+      {
+        "id": "OR-10",
+        "claim": "Native 960x540 original Canvas visual pass improves the opening LV01 scene (Nilo/Tica/first sentry/reward) against explicit reversible pixel legacy, without changing action, physics, checkpoint or unimplemented levels; author and novice aesthetic approval remain external.",
+        "type": "NATIVE_HTTP_PIXEL_COMPARISON_AND_PHYSICAL_MUTATION_EXTERNAL_PENDING"
       }
     ]
   },
@@ -1031,6 +1036,40 @@
     "browser_regression": "tests/browser-action.py",
     "external_author_approval": "BLOCKED_EXTERNAL",
     "creative_decisions": "PENDING_AUTHOR_DECISION",
+    "beta_authorized": false
+  },
+  "golden_minute_v0": {
+    "schema": "nilo.golden-minute-v0/1",
+    "id": "G1-V0",
+    "status": "TECHNICAL_VISUAL_CANDIDATE_NOT_AUTHOR_APPROVED",
+    "scope": "LV01_OPENING_X_0_TO_750_WITH_SMOOTH_FADE",
+    "source_owner": "web/golden-minute.mjs",
+    "consumer_owner": "web/main.mjs",
+    "visual_mode_default": "GOLDEN_MINUTE_CANDIDATE",
+    "legacy_fallback": "?visual=legacy",
+    "native_resolution": [
+      960,
+      540
+    ],
+    "legacy_internal_resolution": [
+      480,
+      270
+    ],
+    "detail_is_native": true,
+    "rendering_only": true,
+    "physics_changed": false,
+    "checkpoint_codec_changed": false,
+    "telemetry_added": false,
+    "compared_browser_test": "tests/browser-golden.py",
+    "source_test": "tests/golden-minute.test.mjs",
+    "source_mutation_test": "tests/golden-minute-mutation.test.mjs",
+    "physical_visual_mutants": 8,
+    "physical_browser_mutants": 1,
+    "independent_novice_acceptance": "BLOCKED_EXTERNAL",
+    "author_art_approval": "BLOCKED_EXTERNAL",
+    "original_asset_provenance": "FIRST_PARTY_PROCEDURAL_SOURCE_CANDIDATE",
+    "rights_review": "BLOCKED_EXTERNAL",
+    "release_authorized": false,
     "beta_authorized": false
   }
 }

@@ -1,5 +1,6 @@
 import {CFG, PLATFORMS, initialState, applyAction, step, encodeCheckpoint} from "./core.mjs";
 import {renderPixelWorld,sceneCue} from "./art.mjs";
+import {goldenMinutePlan,renderGoldenMinute} from "./golden-minute.mjs";
 import {encodeLV02Checkpoint} from "./levels/lv-02.mjs";
 import {encodeLV03Checkpoint} from "./levels/lv-03.mjs";
 const canvas = document.querySelector("#game");
@@ -14,6 +15,8 @@ if (!ctx) throw new Error("Canvas2D unavailable; no false playable claim");
 const STORE = "nilo.checkpoint.v1";
 const STORE_LV02 = "nilo.checkpoint.lv02.v1";
 const STORE_LV03 = "nilo.checkpoint.lv03.v1";
+// Reversible visual-only A/B comparison; never changes game state or input.
+const legacyVisual=new URLSearchParams(window.location.search).get("visual")==="legacy";
 const controls = new Set();
 const jumpKeys=new Set(["Space","ArrowUp","KeyW"]);
 let pendingRepairPress=false;
@@ -38,6 +41,7 @@ Object.defineProperty(window,"__niloReadback",{
     jumpHeld:state.jumpHeld,supportId:state.supportId,currentForce:state.currentForce,
     boss:state.boss?{...state.boss}:null,
     action:state.action?{health:state.action.health,kills:state.action.kills,shards:state.action.shards,shots:state.action.shots.length,enemiesAlive:state.action.enemies.filter(e=>e.alive).length}:null,
+    visual:goldenMinutePlan(state,legacyVisual)?"GOLDEN_MINUTE_CANDIDATE":"LEGACY",
     lightMode:state.lightMode??null,doorsPassed:state.doorsPassed??0,
     archiveLog:Boolean(state.archiveLog),switchesUsed:state.switchesUsed??0})
 });
@@ -94,6 +98,7 @@ function paint() {
   ctx.imageSmoothingEnabled=false;
   ctx.clearRect(0,0,CFG.viewport,CFG.height);
   ctx.drawImage(pixelCanvas,0,0,CFG.viewport,CFG.height);
+  if(!legacyVisual)renderGoldenMinute(ctx,state,PLATFORMS);
 }
 function frame(now) {
   const delta=Math.min(.05,Math.max(0,(now-last)/1000));last=now;accumulator+=delta;
