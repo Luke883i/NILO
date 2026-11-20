@@ -46,7 +46,7 @@ for(const file of files){
 const treeDigest=hash(items.map(x=>x.path+'\0'+x.bytes+'\0'+x.sha256+'\n').join(''));
 const manifest={schema:'nilo.static-deployment/1',source_commit_sha:sourceSha,
  source_dir:'web',publish_dir:'dist',tree_sha256:treeDigest,
- scope:'TWO_LEVEL_FIRST_BOSS_SOURCE_CANDIDATE',
+ scope:'THREE_LEVEL_FIRST_BOSS_SOURCE_CANDIDATE',
  release_authorized:false,beta_authorized:false,external_render_observed:false,
  files:items};
 writeFileSync(join(OUTPUT,'nilo-deploy.json'),JSON.stringify(manifest,null,2)+'\n',{flag:'wx'});
