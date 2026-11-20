@@ -76,7 +76,7 @@ test("Actual renderer changes native pose pixels/geometry without changing hitbo
  assert(has(r1,"fillRect",[50,415,29,8]));
  assert(has(r2,"fillRect",[50,415,29,8]));
  assert(has(ra,"fillRect",[50,415,29,8]));
- assert(has(ra,"stroke",[55,454,51,450]),"airborne footwear/twist must be rendered");
+ assert(has(ra,"moveTo",[55,454])&&has(ra,"lineTo",[51,450]),"airborne footwear/twist must be rendered");
  const t0=record({...idle,ticks:0}),t7=record({...idle,ticks:7});
  assert.notDeepEqual(t0.filter(x=>x.name==="ellipse"),t7.filter(x=>x.name==="ellipse"),
     "Tica wing phase must be a real Canvas geometry difference");
@@ -88,8 +88,8 @@ test("Projectile flare and damage warning require actual action state, not cosme
  const a=record(idle),s=record(shoot),h=record(hurt);
  assert(!has(a,"arc",[82,446,5]));
  assert(has(s,"arc",[82,446,5]),"firing state must draw a native muzzle flare");
- assert(has(h,"stroke",[44,423,82,423]),"real invulnerability must draw damage warning");
- assert(!has(s,"stroke",[44,423,82,423]),"normal projectile is not fake damage");
+ assert(has(h,"moveTo",[44,423])&&has(h,"lineTo",[82,423]),"real invulnerability must draw damage warning");
+ assert(!has(s,"moveTo",[44,423])&&!has(s,"lineTo",[82,423]),"normal projectile is not fake damage");
 });
 
 test("Paused/frozen gameplay produces the same animation state; legacy and other levels stay untouched",()=>{
