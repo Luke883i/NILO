@@ -20,14 +20,17 @@
         "web/main.mjs",
         "web/index.html",
         "web/style.css",
-        "web/action.mjs"
+        "web/action.mjs",
+        "web/levels/catalog.mjs"
       ],
       "tests": [
         "tests/core.test.mjs",
         "tests/mutation.test.mjs",
         "tests/action.test.mjs",
         "tests/action-mutation.test.mjs",
-        "tests/browser-action.py"
+        "tests/browser-action.py",
+        "tests/catalog.test.mjs",
+        "tests/catalog-mutation.test.mjs"
       ]
     },
     {
@@ -39,7 +42,8 @@
         "web/main.mjs",
         "web/art.mjs",
         "web/index.html",
-        "web/levels/custode.mjs"
+        "web/levels/custode.mjs",
+        "web/levels/catalog.mjs"
       ],
       "tests": [
         "tests/lv-02.test.mjs",
@@ -47,7 +51,9 @@
         "tests/browser-lv-02.py",
         "tests/custode.test.mjs",
         "tests/custode-mutation.test.mjs",
-        "tests/browser-custode.py"
+        "tests/browser-custode.py",
+        "tests/catalog.test.mjs",
+        "tests/catalog-mutation.test.mjs"
       ]
     },
     {
@@ -58,12 +64,15 @@
         "web/core.mjs",
         "web/main.mjs",
         "web/art.mjs",
-        "web/index.html"
+        "web/index.html",
+        "web/levels/catalog.mjs"
       ],
       "tests": [
         "tests/lv-03.test.mjs",
         "tests/lv-03-mutation.test.mjs",
-        "tests/browser-lv-03.py"
+        "tests/browser-lv-03.py",
+        "tests/catalog.test.mjs",
+        "tests/catalog-mutation.test.mjs"
       ]
     },
     {
@@ -406,6 +415,28 @@
       ],
       "authority": "HUMAN_AND_BROWSER_REQUIRED",
       "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-08",
+      "level": "LV-01",
+      "sources": [
+        "web/levels/catalog.mjs",
+        "web/core.mjs",
+        "web/levels/lv-02.mjs",
+        "web/levels/lv-03.mjs"
+      ],
+      "tests": [
+        "tests/catalog.test.mjs",
+        "tests/catalog-mutation.test.mjs",
+        "tests/core.test.mjs",
+        "tests/lv-02.test.mjs",
+        "tests/lv-03.test.mjs",
+        "tests/browser-e2e.py",
+        "tests/browser-lv-02.py",
+        "tests/browser-lv-03.py"
+      ],
+      "authority": "MODEL_TEST_ONLY",
+      "browser": "NOT_ATTESTED"
     }
   ],
   "narrative_state": "DRAFT_AUTHOR_UNAPPROVED",
@@ -423,7 +454,9 @@
     "tests/custode-mutation.test.mjs",
     "tests/lv-03.test.mjs",
     "tests/lv-03-mutation.test.mjs",
-    "tests/browser-action.py"
+    "tests/browser-action.py",
+    "tests/catalog.test.mjs",
+    "tests/catalog-mutation.test.mjs"
   ],
   "release_gate": "Q06",
   "interfaces": {

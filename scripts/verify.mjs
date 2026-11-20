@@ -4,7 +4,8 @@ import {resolve,dirname} from "node:path";
 import {fileURLToPath} from "node:url";
 import {validateBridge} from "./verify-development.mjs";
 import {validateIterationHypothesis} from "./semantic-campaign.mjs";
-import {CFG} from "../web/core.mjs";
+import {CFG,PLATFORMS} from "../web/core.mjs";
+import {describeLevel,IMPLEMENTED_LEVEL_IDS,DESIGN_ONLY_LEVEL_IDS} from "../web/levels/catalog.mjs";
 import {LV02,lv02Surfaces,currentForceAt,decodeLV02Checkpoint} from "../web/levels/lv-02.mjs";
 import {ART_CUES,ART_SIGNALS,ART_IDENTITY} from "../web/art.mjs";
 import {CUSTODE,initialCustode,enterCustode,advanceCustode} from "../web/levels/custode.mjs";
@@ -99,10 +100,10 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     contract.slice.acceptance_oracles.some(x=>x.type==="REAL_SOURCE_MUTATION"));
   fail("effects",contract?.gameplay?.security?.includes("no telemetry")&&contract?.permissions?.not_allowed?.includes("release"));
   fail("dod-shape",dod?.schema==="nilo.reticular-dod/1"&&dod?.root==="G_CONTRACT_DEMONSTRATED"&&
-    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===76);
+    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===83);
   const ids=(dod?.nodes||[]).map(n=>n.id),nodes=new Map((dod?.nodes||[]).map(n=>[n.id,n]));
   fail("dod-identities",distinct(ids));
-  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===15&&
+  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===16&&
     nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_BETA_RELEASE,G_SUPPLY_CHAIN,G_RELEASE"&&
     nodes.get("G_BETA_RELEASE")?.depends_on?.join(",")==="G_FULL_GAME,Q01,Q02,Q03,Q04,Q05,Q06,Q07"&&
     nodes.get("G_RELEASE")?.depends_on?.join(",")==="R01,R02,R03,G_DELIVERY_PR11"&&
@@ -112,6 +113,7 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_LV03_PR12")&&
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_LV01_ACTION_S01")&&
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_CREATIVE_A0_S02")&&
+    nodes.get("G_FULL_GAME")?.depends_on?.includes("G_WORLD_CATALOG_S03")&&
     nodes.get("G_LV03_PR12")?.depends_on?.join(",")==="L3_00,L3_01,L3_02,L3_03,L3_04,L3_05,L3_06,L3_07,L3_08");
   const actionLeafIds=["A7_00","A7_01","A7_02","A7_03","A7_04"];
   fail("s01-action-gate",nodes.get("G_LV01_ACTION_S01")?.kind==="AND"&&
@@ -192,6 +194,43 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
       nodes.get(id)?.baseline_status===(i===0?"NOT_VERIFIED":"BLOCKED_EXTERNAL"))&&
     nodes.get("Q07")?.baseline_status==="BLOCKED_EXTERNAL");
   fail("s02-a0-document-owner",existsSync(resolve(ROOT,"docs/NILO_NEXT_S02_A0.md")));
+  const technical=contract?.technical_s03;
+  fail("s03-catalog-contract",technical?.schema==="nilo.engineering-s03a/1"&&
+    technical?.id==="S03a-NILO-NEXT"&&
+    technical?.status==="SOURCE_IMPLEMENTATION_CANDIDATE_NOT_HUMAN_ACCEPTED"&&
+    technical?.target==="PRESERVE_EXISTING_THREE_LEVEL_GAMEPLAY"&&
+    technical?.scope==="LV01_LV02_LV03_ONLY"&&
+    technical?.engine_owner==="web/core.mjs"&&
+    technical?.catalog_owner==="web/levels/catalog.mjs"&&
+    technical?.implemented_level_ids?.join(",")==="LV-01,LV-02,LV-03"&&
+    technical?.design_only_level_ids?.join(",")==="LV-04,LV-05,LV-06"&&
+    technical?.physical_source_mutant_count===6&&
+    technical?.world_geometry_no_duplication===true&&
+    technical?.gameplay_change_intended===false&&
+    technical?.browser_executed_in_source_contract===false&&
+    technical?.creative_a0_approval===false&&
+    technical?.author_review==="BLOCKED_EXTERNAL"&&
+    technical?.future_entity_state_generalization==="NOT_IMPLEMENTED"&&
+    technical?.beta_authorized===false&&
+    technical?.code_oracles?.join(",")==="tests/catalog.test.mjs,tests/catalog-mutation.test.mjs");
+  const implemented=["LV-01","LV-02","LV-03"],proposed=["LV-04","LV-05","LV-06"];
+  fail("s03-catalog-runtime",IMPLEMENTED_LEVEL_IDS.join(",")===implemented.join(",")&&
+    DESIGN_ONLY_LEVEL_IDS.join(",")===proposed.join(",")&&
+    describeLevel("LV-01",CFG,PLATFORMS).width===CFG.width&&
+    describeLevel("LV-01",CFG,PLATFORMS).platforms===PLATFORMS&&
+    describeLevel("LV-02",CFG,PLATFORMS,23).platforms.at(-1).x===
+      lv02Surfaces(23).at(-1).x&&
+    describeLevel("LV-03",CFG,PLATFORMS).width===LV03.width);
+  const s3Ids=["T3_00","T3_01","T3_02","T3_03","T3_04","T3_05"];
+  fail("s03-catalog-gate",nodes.get("G_WORLD_CATALOG_S03")?.kind==="AND"&&
+    nodes.get("G_WORLD_CATALOG_S03")?.depends_on?.join(",")===s3Ids.join(",")&&
+    nodes.get("G_WORLD_CATALOG_S03")?.authorization==="NONE"&&
+    nodes.get("G_WORLD_CATALOG_S03")?.baseline_status==="BLOCKED"&&
+    s3Ids.every((id,i)=>nodes.get(id)?.kind==="LEAF"&&
+      nodes.get(id)?.witness===null&&
+      nodes.get(id)?.baseline_status===(i===5?"BLOCKED_EXTERNAL":"NOT_VERIFIED"))&&
+    nodes.get("G_CREATIVE_A0_S02")?.baseline_status==="BLOCKED"&&
+    contract?.next_a0?.approval?.human_approved===false);
   fail("lv03-no-self-approved-gates",["L3_00","L3_01","L3_02","L3_03","L3_04","L3_05","L3_06","L3_07","L3_08"].every(id=>
     nodes.get(id)?.baseline_status==="NOT_VERIFIED"&&nodes.get(id)?.witness===null)&&
     nodes.get("G_LV03_PR12")?.authorization==="NONE");

@@ -32,6 +32,8 @@ jobs:
         run: node --test tests/action.test.mjs
       - name: Falsify ghost attacks, projectile occlusion and invulnerability in real action source
         run: node --test tests/action-mutation.test.mjs
+      - name: S03a catalogue exact geometry, native physics and six physical source mutants
+        run: node --test tests/catalog.test.mjs tests/catalog-mutation.test.mjs
       - name: Verify narrative, requirements, DoD, BOM and source boundaries
         run: node scripts/verify.mjs
       - name: Test deterministic playable physics and checkpoint

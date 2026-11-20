@@ -540,6 +540,11 @@
         "id": "OR-07",
         "claim": "LV-01 candidate action preview: a one-shot physical J input shoots a swept, platform-occluded impulse, enemies patrol and can be neutralized once by shot or stomp, contact damage uses bounded invulnerability and collectible shards cannot double-count; human comprehension remains unobserved.",
         "type": "UNIT_AND_PHYSICAL_MUTATION_AND_HUMAN_PENDING"
+      },
+      {
+        "id": "OR-08",
+        "claim": "Implemented LV-01/02/03 geometry and spawn are resolved through one pure catalog consumed by the existing core; dynamic bridge and all legacy checkpoints/boss/doors preserve exact current behavior; LV-04–06 reject as not implemented.",
+        "type": "UNIT_AND_PHYSICAL_SOURCE_MUTATION_AND_TARGET_BROWSER"
       }
     ]
   },
@@ -963,5 +968,42 @@
       "approval_from_pr_or_ci": false,
       "approval_from_score": false
     }
+  },
+  "technical_s03": {
+    "schema": "nilo.engineering-s03a/1",
+    "id": "S03a-NILO-NEXT",
+    "status": "SOURCE_IMPLEMENTATION_CANDIDATE_NOT_HUMAN_ACCEPTED",
+    "target": "PRESERVE_EXISTING_THREE_LEVEL_GAMEPLAY",
+    "scope": "LV01_LV02_LV03_ONLY",
+    "engine_owner": "web/core.mjs",
+    "catalog_owner": "web/levels/catalog.mjs",
+    "code_oracles": [
+      "tests/catalog.test.mjs",
+      "tests/catalog-mutation.test.mjs"
+    ],
+    "browser_regressions": [
+      "tests/browser-e2e.py",
+      "tests/browser-lv-02.py",
+      "tests/browser-custode.py",
+      "tests/browser-lv-03.py"
+    ],
+    "implemented_level_ids": [
+      "LV-01",
+      "LV-02",
+      "LV-03"
+    ],
+    "design_only_level_ids": [
+      "LV-04",
+      "LV-05",
+      "LV-06"
+    ],
+    "physical_source_mutant_count": 6,
+    "world_geometry_no_duplication": true,
+    "gameplay_change_intended": false,
+    "browser_executed_in_source_contract": false,
+    "creative_a0_approval": false,
+    "author_review": "BLOCKED_EXTERNAL",
+    "future_entity_state_generalization": "NOT_IMPLEMENTED",
+    "beta_authorized": false
   }
 }

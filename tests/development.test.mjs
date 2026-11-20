@@ -161,3 +161,17 @@ test("S01 browser action witness cannot be dropped from OR-07 without failing th
   const y=base();y.bridge.requirements.find(r=>r.id==="OR-07").browser="PASS";
   assert(validateBridge(y).includes("bridge-no-runtime-promotion"));
 });
+
+test("S03a catalogue owner cannot be removed or mislabeled beta",()=>{
+  let d=base();
+  d.bridge.requirements.find(x=>x.id==="OR-08").sources=
+    d.bridge.requirements.find(x=>x.id==="OR-08").sources.filter(x=>x!=="web/levels/catalog.mjs");
+  assert(validateBridge(d).includes("bridge-world-catalog-s03"));
+  d=base();d.bridge.levels.find(x=>x.id==="LV-03").tests=
+    d.bridge.levels.find(x=>x.id==="LV-03").tests.filter(t=>t!=="tests/catalog-mutation.test.mjs");
+  assert(validateBridge(d).includes("bridge-world-catalog-s03"));
+  d=base();d.bridge.requirements.find(x=>x.id==="OR-08").browser="PASS";
+  assert(validateBridge(d).includes("bridge-no-runtime-promotion"));
+  d=base();d.bridge.levels.find(x=>x.id==="LV-04").state="IMPLEMENTED_CANDIDATE";
+  assert(validateBridge(d).includes("bridge-no-fake-levels"));
+});

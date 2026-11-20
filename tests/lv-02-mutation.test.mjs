@@ -7,7 +7,7 @@ import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const cases=[
- ['moving-bridge-frozen','web/levels/lv-02.mjs','p.amplitude*Math.sin(ticks*p.angularTick)','0*Math.sin(ticks*p.angularTick)'],
+ ['moving-bridge-frozen','web/levels/catalog.mjs','web/levels/lv-02.mjs','p.amplitude*Math.sin(ticks*p.angularTick)','0*Math.sin(ticks*p.angularTick)'],
  ['current-force-disabled','web/levels/lv-02.mjs','zone?zone.boost:0','0'],
  ['checkpoint-version-forged','web/levels/lv-02.mjs','v.version!==1','v.version!==2'],
  ['checkpoint-level-forged','web/levels/lv-02.mjs',"v.level!=='LV-02'","v.level!=='LV-01'"],
