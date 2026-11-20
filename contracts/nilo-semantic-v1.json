@@ -479,6 +479,20 @@
         "tests/lv-03-mutation.test.mjs"
       ],
       "beta_authorized": false
+    },
+    "action_preview": {
+      "id": "S1-NILO-NEXT",
+      "scope": "LV-01_ONLY",
+      "status": "IMPLEMENTED_SOURCE_CANDIDATE_NOT_PLAYER_ACCEPTED",
+      "source": "web/action.mjs",
+      "input": "KeyJ",
+      "enemy_count": 2,
+      "pickup_count": 3,
+      "max_health": 3,
+      "playtest_accepted": false,
+      "browser_http": "NOT_ATTESTED",
+      "author_approved": false,
+      "beta_authorized": false
     }
   },
   "slice": {
@@ -520,6 +534,11 @@
         "id": "OR-06",
         "claim": "a deliberately broken checkpoint write fails the negative oracle",
         "type": "REAL_SOURCE_MUTATION"
+      },
+      {
+        "id": "OR-07",
+        "claim": "LV-01 candidate action preview: a one-shot physical J input shoots a swept, platform-occluded impulse, enemies patrol and can be neutralized once by shot or stomp, contact damage uses bounded invulnerability and collectible shards cannot double-count; human comprehension remains unobserved.",
+        "type": "UNIT_AND_PHYSICAL_MUTATION_AND_HUMAN_PENDING"
       }
     ]
   },

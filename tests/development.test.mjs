@@ -7,8 +7,8 @@ import {fileURLToPath} from "node:url";
 import {validateBridge} from "../scripts/verify-development.mjs";
 const read=p=>JSON.parse(readFileSync(new URL("../"+p,import.meta.url),"utf8"));
 const base=()=>({bridge:read("contracts/development-map.json"),contract:read("contracts/nilo-semantic-v1.json"),dod:read("contracts/dod-v1.json")});
-const fixtureFiles=["web/core.mjs","web/main.mjs","web/index.html","web/style.css","web/art.mjs",
-  "tests/core.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
+const fixtureFiles=["web/action.mjs","web/core.mjs","web/main.mjs","web/index.html","web/style.css","web/art.mjs",
+  "tests/core.test.mjs","tests/action.test.mjs","tests/action-mutation.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
   "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs",
   "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py",
   "web/levels/lv-02.mjs","web/levels/lv-03.mjs","web/levels/custode.mjs",
@@ -23,7 +23,7 @@ test("current contract maps boss oracles and six levels without asserting beta",
   assert.equal(d.bridge.levels.filter(x=>x.state==="DESIGN_ONLY").length,3);
 });
 test("product change without software and repository binding fails closed",()=>{
-  const d=base();d.contract.slice.acceptance_oracles.push({id:"OR-07"});
+  const d=base();d.contract.slice.acceptance_oracles.push({id:"OR-08"});
   assert(validateBridge(d).includes("bridge-oracles"));
 });
 test("mislabeled implemented level without tested source is rejected",()=>{

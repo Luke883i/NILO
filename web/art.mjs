@@ -90,6 +90,51 @@ function nilo(c,state){
   if(!state.onGround){px(c,x+27,y+21,8,3,ART.brass);px(c,x-11,y+19,13,6,ART.coral);}
   else if(run){px(c,x-13-(cycle*4),y+21,13,5,ART.coral);}
 }
+/** First-party combat glyphs: visual projection of source-owned action state.
+ * Painting cannot grant damage, create collectibles or award a victory.
+ * HD asset approval remains external; these are deliberately provisional.
+ */
+function actionGlyphs(c,state){
+  if(!state.action)return;
+  const a=state.action;
+  for(const e of a.enemies){
+    if(!e.alive)continue;
+    const gait=Math.floor(state.ticks/7)%2,rx=Math.round(e.x),ry=e.y;
+    // Copper sentry: antenna, shoulders, two readable eyes, warning-chevron chest.
+    px(c,rx+2,ry+3,26,23,ART.ink);
+    px(c,rx+5,ry+4,20,17,'#b76b57');
+    px(c,rx+9,ry-4,4,9,ART.brass);px(c,rx+12,ry-7,7,5,ART.coral);
+    px(c,rx+6,ry+9,6,5,ART.cream);px(c,rx+18,ry+9,6,5,ART.cream);
+    px(c,rx+9,ry+11,2,3,ART.ink);px(c,rx+21,ry+11,2,3,ART.ink);
+    px(c,rx+11,ry+18,10,6,ART.brass);
+    px(c,rx+2,ry+26,8,4+gait*2,ART.shadow);
+    px(c,rx+20,ry+26,8,6-gait*2,ART.shadow);
+    px(c,rx-3,ry+12,5,8,ART.coral);px(c,rx+27,ry+12,5,8,ART.coral);
+  }
+  for(const p of a.pickups){
+    if(p.collected)continue;
+    const pulse=Math.floor(state.ticks/13)%2;
+    px(c,p.x-8,p.y-10,16,20,ART.ink);
+    px(c,p.x-5,p.y-7,10,14,ART.brass);
+    px(c,p.x-2,p.y-3,4,6,ART.cream);
+    if(pulse){px(c,p.x-13,p.y-1,4,4,ART.teal);px(c,p.x+10,p.y-1,4,4,ART.teal);}
+  }
+  for(const b of a.shots){
+    px(c,b.x-3,b.y-4,18,14,ART.ink);
+    px(c,b.x,b.y,12,6,ART.brass);
+    px(c,b.x+3,b.y+1,6,4,ART.cream);
+  }
+}
+function actionHud(c,state){
+  if(!state.action)return;
+  const a=state.action;
+  px(c,300,15,359,51,ART.ink);
+  px(c,304,19,351,43,ART.shadow);
+  c.fillStyle=ART.cream;c.font='bold 15px system-ui';
+  c.fillText('VITA  '+a.health+'/3  ·  FRAMMENTI  '+a.shards+'/3',316,37);
+  c.fillStyle=ART.teal;c.font='bold 13px system-ui';
+  c.fillText('J · IMPULSO     SALTO · DISARMA',316,55);
+}
 function tica(c,state){
   const x=state.x-27, y=state.y-38+Math.round(Math.sin(state.ticks/19)*2)*2;
   px(c,x-11,y+5,22,8,ART.brass);px(c,x-3,y,16,14,ART.teal);
@@ -129,9 +174,9 @@ function gate(c){
  * contracts/nilo-semantic-v1.json; tests reject a mismatch with that owner. */
 export const ART_CUES = Object.freeze([
   Object.freeze({id:'CUE-01',from:0,until:650,role:'CH-TICA',title:'TICA · TROVA IL PRIMO SEGNATEMPO',
-    hint:'Le ore rubate sono sei. Cerca le bordature d’ottone: indicano dove puoi atterrare.'}),
+    hint:'Le bordature d’ottone indicano dove atterrare. Premi J per lanciare un Impulso agli automi; raccogli i Frammenti d’Ora.'}),
   Object.freeze({id:'CUE-02',from:650,until:1200,role:'CH-NILO',title:'NILO · ATTRAVERSA IL CORTILE',
-    hint:'Tra i tetti corre il vuoto. Salta verso i margini luminosi, non verso le facciate.'}),
+    hint:'Supera i vuoti, schiva gli automi o disarmali con J. I Frammenti premiano l’esplorazione.'}),
   Object.freeze({id:'CUE-03',from:1200,until:1550,role:'CH-PERNO',title:'PERNO · RIACCENDI IL SEGNATEMPO',
     hint:'Il segnatempo custodisce il checkpoint. Il suo quadrante diventa turchese quando è attivo.'}),
   Object.freeze({id:'CUE-04',from:1550,until:2100,role:'CH-TICA',title:'TICA · VERSO IL PORTALE',
@@ -350,6 +395,7 @@ export function renderPixelWorld(c,state,cfg,platforms){
   if(third)archiveDetails(c,state);
   else if(second)canalDetails(c,state);
   else {arrow(c,118,366);checkpoint(c,state);perno(c);gate(c);}
+  actionGlyphs(c,state);
   nilo(c,state);tica(c,state);
   if(second||third){
     spriteLabel(c,Math.max(10,state.x-5),state.y-35,'NILO',ART.brass);
@@ -357,6 +403,7 @@ export function renderPixelWorld(c,state,cfg,platforms){
   }else nameplates(c,state);
   c.restore();
   timeLanterns(c,state);
+  actionHud(c,state);
   // Dedicated in-game signage; primary accessible text remains outside canvas.
   px(c,14,13,274,56,ART.ink);px(c,16,15,270,52,'#213e56');
   c.fillStyle=ART.cream;c.font='bold 18px system-ui';
@@ -369,7 +416,7 @@ export function renderPixelWorld(c,state,cfg,platforms){
   if(state.phase==='PAUSED'||state.phase==='COMPLETED'||state.phase==='DEFEATED'){
     px(c,209,184,544,158,ART.ink);px(c,216,192,528,142,'#24465c');
     c.fillStyle=ART.brass;c.font='bold 29px system-ui';
-    c.fillText(state.phase==='PAUSED'?'TEMPO IN PAUSA':state.phase==='DEFEATED'?'CUSTODE · SCONFITTA':
+    c.fillText(state.phase==='PAUSED'?'TEMPO IN PAUSA':state.phase==='DEFEATED'?(second?'CUSTODE · SCONFITTA':'NILO · ENERGIA ESAURITA'):
       third?'TERZA ORA RESTITUITA':second?'SECONDA ORA RESTITUITA':'PRIMA ORA RESTITUITA',245,247);
     c.fillStyle=ART.ivory;c.font='16px system-ui';
     c.fillText(state.phase==='PAUSED'?'Premi P per continuare':state.phase==='DEFEATED'?'Premi R per riprovare':

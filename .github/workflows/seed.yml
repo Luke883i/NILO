@@ -28,6 +28,10 @@ jobs:
         run: node --test tests/custode.test.mjs tests/custode-mutation.test.mjs
       - name: Verify actual third level physical route and nine original source mutants
         run: node --test tests/lv-03.test.mjs tests/lv-03-mutation.test.mjs
+      - name: Validate LV01 action attacks, enemy contact, invulnerability and shards
+        run: node --test tests/action.test.mjs
+      - name: Falsify ghost attacks, projectile occlusion and invulnerability in real action source
+        run: node --test tests/action-mutation.test.mjs
       - name: Verify narrative, requirements, DoD, BOM and source boundaries
         run: node scripts/verify.mjs
       - name: Test deterministic playable physics and checkpoint

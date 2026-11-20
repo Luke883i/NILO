@@ -18,6 +18,7 @@ const controls = new Set();
 const jumpKeys=new Set(["Space","ArrowUp","KeyW"]);
 let pendingRepairPress=false;
 let pendingJumpPress=false;
+let pendingAttackPress=false;
 const physicalJumpHeld=()=>[...jumpKeys].some(code=>controls.has(code));
 let saved = null;
 try { saved = localStorage.getItem(STORE); } catch { /* unavailable storage: gameplay degrades safely */ }
@@ -36,10 +37,11 @@ Object.defineProperty(window,"__niloReadback",{
     ticks:state.ticks,deaths:state.deaths,camera:state.camera,vy:state.vy,
     jumpHeld:state.jumpHeld,supportId:state.supportId,currentForce:state.currentForce,
     boss:state.boss?{...state.boss}:null,
+    action:state.action?{health:state.action.health,kills:state.action.kills,shards:state.action.shards,shots:state.action.shots.length,enemiesAlive:state.action.enemies.filter(e=>e.alive).length}:null,
     lightMode:state.lightMode??null,doorsPassed:state.doorsPassed??0,
     archiveLog:Boolean(state.archiveLog),switchesUsed:state.switchesUsed??0})
 });
-const keyMap = new Set(["ArrowLeft","ArrowRight","ArrowUp","KeyA","KeyD","KeyW","Space","KeyP","KeyR","KeyN","KeyE"]);
+const keyMap = new Set(["ArrowLeft","ArrowRight","ArrowUp","KeyA","KeyD","KeyW","Space","KeyP","KeyR","KeyN","KeyE","KeyJ"]);
 function announce(text) { announcement.textContent=text; }
 window.addEventListener("keydown", e => {
   if (!keyMap.has(e.code)) return;
@@ -48,13 +50,13 @@ window.addEventListener("keydown", e => {
   if (!e.repeat && (e.code === "KeyP" || e.code === "KeyR")) {
     // Transition boundaries consume pending presses, but preserve held keys
     // until a physical release. No input may be manufactured by a restart.
-    pendingJumpPress=false;pendingRepairPress=false;
+    pendingJumpPress=false;pendingRepairPress=false;pendingAttackPress=false;
     state=applyAction(state,e.code,wasJumpHeld);
     announce(e.code==="KeyP"?(state.phase==="PAUSED"?"In pausa":"Gioco ripreso"):"Ricomincia dal checkpoint, se presente");
   }
   if(!e.repeat&&e.code==="KeyN"&&state.phase==="COMPLETED"&&
      (state.level==="LV-01"||state.level==="LV-02")){
-    pendingJumpPress=false;pendingRepairPress=false;
+    pendingJumpPress=false;pendingRepairPress=false;pendingAttackPress=false;
     state=applyAction(state,"KeyN",wasJumpHeld);
     savedInSession=false;lastPhase=state.phase;lastTip="";lastCue="";
     announce(state.level==='LV-03'?
@@ -66,13 +68,15 @@ window.addEventListener("keydown", e => {
   if(!e.repeat&&e.code==='KeyE'&&state.phase==='PLAYING'&&
      (state.level==='LV-02'||state.level==='LV-03'))
     pendingRepairPress=true;
+  if(!e.repeat&&e.code==='KeyJ'&&state.phase==='PLAYING'&&state.level==='LV-01')
+    pendingAttackPress=true;
   controls.add(e.code);
 });
 window.addEventListener("keyup", e => controls.delete(e.code));
-window.addEventListener("blur", () => {controls.clear();pendingJumpPress=false;pendingRepairPress=false;});
+window.addEventListener("blur", () => {controls.clear();pendingJumpPress=false;pendingRepairPress=false;pendingAttackPress=false;});
 document.addEventListener("visibilitychange", () => {
   if(document.hidden){
-    controls.clear();pendingJumpPress=false;pendingRepairPress=false;
+    controls.clear();pendingJumpPress=false;pendingRepairPress=false;pendingAttackPress=false;
     if(state.phase==="PLAYING"){
       state=applyAction(state,"KeyP",false);
       announce("In pausa: finestra non attiva");
@@ -100,10 +104,10 @@ function frame(now) {
       left:controls.has("ArrowLeft")||controls.has("KeyA"),
       right:controls.has("ArrowRight")||controls.has("KeyD"),jump,
       jumpPressed:pendingJumpPress,repairPressed:pendingRepairPress,
-      interactPressed:pendingRepairPress
+      attackPressed:pendingAttackPress,interactPressed:pendingRepairPress
     },CFG.tick);
     // A press/release within one animation frame is delivered exactly once.
-    pendingJumpPress=false;pendingRepairPress=false;
+    pendingJumpPress=false;pendingRepairPress=false;pendingAttackPress=false;
     accumulator-=CFG.tick;
   }
   if(!savedInSession && state.checkpointActive){
@@ -140,7 +144,8 @@ function frame(now) {
       "Prologo concluso · premi N per LV-02 · altri tre livelli non disponibili":
     state.checkpointActive?"Prima ora · checkpoint salvato · raggiungi il portale":
     state.x>750?"Segui il segnatempo dorato": "Prima ora · segui la freccia →";
-  if(lastTip!==tip){lastTip=tip;hud.textContent="NILO · "+(state.phase==="PAUSED"?"Pausa":tip);}
+  const actionTip=state.action?` · VITA ${state.action.health}/3 · FRAMMENTI ${state.action.shards}/3 · J ATTACCA`:'';
+  if(lastTip!==tip+actionTip){lastTip=tip+actionTip;hud.textContent="NILO · "+(state.phase==="PAUSED"?"Pausa":tip)+actionTip;}
 
   const cue=sceneCue(state);
   if(cue.id!==lastCue){
