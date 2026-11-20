@@ -7,16 +7,17 @@ import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 const root=fileURLToPath(new URL('../',import.meta.url));
 const cases=[
- ['moving-bridge-frozen','web/levels/catalog.mjs','web/levels/lv-02.mjs','p.amplitude*Math.sin(ticks*p.angularTick)','0*Math.sin(ticks*p.angularTick)'],
+ ['moving-bridge-frozen','web/levels/lv-02.mjs','p.amplitude*Math.sin(ticks*p.angularTick)','0*Math.sin(ticks*p.angularTick)'],
  ['current-force-disabled','web/levels/lv-02.mjs','zone?zone.boost:0','0'],
  ['checkpoint-version-forged','web/levels/lv-02.mjs','v.version!==1','v.version!==2'],
  ['checkpoint-level-forged','web/levels/lv-02.mjs',"v.level!=='LV-02'","v.level!=='LV-01'"],
  ['moving-bridge-carry-disabled','web/core.mjs','movingBridge(state.ticks+1).x-movingBridge(state.ticks).x','0']
 ];
 test('five original-source LV02 mutants are killed by the independent real test',()=>{
+ assert(cases.every(c=>c.length===4),'mutant tuples must retain id/source/from/to');
  const tmp=mkdtempSync(join(tmpdir(),'nilo-lv02-physical-'));
  try{
-  for(const file of ['web/action.mjs','web/core.mjs','web/art.mjs','web/levels/lv-02.mjs','web/levels/lv-03.mjs','web/levels/custode.mjs','tests/lv-02.test.mjs']){
+  for(const file of ['web/action.mjs','web/core.mjs','web/art.mjs','web/levels/catalog.mjs','web/levels/lv-02.mjs','web/levels/lv-03.mjs','web/levels/custode.mjs','tests/lv-02.test.mjs']){
    const dst=join(tmp,file);mkdirSync(resolve(dst,'..'),{recursive:true});cpSync(join(root,file),dst);
   }
   writeFileSync(join(tmp,'package.json'),JSON.stringify({type:'module'}));
