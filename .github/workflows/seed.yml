@@ -40,6 +40,8 @@ jobs:
         run: node --test tests/feel.test.mjs
       - name: Test contract, reticular DoD and S-BOM negative cases
         run: node --test tests/contracts.test.mjs tests/experience.test.mjs
+      - name: S02 falsify physical creative contract mutants and fake approval
+        run: node --test tests/creative-a0-mutation.test.mjs
       - name: Validate product software repository map
         run: node scripts/verify-development.mjs
       - name: Falsify bridge declarations and missing owners
