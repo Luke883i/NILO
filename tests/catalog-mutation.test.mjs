@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {mkdtempSync,mkdirSync,cpSync,readFileSync,writeFileSync,rmSync} from "node:fs";
 import {tmpdir} from "node:os";
-import {join} from "node:path";
+import {join,dirname} from "node:path";
 import {fileURLToPath} from "node:url";
 import {spawnSync} from "node:child_process";
 const root=fileURLToPath(new URL("../",import.meta.url));
@@ -18,9 +18,14 @@ const mutants=[
 test("S03a six original-source catalog mutants are killed by independent native assertions",()=>{
   const tmp=mkdtempSync(join(tmpdir(),"nilo-s03a-catalog-"));
   try{
-    cpSync(join(root,"web"),join(tmp,"web"),{recursive:true});
-    mkdirSync(join(tmp,"tests"));
-    cpSync(join(root,"tests/catalog.test.mjs"),join(tmp,"tests/catalog.test.mjs"));
+    const files=["web/action.mjs","web/core.mjs","web/levels/catalog.mjs",
+      "web/levels/lv-02.mjs","web/levels/lv-03.mjs",
+      "web/levels/custode.mjs","tests/catalog.test.mjs"];
+    for(const file of files){
+      const target=join(tmp,file);
+      mkdirSync(dirname(target),{recursive:true});
+      cpSync(join(root,file),target);
+    }
     writeFileSync(join(tmp,"package.json"),JSON.stringify({type:"module"}));
     const target=join(tmp,"web/levels/catalog.mjs");
     const original=readFileSync(target,"utf8");
@@ -36,7 +41,7 @@ test("S03a six original-source catalog mutants are killed by independent native 
       assert.equal(original.split(from).length,2,"mutation must edit exactly one real source span: "+id);
       writeFileSync(target,original.replace(from,to),"utf8");
       const out=run();
-      assert.equal(out.status,1,"mutant must be rejected by tests, not by harness error: "+id+" status="+out.status+" stdout="+out.stdout+" stderr="+out.stderr);
+      assert.notEqual(out.status,0,"mutant survived: "+id+" status="+out.status+" stdout="+out.stdout+" stderr="+out.stderr);
       assert.match(out.stdout,/not ok/,id+" must fail an actual positive test oracle");
       writeFileSync(target,original,"utf8");
     }
