@@ -7,9 +7,9 @@ import {fileURLToPath} from "node:url";
 import {validateBridge} from "../scripts/verify-development.mjs";
 const read=p=>JSON.parse(readFileSync(new URL("../"+p,import.meta.url),"utf8"));
 const base=()=>({bridge:read("contracts/development-map.json"),contract:read("contracts/nilo-semantic-v1.json"),dod:read("contracts/dod-v1.json")});
-const fixtureFiles=["web/action.mjs","web/core.mjs","web/main.mjs","web/index.html","web/style.css","web/art.mjs",
+const fixtureFiles=["web/action.mjs","web/core.mjs","web/main.mjs","web/index.html","web/style.css","web/art.mjs","web/golden-minute.mjs",
   "tests/core.test.mjs","tests/action.test.mjs","tests/action-mutation.test.mjs","tests/entity-blueprint.test.mjs","tests/entity-blueprint-mutation.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
-  "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs",
+  "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs","tests/golden-minute.test.mjs","tests/golden-minute-mutation.test.mjs","tests/browser-golden.py",
   "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py","tests/browser-action.py",
   "web/levels/catalog.mjs","web/levels/lv-02.mjs","web/levels/lv-03.mjs","web/levels/custode.mjs",
   "tests/lv-03.test.mjs","tests/lv-03-mutation.test.mjs","tests/browser-lv-03.py","tests/catalog.test.mjs","tests/catalog-mutation.test.mjs","tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py",
@@ -188,5 +188,19 @@ test("S03b entity blueprint owner and external scope cannot silently drift",()=>
   assert(validateBridge(d).includes("bridge-no-runtime-promotion"));
   d=base();d.contract.technical_s03b.beta_authorized=true;
   assert(validateBridge(d).includes("bridge-action-entities-s03b"));
+});
+
+test("G1-V0 native visual owner, browser witness and fallback cannot be omitted",()=>{
+  let d=base();
+  d.bridge.requirements.find(x=>x.id==="OR-10").sources=
+    d.bridge.requirements.find(x=>x.id==="OR-10").sources.filter(x=>x!=="web/golden-minute.mjs");
+  assert(validateBridge(d).includes("bridge-golden-minute-v0"));
+  d=base();d.bridge.levels.find(x=>x.id==="LV-01").tests=
+    d.bridge.levels.find(x=>x.id==="LV-01").tests.filter(x=>x!=="tests/browser-golden.py");
+  assert(validateBridge(d).includes("bridge-golden-minute-v0"));
+  d=base();d.bridge.requirements.find(x=>x.id==="OR-10").browser="PASS";
+  assert(validateBridge(d).includes("bridge-no-runtime-promotion"));
+  d=base();d.contract.golden_minute_v0.author_art_approval="PASS";
+  assert(validateBridge(d).includes("bridge-golden-minute-v0"));
 });
 

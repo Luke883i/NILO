@@ -226,7 +226,21 @@ def run(args):
             report["pixel_sample"]=samples
             report["pixel_grid"]=pixel_grid(page)
             assert report["pixel_grid"]["display"]==[960,540]
-            assert report["pixel_grid"]["mismatches"]==0,("broken 2x grid: "+repr(report["pixel_grid"]))
+            assert state(page)["visual"]=="GOLDEN_MINUTE_CANDIDATE", "native visual mode not active"
+            assert report["pixel_grid"]["mismatches"]>0,("native detail absent: "+repr(report["pixel_grid"]))
+            # A reversible, independently checked legacy render must retain the
+            # original full-image 2x pixel-grid invariant. Do not remove this
+            # negative oracle just to make the native candidate pass.
+            loaded(page,url+"?visual=legacy")
+            page.wait_for_timeout(90)
+            assert state(page)["visual"]=="LEGACY"
+            report["pixel_grid_legacy"]=pixel_grid(page)
+            assert report["pixel_grid_legacy"]["mismatches"]==0,(
+                "legacy grid regression: "+repr(report["pixel_grid_legacy"]))
+            original_mode_url=url
+            loaded(page,original_mode_url)
+            page.wait_for_timeout(90)
+            assert state(page)["visual"]=="GOLDEN_MINUTE_CANDIDATE"
             page.wait_for_function("() => document.querySelector('#scene-title')?.textContent?.includes('TICA')")
             report["visual_scene_start"]=scene_text(page)
             assert "segnatempo" in report["visual_scene_start"]["title"].lower()
