@@ -30,11 +30,13 @@ test("S03a six original-source catalog mutants are killed by independent native 
       cwd:tmp,encoding:"utf8",timeout:18000,env,maxBuffer:1024*1024});
     const clean=run();
     assert.equal(clean.status,0,"clean catalog must pass first: "+clean.stdout+" "+clean.stderr);
-    for(const [id,from,to] of mutants){
+    const chosen=process.env.NILO_S03_MUTANT;
+    assert(!chosen||mutants.some(m=>m[0]===chosen),"unknown source mutant selector");
+    for(const [id,from,to] of mutants.filter(m=>!chosen||m[0]===chosen)){
       assert.equal(original.split(from).length,2,"mutation must edit exactly one real source span: "+id);
       writeFileSync(target,original.replace(from,to),"utf8");
       const out=run();
-      assert.equal(out.status,1,"mutant must be rejected by tests, not by harness error: "+id+" "+out.stderr);
+      assert.equal(out.status,1,"mutant must be rejected by tests, not by harness error: "+id+" status="+out.status+" stdout="+out.stdout+" stderr="+out.stderr);
       assert.match(out.stdout,/not ok/,id+" must fail an actual positive test oracle");
       writeFileSync(target,original,"utf8");
     }
