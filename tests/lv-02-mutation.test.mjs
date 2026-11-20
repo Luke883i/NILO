@@ -14,9 +14,10 @@ const cases=[
  ['moving-bridge-carry-disabled','web/core.mjs','movingBridge(state.ticks+1).x-movingBridge(state.ticks).x','0']
 ];
 test('five original-source LV02 mutants are killed by the independent real test',()=>{
+ assert(cases.every(c=>c.length===4),'mutant tuples must retain id/source/from/to');
  const tmp=mkdtempSync(join(tmpdir(),'nilo-lv02-physical-'));
  try{
-  for(const file of ['web/action.mjs','web/core.mjs','web/art.mjs','web/levels/lv-02.mjs','web/levels/lv-03.mjs','web/levels/custode.mjs','tests/lv-02.test.mjs']){
+  for(const file of ['web/action.mjs','web/core.mjs','web/art.mjs','web/levels/catalog.mjs','web/levels/lv-02.mjs','web/levels/lv-03.mjs','web/levels/custode.mjs','tests/lv-02.test.mjs']){
    const dst=join(tmp,file);mkdirSync(resolve(dst,'..'),{recursive:true});cpSync(join(root,file),dst);
   }
   writeFileSync(join(tmp,'package.json'),JSON.stringify({type:'module'}));

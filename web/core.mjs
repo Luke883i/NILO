@@ -1,4 +1,5 @@
 import {initialAction,advanceAction,ACTION_CFG} from "./action.mjs";
+import {describeLevel} from "./levels/catalog.mjs";
 import {LV02,lv02Surfaces,movingBridge,currentForceAt,decodeLV02Checkpoint,encodeLV02Checkpoint} from "./levels/lv-02.mjs";
 import {CUSTODE,initialCustode,enterCustode,advanceCustode} from "./levels/custode.mjs";
 import {LV03,decodeLV03Checkpoint,encodeLV03Checkpoint,archiveDoorOpen,archiveInteraction} from "./levels/lv-03.mjs";
@@ -29,7 +30,8 @@ export function encodeCheckpoint() {
 export function initialLevelState(level='LV-01',saved=null){
   if(level==='LV-02'){
     const active=Boolean(decodeLV02Checkpoint(saved));
-    const spawn=active?LV02.checkpointSpawn:LV02.initial;
+    const descriptor=describeLevel("LV-02",CFG,PLATFORMS);
+    const spawn=active?descriptor.checkpointSpawn:descriptor.initial;
     return {phase:'PLAYING',level:'LV-02',x:spawn.x,y:spawn.y,vx:0,vy:0,
       onGround:true,checkpointActive:active,camera:active?1170:0,
       deaths:0,ticks:0,coyoteLeft:0,bufferLeft:0,jumpHeld:false,
@@ -37,7 +39,8 @@ export function initialLevelState(level='LV-01',saved=null){
   }
   if(level==='LV-03'){
     const active=Boolean(decodeLV03Checkpoint(saved));
-    const spawn=active?LV03.checkpointSpawn:LV03.initial;
+    const descriptor=describeLevel("LV-03",CFG,PLATFORMS);
+    const spawn=active?descriptor.checkpointSpawn:descriptor.initial;
     return {phase:'PLAYING',level:'LV-03',x:spawn.x,y:spawn.y,vx:0,vy:0,
       onGround:true,checkpointActive:active,camera:active?950:0,
       deaths:0,ticks:0,coyoteLeft:0,bufferLeft:0,jumpHeld:false,
@@ -54,9 +57,11 @@ export function initialState(saved = null, savedLV02=null, savedLV03=null) {
   // CP-02 is a strict local resume record, not proof of past play: localStorage is user-controlled.
   if(decodeLV02Checkpoint(savedLV02))return initialLevelState('LV-02',savedLV02);
   const checkpointActive = Boolean(decodeCheckpoint(saved));
-  const x = checkpointActive ? 1220 : 48;
+  const descriptor=describeLevel("LV-01",CFG,PLATFORMS);
+  const spawn=checkpointActive?descriptor.checkpointSpawn:descriptor.initial;
+  const x=spawn.x;
   return {
-    action:initialAction(),phase:"PLAYING", level:"LV-01", x, y:checkpointActive ? 358 : 418,
+    action:initialAction(),phase:"PLAYING", level:"LV-01", x, y:spawn.y,
     vx:0, vy:0, onGround:true, checkpointActive,
     camera:checkpointActive ? 900 : 0, deaths:0, ticks:0,
     coyoteLeft:0, bufferLeft:0, jumpHeld:false, jumpCut:false, supportId:null,currentForce:0
@@ -92,8 +97,9 @@ export function step(state, input = {}, dt = CFG.tick) {
   let coyoteLeft=state.onGround ? CFG.coyoteTicks : Math.max(0,(state.coyoteLeft ?? 0)-1);
   let bufferLeft=justPressed ? CFG.bufferTicks : Math.max(0,(state.bufferLeft ?? 0)-1);
   const second=state.level==='LV-02',third=state.level==='LV-03';
-  const worldWidth=third?LV03.width:second?LV02.width:CFG.width;
-  const platforms=third?LV03.platforms:second?lv02Surfaces(state.ticks+1):PLATFORMS;
+  const descriptor=describeLevel(state.level,CFG,PLATFORMS,state.ticks+1);
+  const worldWidth=descriptor.width;
+  const platforms=descriptor.platforms;
   const movingCarry=second&&state.onGround&&state.supportId==='canal-bridge'?
     movingBridge(state.ticks+1).x-movingBridge(state.ticks).x:0;
   const flow=second?currentForceAt(state.x+CFG.playerWidth/2):0;

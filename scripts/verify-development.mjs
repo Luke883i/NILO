@@ -82,6 +82,21 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
       a7.tests?.includes(t)&&lv01?.tests?.includes(t))&&
     contract?.gameplay?.action_preview?.browser_oracle==="tests/browser-action.py"&&
     contract.gameplay.action_preview?.playtest_accepted===false);
+  const cat=r.find(x=>x.id==="OR-08"),tech=contract?.technical_s03;
+  bad("bridge-world-catalog-s03",tech?.catalog_owner==="web/levels/catalog.mjs"&&
+    tech?.engine_owner==="web/core.mjs"&&
+    tech?.creative_a0_approval===false&&tech?.beta_authorized===false&&
+    tech?.scope==="LV01_LV02_LV03_ONLY"&&
+    cat?.level==="LV-01"&&cat?.authority==="MODEL_TEST_ONLY"&&
+    cat?.browser==="NOT_ATTESTED"&&
+    ["web/levels/catalog.mjs","web/core.mjs","web/levels/lv-02.mjs","web/levels/lv-03.mjs"].every(p=>cat?.sources?.includes(p))&&
+    ["tests/catalog.test.mjs","tests/catalog-mutation.test.mjs"].every(t=>
+      cat?.tests?.includes(t)&&bridge?.repo_tests?.includes(t)&&
+      ["LV-01","LV-02","LV-03"].every(id=>l.find(x=>x.id===id)?.tests?.includes(t)))&&
+    ["LV-01","LV-02","LV-03"].every(id=>
+      l.find(x=>x.id===id)?.source?.includes("web/levels/catalog.mjs"))&&
+    ["LV-04","LV-05","LV-06"].every(id=>
+      l.find(x=>x.id===id)?.state==="DESIGN_ONLY"&&l.find(x=>x.id===id).source.length===0));
   const delivery=bridge?.delivery,prodDelivery=contract?.delivery;
   bad("bridge-delivery",delivery?.id==="I07-D"&&delivery?.id===prodDelivery?.id&&
     delivery?.authority==="SOURCE_AND_BROWSER_TESTS_NOT_EXTERNAL_ATTESTATION"&&

@@ -32,6 +32,34 @@ jobs:
         run: node --test tests/action.test.mjs
       - name: Falsify ghost attacks, projectile occlusion and invulnerability in real action source
         run: node --test tests/action-mutation.test.mjs
+      - name: S03a catalog behavior and original runtime consumer assertions
+        run: node --test tests/catalog.test.mjs
+      - name: S03a physical mutant 1 lv01-width-drift
+        env:
+          NILO_S03_MUTANT: lv01-width-drift
+        run: node --test tests/catalog-mutation.test.mjs
+      - name: S03a physical mutant 2 frozen-moving-bridge
+        env:
+          NILO_S03_MUTANT: frozen-moving-bridge
+        run: node --test tests/catalog-mutation.test.mjs
+      - name: S03a physical mutant 3 archive-checkpoint-misroute
+        env:
+          NILO_S03_MUTANT: archive-checkpoint-misroute
+        run: node --test tests/catalog-mutation.test.mjs
+      - name: S03a physical mutant 4 boss-identity-erased
+        env:
+          NILO_S03_MUTANT: boss-identity-erased
+        run: node --test tests/catalog-mutation.test.mjs
+      - name: S03a physical mutant 5 design-only-level-unlocked
+        env:
+          NILO_S03_MUTANT: design-only-level-unlocked
+        run: node --test tests/catalog-mutation.test.mjs
+      - name: S03a physical mutant 6 tick-validation-disabled
+        env:
+          NILO_S03_MUTANT: tick-validation-disabled
+        run: node --test tests/catalog-mutation.test.mjs
+      - name: S03a six physical source mutants independently falsified
+        run: node --test tests/catalog-mutation.test.mjs
       - name: Verify narrative, requirements, DoD, BOM and source boundaries
         run: node scripts/verify.mjs
       - name: Test deterministic playable physics and checkpoint

@@ -31,6 +31,7 @@ test("all original and game-feel real-source mutations are killed by independent
    // Shared core now imports the new level data; physical copies must
    // preserve the original import topology before applying any mutation.
    mkdirSync(join(tmp,"web","levels"),{recursive:true});
+   writeFileSync(join(tmp,"web","levels","catalog.mjs"),readFileSync(resolve(root,"web/levels/catalog.mjs"),"utf8"));
    writeFileSync(join(tmp,"web","action.mjs"),readFileSync(resolve(root,"web/action.mjs"),"utf8"));
    writeFileSync(join(tmp,"web","levels","lv-02.mjs"),
      readFileSync(resolve(root,"web/levels/lv-02.mjs"),"utf8"));

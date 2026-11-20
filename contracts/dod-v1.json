@@ -5,7 +5,7 @@
   "seed_goal": "G_SEED_SOURCE",
   "qualification": "ALL_GATES_NONCOMPENSATORY",
   "authority": "NONE",
-  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt. PR11 extends the RELEASE branch noncompensatorily: source-and-local tests do not confer Codespace forwarding or an actual Render deploy. The external leaves DL02 and DL08 remain BLOCKED_EXTERNAL until observed. PR12 adds nine obligations under G_FULL_GAME; technical tests cannot override Q07, DL02 or DL08. S01 adds source/native HTTP/physical mutation and independent novice gates for OR-07; no self-issued PASS. S02 declares original NILO NEXT creative A0 as draft: the 7-leaf G_CREATIVE_A0_S02 AND branch preserves author, rights, UX and governance approval as external; no CI result self-approves decisions.",
+  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt. PR11 extends the RELEASE branch noncompensatorily: source-and-local tests do not confer Codespace forwarding or an actual Render deploy. The external leaves DL02 and DL08 remain BLOCKED_EXTERNAL until observed. PR12 adds nine obligations under G_FULL_GAME; technical tests cannot override Q07, DL02 or DL08. S01 adds source/native HTTP/physical mutation and independent novice gates for OR-07; no self-issued PASS. S02 declares original NILO NEXT creative A0 as draft: the 7-leaf G_CREATIVE_A0_S02 AND branch preserves author, rights, UX and governance approval as external; no CI result self-approves decisions. S03a adds behavior-preserving catalog with 6 physical source mutations; owner/creative acceptance remains external, no new world or entity feature certified.",
   "nodes": [
     {
       "id": "I01",
@@ -297,7 +297,8 @@
         "A01",
         "G_LV03_PR12",
         "G_LV01_ACTION_S01",
-        "G_CREATIVE_A0_S02"
+        "G_CREATIVE_A0_S02",
+        "G_WORLD_CATALOG_S03"
       ],
       "claim": "accepted six-level / three-boss game",
       "baseline_status": "BLOCKED",
@@ -774,6 +775,75 @@
         "C2_06"
       ],
       "claim": "NILO NEXT A0 original action-platform design has author decision, legal/experience scope and source traceability; source draft alone is not approval",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "T3_00",
+      "kind": "LEAF",
+      "plane": "SOURCE",
+      "claim": "Three existing levels have one catalog owner; design-only worlds remain rejected",
+      "oracle": "bridge OR-08 catalog source owner, same three level IDs and no duplicate engine",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "T3_01",
+      "kind": "LEAF",
+      "plane": "TARGET_RUNTIME",
+      "claim": "Exact original spawn, checkpoint, world bounds and moving bridge survive refactor",
+      "oracle": "target-native Node catalog/core/level assertions on HEAD",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "T3_02",
+      "kind": "LEAF",
+      "plane": "TARGET_RUNTIME",
+      "claim": "Keyboard, boss, archive doors, checkpoint reload, and dist path remain playable",
+      "oracle": "existing native HTTP Chrome end-to-end on exact HEAD and dist bytes",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "T3_03",
+      "kind": "LEAF",
+      "plane": "SOURCE",
+      "claim": "Physical catalog drift is rejected, without missing-import false kills",
+      "oracle": "six original-byte source mutants with independently executed Node assertions",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "T3_04",
+      "kind": "LEAF",
+      "plane": "SOURCE",
+      "claim": "All original physical source mutants still execute under preserved import topology",
+      "oracle": "existing mutational harnesses, browser negatives and source coverage",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "T3_05",
+      "kind": "LEAF",
+      "plane": "EXTERNAL",
+      "claim": "Owner reviews data ownership and S02 creative A0 choices before extending entities or new levels",
+      "oracle": "explicit original NILO author approval and engineer reviewer; Q07 independent quality still open",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "witness": null
+    },
+    {
+      "id": "G_WORLD_CATALOG_S03",
+      "kind": "AND",
+      "depends_on": [
+        "T3_00",
+        "T3_01",
+        "T3_02",
+        "T3_03",
+        "T3_04",
+        "T3_05"
+      ],
+      "claim": "S03a three-level data catalog and unchanged gameplay acceptance; future entities and three remaining levels excluded",
       "baseline_status": "BLOCKED",
       "authorization": "NONE"
     }

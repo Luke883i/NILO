@@ -118,3 +118,20 @@ test("S01 combat AND gate cannot be bypassed by missing leaves or synthetic huma
   x=fresh();x.dod.nodes.find(n=>n.id==="G_LV01_ACTION_S01").depends_on.pop();
   assert(audit(x).includes("s01-action-gate"));
 });
+
+test("S03a AND-DoD requires catalog source, native witnesses and owner review",()=>{
+  let d=fresh();
+  d.dod.nodes.find(n=>n.id==="G_FULL_GAME").depends_on=
+    d.dod.nodes.find(n=>n.id==="G_FULL_GAME").depends_on.filter(x=>x!=="G_WORLD_CATALOG_S03");
+  assert(audit(d).includes("dod-AND"));
+  d=fresh();d.dod.nodes.find(n=>n.id==="T3_05").baseline_status="PASS";
+  assert(audit(d).includes("s03-catalog-gate"));
+  d=fresh();d.dod.nodes.find(n=>n.id==="T3_02").witness="invented-browser";
+  assert(audit(d).includes("s03-catalog-gate"));
+  d=fresh();d.dod.nodes.find(n=>n.id==="G_WORLD_CATALOG_S03").depends_on.pop();
+  assert(audit(d).includes("s03-catalog-gate"));
+  d=fresh();d.contract.technical_s03.creative_a0_approval=true;
+  assert(audit(d).includes("s03-catalog-contract"));
+  d=fresh();d.contract.technical_s03.future_entity_state_generalization="COMPLETE";
+  assert(audit(d).includes("s03-catalog-contract"));
+});

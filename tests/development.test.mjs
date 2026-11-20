@@ -11,8 +11,8 @@ const fixtureFiles=["web/action.mjs","web/core.mjs","web/main.mjs","web/index.ht
   "tests/core.test.mjs","tests/action.test.mjs","tests/action-mutation.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
   "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs",
   "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py","tests/browser-action.py",
-  "web/levels/lv-02.mjs","web/levels/lv-03.mjs","web/levels/custode.mjs",
-  "tests/lv-03.test.mjs","tests/lv-03-mutation.test.mjs","tests/browser-lv-03.py","tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py",
+  "web/levels/catalog.mjs","web/levels/lv-02.mjs","web/levels/lv-03.mjs","web/levels/custode.mjs",
+  "tests/lv-03.test.mjs","tests/lv-03-mutation.test.mjs","tests/browser-lv-03.py","tests/catalog.test.mjs","tests/catalog-mutation.test.mjs","tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py",
   "tests/custode.test.mjs","tests/custode-mutation.test.mjs","tests/browser-custode.py",
   ".github/workflows/seed.yml",".github/workflows/render-live.yml",
   ".devcontainer/devcontainer.json","render.yaml","package.json",
@@ -160,4 +160,18 @@ test("S01 browser action witness cannot be dropped from OR-07 without failing th
   assert(validateBridge(x).includes("bridge-action-s01"));
   const y=base();y.bridge.requirements.find(r=>r.id==="OR-07").browser="PASS";
   assert(validateBridge(y).includes("bridge-no-runtime-promotion"));
+});
+
+test("S03a catalogue owner cannot be removed or mislabeled beta",()=>{
+  let d=base();
+  d.bridge.requirements.find(x=>x.id==="OR-08").sources=
+    d.bridge.requirements.find(x=>x.id==="OR-08").sources.filter(x=>x!=="web/levels/catalog.mjs");
+  assert(validateBridge(d).includes("bridge-world-catalog-s03"));
+  d=base();d.bridge.levels.find(x=>x.id==="LV-03").tests=
+    d.bridge.levels.find(x=>x.id==="LV-03").tests.filter(t=>t!=="tests/catalog-mutation.test.mjs");
+  assert(validateBridge(d).includes("bridge-world-catalog-s03"));
+  d=base();d.bridge.requirements.find(x=>x.id==="OR-08").browser="PASS";
+  assert(validateBridge(d).includes("bridge-no-runtime-promotion"));
+  d=base();d.bridge.levels.find(x=>x.id==="LV-04").state="IMPLEMENTED_CANDIDATE";
+  assert(validateBridge(d).includes("bridge-no-fake-levels"));
 });
