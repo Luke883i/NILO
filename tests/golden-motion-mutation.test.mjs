@@ -22,7 +22,7 @@ function pixels(m,game){
 }
 const contains=(o,kind,coords)=>o.some(x=>x[0]===kind&&coords.every((v,i)=>x[i+1]===v));
 const cases=[
- {id:"idle-classified-as-running",from:':"RUN":"IDLE";',to:':"RUN":"RUN";',
+ {id:"idle-classified-as-running",from:'?"RUN":"IDLE";',to:'?"RUN":"RUN";',
   check:(m,b)=>{assert.equal(b.goldenMotionPose(state()).phase,"IDLE");assert.equal(m.goldenMotionPose(state()).phase,"RUN");}},
  {id:"run-cycle-stuck",from:"const frame=Math.floor(state.ticks/GOLDEN_MOTION.runCycleTicks)%4;",to:"const frame=0;",
   check:(m,b)=>{const x={...state(5),vx:120};assert.equal(b.goldenMotionPose(x).stride,3);assert.equal(m.goldenMotionPose(x).stride,0);}},
