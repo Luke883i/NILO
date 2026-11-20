@@ -5,7 +5,7 @@
   "seed_goal": "G_SEED_SOURCE",
   "qualification": "ALL_GATES_NONCOMPENSATORY",
   "authority": "NONE",
-  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt. PR11 extends the RELEASE branch noncompensatorily: source-and-local tests do not confer Codespace forwarding or an actual Render deploy. The external leaves DL02 and DL08 remain BLOCKED_EXTERNAL until observed. PR12 adds nine obligations under G_FULL_GAME; technical tests cannot override Q07, DL02 or DL08. S01 adds source/native HTTP/physical mutation and independent novice gates for OR-07; no self-issued PASS. S02 declares original NILO NEXT creative A0 as draft: the 7-leaf G_CREATIVE_A0_S02 AND branch preserves author, rights, UX and governance approval as external; no CI result self-approves decisions. S03a adds behavior-preserving catalog with 6 physical source mutations; owner/creative acceptance remains external, no new world or entity feature certified.",
+  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt. PR11 extends the RELEASE branch noncompensatorily: source-and-local tests do not confer Codespace forwarding or an actual Render deploy. The external leaves DL02 and DL08 remain BLOCKED_EXTERNAL until observed. PR12 adds nine obligations under G_FULL_GAME; technical tests cannot override Q07, DL02 or DL08. S01 adds source/native HTTP/physical mutation and independent novice gates for OR-07; no self-issued PASS. S02 declares original NILO NEXT creative A0 as draft: the 7-leaf G_CREATIVE_A0_S02 AND branch preserves author, rights, UX and governance approval as external; no CI result self-approves decisions. S03a adds behavior-preserving catalog with 6 physical source mutations; owner/creative acceptance remains external, no new world or entity feature certified. S03b creates one LV01 action entity blueprint, seven physical mutations and an external owner decision; this is not general combat for LV02/03 or future worlds.",
   "nodes": [
     {
       "id": "I01",
@@ -298,7 +298,8 @@
         "G_LV03_PR12",
         "G_LV01_ACTION_S01",
         "G_CREATIVE_A0_S02",
-        "G_WORLD_CATALOG_S03"
+        "G_WORLD_CATALOG_S03",
+        "G_ACTION_ENTITIES_S03B"
       ],
       "claim": "accepted six-level / three-boss game",
       "baseline_status": "BLOCKED",
@@ -844,6 +845,75 @@
         "T3_05"
       ],
       "claim": "S03a three-level data catalog and unchanged gameplay acceptance; future entities and three remaining levels excluded",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "E3_00",
+      "kind": "LEAF",
+      "plane": "SOURCE",
+      "claim": "Immutable LV01 entity catalog is uniquely owned by action source and has an OR-09 source-test bridge",
+      "oracle": "product->source->native-tests on same SHA",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "E3_01",
+      "kind": "LEAF",
+      "plane": "TARGET_RUNTIME",
+      "claim": "Initial action state is fresh, stable and preserves original two sentries and three pickups",
+      "oracle": "positive Node entity factory, patrol, physical shooting and pickup assertions",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "E3_02",
+      "kind": "LEAF",
+      "plane": "SOURCE",
+      "claim": "Seven physical original-file mutations yield independent observed counterexamples",
+      "oracle": "disk-mutated ESM imports and exact negative outcomes, no import failure counted",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "E3_03",
+      "kind": "LEAF",
+      "plane": "TARGET_RUNTIME",
+      "claim": "Legacy action, physics and checkpoints have no regressions in source tests",
+      "oracle": "original target-owned tests and mutations on exact commit",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "E3_04",
+      "kind": "LEAF",
+      "plane": "TARGET_RUNTIME",
+      "claim": "Real keyboard attack, pickup, pause and restart still work in Chrome and dist",
+      "oracle": "native HTTP and static output browser receipts bound to HEAD",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "E3_05",
+      "kind": "LEAF",
+      "plane": "EXTERNAL",
+      "claim": "Product author approves combat/repair meaning and owner independently reviews extension semantics",
+      "oracle": "DA02 author decision, rights and novice gate remain human-controlled",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "witness": null
+    },
+    {
+      "id": "G_ACTION_ENTITIES_S03B",
+      "kind": "AND",
+      "depends_on": [
+        "E3_00",
+        "E3_01",
+        "E3_02",
+        "E3_03",
+        "E3_04",
+        "E3_05"
+      ],
+      "claim": "LV01 immutable entity blueprint consumed by actual action and proven by independent tests; no human approval self-issued",
       "baseline_status": "BLOCKED",
       "authorization": "NONE"
     }

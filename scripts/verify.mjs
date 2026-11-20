@@ -5,6 +5,7 @@ import {fileURLToPath} from "node:url";
 import {validateBridge} from "./verify-development.mjs";
 import {validateIterationHypothesis} from "./semantic-campaign.mjs";
 import {CFG,PLATFORMS} from "../web/core.mjs";
+import {LV01_ENTITY_BLUEPRINT,validateActionBlueprint,spawnActionEntities} from "../web/action.mjs";
 import {describeLevel,IMPLEMENTED_LEVEL_IDS,DESIGN_ONLY_LEVEL_IDS} from "../web/levels/catalog.mjs";
 import {LV02,lv02Surfaces,currentForceAt,decodeLV02Checkpoint} from "../web/levels/lv-02.mjs";
 import {ART_CUES,ART_SIGNALS,ART_IDENTITY} from "../web/art.mjs";
@@ -100,10 +101,10 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     contract.slice.acceptance_oracles.some(x=>x.type==="REAL_SOURCE_MUTATION"));
   fail("effects",contract?.gameplay?.security?.includes("no telemetry")&&contract?.permissions?.not_allowed?.includes("release"));
   fail("dod-shape",dod?.schema==="nilo.reticular-dod/1"&&dod?.root==="G_CONTRACT_DEMONSTRATED"&&
-    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===83);
+    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===90);
   const ids=(dod?.nodes||[]).map(n=>n.id),nodes=new Map((dod?.nodes||[]).map(n=>[n.id,n]));
   fail("dod-identities",distinct(ids));
-  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===16&&
+  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===17&&
     nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_BETA_RELEASE,G_SUPPLY_CHAIN,G_RELEASE"&&
     nodes.get("G_BETA_RELEASE")?.depends_on?.join(",")==="G_FULL_GAME,Q01,Q02,Q03,Q04,Q05,Q06,Q07"&&
     nodes.get("G_RELEASE")?.depends_on?.join(",")==="R01,R02,R03,G_DELIVERY_PR11"&&
@@ -114,6 +115,7 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_LV01_ACTION_S01")&&
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_CREATIVE_A0_S02")&&
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_WORLD_CATALOG_S03")&&
+    nodes.get("G_FULL_GAME")?.depends_on?.includes("G_ACTION_ENTITIES_S03B")&&
     nodes.get("G_LV03_PR12")?.depends_on?.join(",")==="L3_00,L3_01,L3_02,L3_03,L3_04,L3_05,L3_06,L3_07,L3_08");
   const actionLeafIds=["A7_00","A7_01","A7_02","A7_03","A7_04"];
   fail("s01-action-gate",nodes.get("G_LV01_ACTION_S01")?.kind==="AND"&&
@@ -230,6 +232,44 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
       nodes.get(id)?.witness===null&&
       nodes.get(id)?.baseline_status===(i===5?"BLOCKED_EXTERNAL":"NOT_VERIFIED"))&&
     nodes.get("G_CREATIVE_A0_S02")?.baseline_status==="BLOCKED"&&
+    contract?.next_a0?.approval?.human_approved===false);
+  const entity3=contract?.technical_s03b;
+  fail("s03b-entity-contract",entity3?.schema==="nilo.engineering-s03b-action-entities/1"&&
+    entity3?.id==="S03b-NILO-NEXT"&&
+    entity3?.status==="SOURCE_IMPLEMENTATION_CANDIDATE_NOT_AUTHOR_ACCEPTED"&&
+    entity3?.scope==="LV01_ACTION_ENTITIES_ONLY"&&
+    entity3?.source_owner==="web/action.mjs"&&
+    entity3?.consumer_owner==="web/core.mjs"&&
+    entity3?.blueprint_export==="LV01_ENTITY_BLUEPRINT"&&
+    entity3?.validation_export==="validateActionBlueprint"&&
+    entity3?.spawn_export==="spawnActionEntities"&&
+    entity3?.no_new_levels===true&&entity3?.same_runtime_shape===true&&
+    entity3?.independent_mutable_instances===true&&
+    entity3?.unique_entity_ids===true&&
+    entity3?.source_mutation_oracle==="tests/entity-blueprint-mutation.test.mjs"&&
+    entity3?.positive_oracle==="tests/entity-blueprint.test.mjs"&&
+    entity3?.physical_source_mutants===7&&
+    entity3?.browser_regression==="tests/browser-action.py"&&
+    entity3?.external_author_approval==="BLOCKED_EXTERNAL"&&
+    entity3?.creative_decisions==="PENDING_AUTHOR_DECISION"&&
+    entity3?.beta_authorized===false);
+  const blue=LV01_ENTITY_BLUEPRINT,spawned=spawnActionEntities("LV-01");
+  fail("s03b-entity-source",validateActionBlueprint(blue)===true&&
+    Object.isFrozen(blue)&&Object.isFrozen(blue.enemies)&&
+    Object.isFrozen(blue.pickups)&&
+    blue.enemies?.length===2&&blue.pickups?.length===3&&
+    blue.enemies?.every(Object.isFrozen)&&blue.pickups?.every(Object.isFrozen)&&
+    spawned?.enemies?.length===2&&spawned.pickups?.length===3&&
+    spawned.enemies[0]!==blue.enemies[0]&&spawned.pickups[0]!==blue.pickups[0]&&
+    spawnActionEntities("LV-02")===null&&spawnActionEntities("LV-04")===null);
+  const s3bLeaves=["E3_00","E3_01","E3_02","E3_03","E3_04","E3_05"];
+  fail("s03b-action-gate",nodes.get("G_ACTION_ENTITIES_S03B")?.kind==="AND"&&
+    nodes.get("G_ACTION_ENTITIES_S03B")?.depends_on?.join(",")===s3bLeaves.join(",")&&
+    nodes.get("G_ACTION_ENTITIES_S03B")?.authorization==="NONE"&&
+    nodes.get("G_ACTION_ENTITIES_S03B")?.baseline_status==="BLOCKED"&&
+    s3bLeaves.every((id,i)=>nodes.get(id)?.kind==="LEAF"&&
+      nodes.get(id)?.witness===null&&
+      nodes.get(id)?.baseline_status===(i===5?"BLOCKED_EXTERNAL":"NOT_VERIFIED"))&&
     contract?.next_a0?.approval?.human_approved===false);
   fail("lv03-no-self-approved-gates",["L3_00","L3_01","L3_02","L3_03","L3_04","L3_05","L3_06","L3_07","L3_08"].every(id=>
     nodes.get(id)?.baseline_status==="NOT_VERIFIED"&&nodes.get(id)?.witness===null)&&

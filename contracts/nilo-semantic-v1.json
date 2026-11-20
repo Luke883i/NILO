@@ -545,6 +545,11 @@
         "id": "OR-08",
         "claim": "Implemented LV-01/02/03 geometry and spawn are resolved through one pure catalog consumed by the existing core; dynamic bridge and all legacy checkpoints/boss/doors preserve exact current behavior; LV-04–06 reject as not implemented.",
         "type": "UNIT_AND_PHYSICAL_SOURCE_MUTATION_AND_TARGET_BROWSER"
+      },
+      {
+        "id": "OR-09",
+        "type": "REAL_SOURCE_MUTATION",
+        "claim": "LV01 enemies and fragments are uniquely identified immutable source blueprints, instantiated into independent mutable runtime state without changing attack or collectible behavior. LV02/03 and design-only worlds are not made combat-ready by a catalog declaration."
       }
     ]
   },
@@ -1004,6 +1009,28 @@
     "creative_a0_approval": false,
     "author_review": "BLOCKED_EXTERNAL",
     "future_entity_state_generalization": "NOT_IMPLEMENTED",
+    "beta_authorized": false
+  },
+  "technical_s03b": {
+    "schema": "nilo.engineering-s03b-action-entities/1",
+    "id": "S03b-NILO-NEXT",
+    "status": "SOURCE_IMPLEMENTATION_CANDIDATE_NOT_AUTHOR_ACCEPTED",
+    "scope": "LV01_ACTION_ENTITIES_ONLY",
+    "source_owner": "web/action.mjs",
+    "consumer_owner": "web/core.mjs",
+    "blueprint_export": "LV01_ENTITY_BLUEPRINT",
+    "validation_export": "validateActionBlueprint",
+    "spawn_export": "spawnActionEntities",
+    "no_new_levels": true,
+    "same_runtime_shape": true,
+    "independent_mutable_instances": true,
+    "unique_entity_ids": true,
+    "source_mutation_oracle": "tests/entity-blueprint-mutation.test.mjs",
+    "positive_oracle": "tests/entity-blueprint.test.mjs",
+    "physical_source_mutants": 7,
+    "browser_regression": "tests/browser-action.py",
+    "external_author_approval": "BLOCKED_EXTERNAL",
+    "creative_decisions": "PENDING_AUTHOR_DECISION",
     "beta_authorized": false
   }
 }

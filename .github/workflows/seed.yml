@@ -60,6 +60,10 @@ jobs:
         run: node --test tests/catalog-mutation.test.mjs
       - name: S03a six physical source mutants independently falsified
         run: node --test tests/catalog-mutation.test.mjs
+      - name: S03b LV01 entity blueprint native state isolation and real action consumers
+        run: node --test tests/entity-blueprint.test.mjs
+      - name: S03b seven physically materialized entity source mutants and counterexamples
+        run: node --test tests/entity-blueprint-mutation.test.mjs
       - name: Verify narrative, requirements, DoD, BOM and source boundaries
         run: node scripts/verify.mjs
       - name: Test deterministic playable physics and checkpoint
