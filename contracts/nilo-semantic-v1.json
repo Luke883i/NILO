@@ -555,6 +555,11 @@
         "id": "OR-10",
         "claim": "Native 960x540 original Canvas visual pass improves the opening LV01 scene (Nilo/Tica/first sentry/reward) against explicit reversible pixel legacy, without changing action, physics, checkpoint or unimplemented levels; author and novice aesthetic approval remain external.",
         "type": "NATIVE_HTTP_PIXEL_COMPARISON_AND_PHYSICAL_MUTATION_EXTERNAL_PENDING"
+      },
+      {
+        "id": "OR-11",
+        "claim": "G1-V1 LV01 native visuals derive five distinct player poses, real shot and damage responses, Tica wings, sentry gait and shard glints from the existing gameplay state and fixed ticks without changing physics, checkpoint serialization, legacy fallback or other levels.",
+        "type": "TARGET_NATIVE_CANVAS_AND_PHYSICAL_SOURCE_MUTATION_AND_BROWSER_EXTERNAL_PENDING"
       }
     ]
   },
@@ -1071,5 +1076,39 @@
     "rights_review": "BLOCKED_EXTERNAL",
     "release_authorized": false,
     "beta_authorized": false
+  },
+  "golden_motion_v1": {
+    "schema": "nilo.golden-motion-v1/1",
+    "id": "G1-V1",
+    "status": "SOURCE_IMPLEMENTATION_CANDIDATE_NOT_CREATIVE_APPROVAL",
+    "scope": "LV01_GOLDEN_MINUTE_X_0_750_ONLY",
+    "source_owner": "web/golden-minute.mjs",
+    "consumer_owner": "web/main.mjs",
+    "contract_export": "GOLDEN_MOTION",
+    "pose_selector": "goldenMotionPose",
+    "gameplay_poses": [
+      "IDLE",
+      "RUN",
+      "AIR",
+      "FIRE",
+      "HURT"
+    ],
+    "actual_shot_required_for_flare": true,
+    "actual_invulnerability_required_for_hurt": true,
+    "simulation_mutated": false,
+    "storage_mutated": false,
+    "external_assets_added": false,
+    "legacy_visual_fallback": "?visual=legacy",
+    "source_test": "tests/golden-motion.test.mjs",
+    "physical_source_mutation_test": "tests/golden-motion-mutation.test.mjs",
+    "native_browser_test": "tests/browser-golden-motion.py",
+    "physical_source_mutants": 9,
+    "prior_visual_browser": "tests/browser-golden.py",
+    "author_art_approval": "BLOCKED_EXTERNAL",
+    "independent_player_validation": "BLOCKED_EXTERNAL",
+    "rights_review": "BLOCKED_EXTERNAL",
+    "a0_draft_only": true,
+    "beta_authorized": false,
+    "release_authorized": false
   }
 }

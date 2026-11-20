@@ -36,7 +36,10 @@
         "tests/entity-blueprint-mutation.test.mjs",
         "tests/golden-minute.test.mjs",
         "tests/golden-minute-mutation.test.mjs",
-        "tests/browser-golden.py"
+        "tests/browser-golden.py",
+        "tests/golden-motion.test.mjs",
+        "tests/golden-motion-mutation.test.mjs",
+        "tests/browser-golden-motion.py"
       ]
     },
     {
@@ -478,6 +481,26 @@
       ],
       "authority": "HUMAN_AND_BROWSER_REQUIRED",
       "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-11",
+      "level": "LV-01",
+      "sources": [
+        "web/golden-minute.mjs",
+        "web/main.mjs",
+        "web/action.mjs",
+        "web/core.mjs"
+      ],
+      "tests": [
+        "tests/golden-motion.test.mjs",
+        "tests/golden-motion-mutation.test.mjs",
+        "tests/browser-golden-motion.py",
+        "tests/golden-minute.test.mjs",
+        "tests/browser-golden.py",
+        "tests/browser-action.py"
+      ],
+      "authority": "HUMAN_AND_BROWSER_REQUIRED",
+      "browser": "NOT_ATTESTED"
     }
   ],
   "narrative_state": "DRAFT_AUTHOR_UNAPPROVED",
@@ -502,7 +525,10 @@
     "tests/entity-blueprint-mutation.test.mjs",
     "tests/golden-minute.test.mjs",
     "tests/golden-minute-mutation.test.mjs",
-    "tests/browser-golden.py"
+    "tests/browser-golden.py",
+    "tests/golden-motion.test.mjs",
+    "tests/golden-motion-mutation.test.mjs",
+    "tests/browser-golden-motion.py"
   ],
   "release_gate": "Q06",
   "interfaces": {

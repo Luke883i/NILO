@@ -25,6 +25,36 @@ const stroke=(ctx,x1,y1,x2,y2,color,width=1)=>{
 const disk=(ctx,x,y,r,fill)=>{
  ctx.beginPath();ctx.arc(x,y,r,0,TWO_PI);ctx.fillStyle=fill;ctx.fill();
 };
+/** G1-V1: deterministic, simulation-owned animation grammar.
+ * No timer, stored sprite frame, random jitter, physics mutation or new rights.
+ * The pose is an observation of the actual game state, not a second engine.
+ */
+export const GOLDEN_MOTION=Object.freeze({
+ schema:"nilo.golden-motion/1",level:"LV-01",
+ runCycleTicks:5,wingCycleTicks:7,
+ source:"ACTUAL_GAME_STATE_ONLY",renderOnly:true,
+ authorApproved:false,independentPlaytest:false
+});
+export function goldenMotionPose(state){
+ if(!state||state.level!==GOLDEN_MOTION.level||
+    !Number.isSafeInteger(state.ticks)||state.ticks<0||
+    !Number.isFinite(state.x)||!Number.isFinite(state.y))return null;
+ const action=state.action;
+ const hurt=Boolean(action&&action.invulnerable>0);
+ const firing=Boolean(action?.shots?.length);
+ const running=Number.isFinite(state.vx)&&Math.abs(state.vx)>1;
+ const phase=hurt?"HURT":firing?"FIRE":state.onGround===false?"AIR":running?"RUN":"IDLE";
+ const frame=Math.floor(state.ticks/GOLDEN_MOTION.runCycleTicks)%4;
+ const stride=phase==="RUN"?[0,3,0,-3][frame]:0;
+ const wingLift=Math.floor(state.ticks/GOLDEN_MOTION.wingCycleTicks)%2===0?-4:4;
+ return Object.freeze({phase,frame,stride,
+   wingLift,blink:state.ticks%180>=175,
+   scarfLift:phase==="AIR"?-6:phase==="RUN"?stride:0,
+   shotFlare:firing,hurtFlash:hurt&&state.ticks%6<3,
+   sentryStep:Math.floor(state.ticks/7)%2?2:0,
+   shardFrame:Math.floor(state.ticks/7)%4,
+   facing:action?.facing===-1?-1:1});
+}
 export function goldenMinutePlan(state,legacy=false){
  if(legacy||!state||state.level!==GOLDEN_MINUTE.level||
     !Number.isFinite(state.x)||!Number.isFinite(state.camera)||
@@ -168,13 +198,15 @@ function pickups(ctx,state){
    ctx.lineTo(x,y);ctx.closePath();ctx.fillStyle=C.teal;ctx.fill();
    disk(ctx,x,y,1.5,C.ivory);
    sparkles(ctx,x,y,state.ticks);
+   const glint=goldenMotionPose(state).shardFrame;
+   stroke(ctx,x-7+glint*4,y-5,x-4+glint*4,y-5,C.ivory,1.5);
  }
 }
 function sentries(ctx,state){
  if(!state.action)return;
  for(const e of state.action.enemies){
    if(!e.alive)continue;
-   const x=e.x-state.camera,y=e.y,run=(state.ticks%14)<7?2:0;
+   const x=e.x-state.camera,y=e.y,run=goldenMotionPose(state).sentryStep;
    if(x<-45||x>1000)continue;
    rectangle(ctx,x+2,y+4,27,25,C.ink);
    rectangle(ctx,x+5,y+7,21,18,C.copper);
@@ -192,6 +224,8 @@ function sentries(ctx,state){
    }
    stroke(ctx,x+6,y+27,x+24,y+27,C.gold);
    for(let k=0;k<3;k++)disk(ctx,x+10+k*6,y+4,1,C.ivory);
+   rectangle(ctx,x+7,y+8,17,2,run?C.gold:C.teal);
+   stroke(ctx,x+7,y+25,x+24,y+25,run?C.copper:C.brass);
  }
 }
 function impulses(ctx,state){
@@ -207,7 +241,7 @@ function impulses(ctx,state){
 }
 function nilo(ctx,state){
  const x=state.x-state.camera,y=state.y;
- const running=Math.abs(state.vx||0)>1,pose=running&&(Math.floor(state.ticks/6)%2);
+ const pose=goldenMotionPose(state),running=pose.phase==="RUN",cycle=running&&pose.stride>0;
  // All details fit the original actor's logical collision footprint.
  rectangle(ctx,x+2,y-3,29,8,C.ink);
  rectangle(ctx,x+5,y-7,25,7,C.tealDark);
@@ -223,33 +257,55 @@ function nilo(ctx,state){
  rectangle(ctx,x+17,y+26,8,7,C.tealDark);
  disk(ctx,x+21,y+29,3.5,C.gold);
  rectangle(ctx,x+7,y+34,8,8,C.ink);
- rectangle(ctx,x+19,y+34+(pose?1:0),8,8,C.ink);
+ rectangle(ctx,x+19,y+34+(cycle?1:0),8,8,C.ink);
  rectangle(ctx,x+8,y+37,6,2,C.ivory);
- rectangle(ctx,x+20,y+37+(pose?1:0),6,2,C.ivory);
+ rectangle(ctx,x+20,y+37+(cycle?1:0),6,2,C.ivory);
  rectangle(ctx,x-3,y+28,7,6,C.ink);
  rectangle(ctx,x+27,y+29,6,6,C.ink);
- rectangle(ctx,x-13-(pose?3:0),y+21,17,5,C.coral);
- stroke(ctx,x-12-(pose?3:0),y+23,x-19-(pose?3:0),y+22,C.ivory,1.5);
+ rectangle(ctx,x-13-(cycle?3:0),y+21+pose.scarfLift,17,5,C.coral);
+ stroke(ctx,x-12-(cycle?3:0),y+23+pose.scarfLift,x-19-(cycle?3:0),y+22+pose.scarfLift,C.ivory,1.5);
  if(!state.onGround){
    rectangle(ctx,x+26,y+19,10,3,C.brass);
    stroke(ctx,x+25,y+22,x+32,y+28,C.teal,1.5);
+ }
+ // Distinct, source-grounded pose details: eyes, run boots, airborne twist,
+ // muzzle flare and temporary hurt warning are visual only.
+ if(pose.blink)stroke(ctx,x+18,y+16,x+25,y+16,C.ink,2);
+ else disk(ctx,x+24,y+16,1,C.ivory);
+ if(pose.phase==="RUN"){
+   stroke(ctx,x+9,y+40+pose.stride,x+14,y+40,C.gold,1.5);
+   stroke(ctx,x+21,y+40-pose.stride,x+26,y+40,C.gold,1.5);
+ }
+ if(pose.phase==="AIR"){
+   stroke(ctx,x+7,y+36,x+3,y+32,C.ivory,2);
+   stroke(ctx,x+23,y+36,x+29,y+32,C.ivory,2);
+ }
+ if(pose.shotFlare){
+   disk(ctx,x+(pose.facing===1?34:-6),y+28,5,C.brass);
+   stroke(ctx,x+(pose.facing===1?29:-1),y+28,x+(pose.facing===1?42:-14),y+28,C.ivory,2);
+ }
+ if(pose.hurtFlash){
+   stroke(ctx,x-4,y+5,x+34,y+5,C.coral,3);
+   stroke(ctx,x-4,y+5,x-4,y+36,C.coral,2);
  }
  if(state.action&&state.action.health<3){
    stroke(ctx,x-5,y+10,x+1,y+4,C.coral,2);
  }
 }
 function tica(ctx,state){
+ const pose=goldenMotionPose(state);
  const x=state.x-state.camera-27,y=state.y-38+
    Math.sin(state.ticks/19)*2.2;
  disk(ctx,x,y+7,11,C.brass);
  disk(ctx,x+3,y+5,8,C.teal);
  rectangle(ctx,x+4,y+2,4,3,C.ink);
  rectangle(ctx,x+12,y+8,7,4,C.coral);
- ctx.beginPath();ctx.ellipse(x-16,y+4,13,4,-.4,0,TWO_PI);
+ ctx.beginPath();ctx.ellipse(x-16,y+4+pose.wingLift,13,4,-.4,0,TWO_PI);
  ctx.fillStyle=C.ivory;ctx.fill();
- ctx.beginPath();ctx.ellipse(x+10,y-4,10,3,.4,0,TWO_PI);
+ ctx.beginPath();ctx.ellipse(x+10,y-4-pose.wingLift,10,3,.4,0,TWO_PI);
  ctx.fillStyle=C.gold;ctx.fill();
  for(let j=0;j<4;j++)disk(ctx,x-8+j*4,y+16,1,C.ink);
+ stroke(ctx,x-10,y+11,x+7,y+14,pose.wingLift<0?C.ivory:C.teal,1.5);
 }
 function cueLabels(ctx,state){
  const x=state.x-state.camera,y=state.y;

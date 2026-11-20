@@ -5,7 +5,7 @@
   "seed_goal": "G_SEED_SOURCE",
   "qualification": "ALL_GATES_NONCOMPENSATORY",
   "authority": "NONE",
-  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt. PR11 extends the RELEASE branch noncompensatorily: source-and-local tests do not confer Codespace forwarding or an actual Render deploy. The external leaves DL02 and DL08 remain BLOCKED_EXTERNAL until observed. PR12 adds nine obligations under G_FULL_GAME; technical tests cannot override Q07, DL02 or DL08. S01 adds source/native HTTP/physical mutation and independent novice gates for OR-07; no self-issued PASS. S02 declares original NILO NEXT creative A0 as draft: the 7-leaf G_CREATIVE_A0_S02 AND branch preserves author, rights, UX and governance approval as external; no CI result self-approves decisions. S03a adds behavior-preserving catalog with 6 physical source mutations; owner/creative acceptance remains external, no new world or entity feature certified. S03b creates one LV01 action entity blueprint, seven physical mutations and an external owner decision; this is not general combat for LV02/03 or future worlds. G1-V0 introduces reversible original native pixel visual candidate; all art acceptance, rights, novice validation remain external.",
+  "note": "Seed source testing may be reproducible; no node is self-certified. This is a declared graph, not a test receipt. PR11 extends the RELEASE branch noncompensatorily: source-and-local tests do not confer Codespace forwarding or an actual Render deploy. The external leaves DL02 and DL08 remain BLOCKED_EXTERNAL until observed. PR12 adds nine obligations under G_FULL_GAME; technical tests cannot override Q07, DL02 or DL08. S01 adds source/native HTTP/physical mutation and independent novice gates for OR-07; no self-issued PASS. S02 declares original NILO NEXT creative A0 as draft: the 7-leaf G_CREATIVE_A0_S02 AND branch preserves author, rights, UX and governance approval as external; no CI result self-approves decisions. S03a adds behavior-preserving catalog with 6 physical source mutations; owner/creative acceptance remains external, no new world or entity feature certified. S03b creates one LV01 action entity blueprint, seven physical mutations and an external owner decision; this is not general combat for LV02/03 or future worlds. G1-V0 introduces reversible original native pixel visual candidate; all art acceptance, rights, novice validation remain external. G1-V1 adds source-grounded original character motion in the native first-minute renderer; no creative approval or full-level art is conferred.",
   "nodes": [
     {
       "id": "I01",
@@ -300,7 +300,8 @@
         "G_CREATIVE_A0_S02",
         "G_WORLD_CATALOG_S03",
         "G_ACTION_ENTITIES_S03B",
-        "G_GOLDEN_MINUTE_V0"
+        "G_GOLDEN_MINUTE_V0",
+        "G_GOLDEN_MOTION_V1"
       ],
       "claim": "accepted six-level / three-boss game",
       "baseline_status": "BLOCKED",
@@ -984,6 +985,76 @@
         "V0_05"
       ],
       "claim": "G1V0 first native-pixel visual vertical slice technically proved and human accepted; not equivalent to HD six-world game",
+      "baseline_status": "BLOCKED",
+      "authorization": "NONE"
+    },
+    {
+      "id": "V1_00",
+      "kind": "LEAF",
+      "plane": "SOURCE",
+      "claim": "Original G1-V0 ownership, OR-11 visual pose grammar, immutable native state selector, no invented approval",
+      "oracle": "Product-to-source-to-native tests and unique ids",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "V1_01",
+      "kind": "LEAF",
+      "plane": "TARGET_RUNTIME",
+      "claim": "Nilo five poses, source-grounded projectile and hit, wing/gait/shard frame and no simulation mutations",
+      "oracle": "Node target-owned physical Canvas observations and state equality",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "V1_02",
+      "kind": "LEAF",
+      "plane": "SOURCE",
+      "claim": "Nine written source mutations are observed by independent original-vs-mutant counterexamples",
+      "oracle": "Real physical modified .mjs module imports, not harness errors",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "V1_03",
+      "kind": "LEAF",
+      "plane": "TARGET_RUNTIME",
+      "claim": "Browser native keyboard run, jump, J and frozen pause cause distinct source-bound Canvas observations",
+      "oracle": "Chrome HTTP same-origin, hash, exact HEAD, screenshots",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "V1_04",
+      "kind": "LEAF",
+      "plane": "TARGET_RUNTIME",
+      "claim": "Legacy pixel source, real attacks, CP01/02/03, Custode and dist replay remain unchanged",
+      "oracle": "Existing independent native HTTP and exact dist tests, no removed oracles",
+      "baseline_status": "NOT_VERIFIED",
+      "witness": null
+    },
+    {
+      "id": "V1_05",
+      "kind": "LEAF",
+      "plane": "EXTERNAL",
+      "claim": "Original NILO author reviews DA01 DA07, original asset origin and independent players evaluate recognition of poses",
+      "oracle": "Owner/rights/novice human decisions, no inferred beauty from test PASS",
+      "baseline_status": "BLOCKED_EXTERNAL",
+      "witness": null
+    },
+    {
+      "id": "G_GOLDEN_MOTION_V1",
+      "kind": "AND",
+      "depends_on": [
+        "G_GOLDEN_MINUTE_V0",
+        "V1_00",
+        "V1_01",
+        "V1_02",
+        "V1_03",
+        "V1_04",
+        "V1_05"
+      ],
+      "claim": "Native LV01 pose system observed with exact source/target tests and separately accepted by author and independent players",
       "baseline_status": "BLOCKED",
       "authorization": "NONE"
     }

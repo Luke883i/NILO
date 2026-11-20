@@ -68,6 +68,10 @@ jobs:
         run: node --test tests/golden-minute.test.mjs
       - name: G1-V0 eight physical source mutations with independent visual counterexamples
         run: node --test tests/golden-minute-mutation.test.mjs
+      - name: G1-V1 native state-derived five poses and physical visual observations
+        run: node --test tests/golden-motion.test.mjs
+      - name: G1-V1 nine real-source physical mutation counterexamples
+        run: node --test tests/golden-motion-mutation.test.mjs
       - name: Verify narrative, requirements, DoD, BOM and source boundaries
         run: node scripts/verify.mjs
       - name: Test deterministic playable physics and checkpoint
@@ -208,6 +212,30 @@ jobs:
               assert hashlib.sha256(data).hexdigest()==image['sha256']
           print('PASS_SCOPED_G1V0_VISUAL_NOT_HUMAN_APPROVED',sha)
           PY_GOLDEN
+      - name: G1-V1 real Chrome keyboard animation, projectile and pause freeze
+        run: python tests/browser-golden-motion.py --out /tmp/nilo-browser-golden-motion --expected-sha "${{ github.event.pull_request.head.sha || github.sha }}"
+      - name: G1-V1 validate Chrome source receipt, first-party PNG bytes and no creative approval
+        run: |
+          python - <<'PY_G1V1'
+          import hashlib,json,subprocess
+          from pathlib import Path
+          folder=Path('/tmp/nilo-browser-golden-motion')
+          r=json.loads((folder/'motion-receipt.json').read_text())
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert r['source_sha']==sha and r['status']=='PASS_SCOPED_G1V1_BROWSER'
+          assert r['browser_executed'] and r['scope']=='G1V1_LV01_NATIVE_KEYBOARD_ANIMATION_ONLY'
+          assert not r['author_approved'] and not r['independent_player_accepted']
+          assert not r['rights_cleared'] and not r['beta_authorized'] and not r['release_authorized']
+          expected=['pause_freezes_actual_native_frame','physical_run_changes_native_frame',
+                    'physical_jump_changes_native_frame','physical_j_projectile_visible_and_native_frame_changes']
+          assert all(r['checks'].get(k)=='PASS_HTTP_OBSERVED' for k in expected)
+          assert len(r['screenshots'])==1
+          f=r['screenshots'][0]
+          raw=(folder/f['name']).read_bytes()
+          assert raw.startswith(bytes.fromhex('89504e470d0a1a0a'))
+          assert hashlib.sha256(raw).hexdigest()==f['sha256'] and len(raw)==f['bytes']>1000
+          print('PASS_SCOPED_G1V1_NOT_ART_ACCEPTANCE',sha)
+          PY_G1V1
       - name: Input lifecycle - native events, real respawn, pause and physical queue mutant
         run: python tests/browser-e2e.py --stage input-continuity --out /tmp/nilo-input-continuity --physical-mutant
       - name: Full LV01 real-origin E2E including all prior negative oracles
@@ -415,6 +443,7 @@ jobs:
             /tmp/nilo-browser-evidence/
             /tmp/nilo-browser-action/
             /tmp/nilo-browser-golden/
+            /tmp/nilo-browser-golden-motion/
             /tmp/nilo-browser-lv02/
             /tmp/nilo-browser-custode/
             /tmp/nilo-render-local/

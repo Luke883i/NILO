@@ -6,7 +6,7 @@ import {validateBridge} from "./verify-development.mjs";
 import {validateIterationHypothesis} from "./semantic-campaign.mjs";
 import {CFG,PLATFORMS} from "../web/core.mjs";
 import {LV01_ENTITY_BLUEPRINT,validateActionBlueprint,spawnActionEntities} from "../web/action.mjs";
-import {GOLDEN_MINUTE,goldenMinutePlan} from "../web/golden-minute.mjs";
+import {GOLDEN_MINUTE,goldenMinutePlan,GOLDEN_MOTION,goldenMotionPose} from "../web/golden-minute.mjs";
 import {describeLevel,IMPLEMENTED_LEVEL_IDS,DESIGN_ONLY_LEVEL_IDS} from "../web/levels/catalog.mjs";
 import {LV02,lv02Surfaces,currentForceAt,decodeLV02Checkpoint} from "../web/levels/lv-02.mjs";
 import {ART_CUES,ART_SIGNALS,ART_IDENTITY} from "../web/art.mjs";
@@ -102,10 +102,10 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     contract.slice.acceptance_oracles.some(x=>x.type==="REAL_SOURCE_MUTATION"));
   fail("effects",contract?.gameplay?.security?.includes("no telemetry")&&contract?.permissions?.not_allowed?.includes("release"));
   fail("dod-shape",dod?.schema==="nilo.reticular-dod/1"&&dod?.root==="G_CONTRACT_DEMONSTRATED"&&
-    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===97);
+    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===104);
   const ids=(dod?.nodes||[]).map(n=>n.id),nodes=new Map((dod?.nodes||[]).map(n=>[n.id,n]));
   fail("dod-identities",distinct(ids));
-  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===18&&
+  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===19&&
     nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_BETA_RELEASE,G_SUPPLY_CHAIN,G_RELEASE"&&
     nodes.get("G_BETA_RELEASE")?.depends_on?.join(",")==="G_FULL_GAME,Q01,Q02,Q03,Q04,Q05,Q06,Q07"&&
     nodes.get("G_RELEASE")?.depends_on?.join(",")==="R01,R02,R03,G_DELIVERY_PR11"&&
@@ -118,6 +118,7 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_WORLD_CATALOG_S03")&&
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_ACTION_ENTITIES_S03B")&&
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_GOLDEN_MINUTE_V0")&&
+    nodes.get("G_FULL_GAME")?.depends_on?.includes("G_GOLDEN_MOTION_V1")&&
     nodes.get("G_LV03_PR12")?.depends_on?.join(",")==="L3_00,L3_01,L3_02,L3_03,L3_04,L3_05,L3_06,L3_07,L3_08");
   const actionLeafIds=["A7_00","A7_01","A7_02","A7_03","A7_04"];
   fail("s01-action-gate",nodes.get("G_LV01_ACTION_S01")?.kind==="AND"&&
@@ -312,6 +313,54 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     nodes.get("G_GOLDEN_MINUTE_V0")?.baseline_status==="BLOCKED"&&
     nodes.get("G_GOLDEN_MINUTE_V0")?.authorization==="NONE"&&
     gIds.every((id,i)=>nodes.get(id)?.kind==="LEAF"&&
+      nodes.get(id)?.witness===null&&
+      nodes.get(id)?.baseline_status===(i===5?"BLOCKED_EXTERNAL":"NOT_VERIFIED"))&&
+    contract?.next_a0?.approval?.human_approved===false&&
+    nodes.get("Q07")?.baseline_status==="BLOCKED_EXTERNAL");
+  const motion=contract?.golden_motion_v1;
+  fail("g1v1-animation-contract",motion?.schema==="nilo.golden-motion-v1/1"&&
+    motion?.id==="G1-V1"&&
+    motion?.status==="SOURCE_IMPLEMENTATION_CANDIDATE_NOT_CREATIVE_APPROVAL"&&
+    motion?.scope==="LV01_GOLDEN_MINUTE_X_0_750_ONLY"&&
+    motion?.source_owner==="web/golden-minute.mjs"&&
+    motion?.consumer_owner==="web/main.mjs"&&
+    motion?.contract_export==="GOLDEN_MOTION"&&
+    motion?.pose_selector==="goldenMotionPose"&&
+    motion?.gameplay_poses?.join(",")==="IDLE,RUN,AIR,FIRE,HURT"&&
+    motion?.actual_shot_required_for_flare===true&&
+    motion?.actual_invulnerability_required_for_hurt===true&&
+    motion?.simulation_mutated===false&&motion?.storage_mutated===false&&
+    motion?.external_assets_added===false&&
+    motion?.legacy_visual_fallback==="?visual=legacy"&&
+    motion?.source_test==="tests/golden-motion.test.mjs"&&
+    motion?.physical_source_mutation_test==="tests/golden-motion-mutation.test.mjs"&&
+    motion?.native_browser_test==="tests/browser-golden-motion.py"&&
+    motion?.physical_source_mutants===9&&
+    motion?.prior_visual_browser==="tests/browser-golden.py"&&
+    motion?.author_art_approval==="BLOCKED_EXTERNAL"&&
+    motion?.independent_player_validation==="BLOCKED_EXTERNAL"&&
+    motion?.rights_review==="BLOCKED_EXTERNAL"&&
+    motion?.a0_draft_only===true&&motion?.beta_authorized===false&&
+    motion?.release_authorized===false);
+  const initialMotion={level:"LV-01",x:48,y:418,ticks:0,vx:0,onGround:true,
+    action:{invulnerable:0,shots:[],facing:1}};
+  fail("g1v1-source-pose",GOLDEN_MOTION?.schema==="nilo.golden-motion/1"&&
+    GOLDEN_MOTION?.renderOnly===true&&GOLDEN_MOTION?.authorApproved===false&&
+    GOLDEN_MOTION?.independentPlaytest===false&&
+    Object.isFrozen(GOLDEN_MOTION)&&
+    goldenMotionPose(initialMotion)?.phase==="IDLE"&&
+    goldenMotionPose({...initialMotion,vx:200,ticks:5})?.stride===3&&
+    goldenMotionPose({...initialMotion,onGround:false})?.phase==="AIR"&&
+    goldenMotionPose({...initialMotion,action:{...initialMotion.action,shots:[{x:70,y:410}]}})?.phase==="FIRE"&&
+    goldenMotionPose({...initialMotion,action:{...initialMotion.action,invulnerable:4}})?.phase==="HURT"&&
+    goldenMotionPose({...initialMotion,level:"LV-02"})===null);
+  const gMotion=["V1_00","V1_01","V1_02","V1_03","V1_04","V1_05"];
+  fail("g1v1-motion-gate",nodes.get("G_GOLDEN_MOTION_V1")?.kind==="AND"&&
+    nodes.get("G_GOLDEN_MOTION_V1")?.depends_on?.join(",")==
+      ["G_GOLDEN_MINUTE_V0",...gMotion].join(",")&&
+    nodes.get("G_GOLDEN_MOTION_V1")?.baseline_status==="BLOCKED"&&
+    nodes.get("G_GOLDEN_MOTION_V1")?.authorization==="NONE"&&
+    gMotion.every((id,i)=>nodes.get(id)?.kind==="LEAF"&&
       nodes.get(id)?.witness===null&&
       nodes.get(id)?.baseline_status===(i===5?"BLOCKED_EXTERNAL":"NOT_VERIFIED"))&&
     contract?.next_a0?.approval?.human_approved===false&&
