@@ -1,3 +1,4 @@
+import {initialAction,advanceAction,ACTION_CFG} from "./action.mjs";
 import {LV02,lv02Surfaces,movingBridge,currentForceAt,decodeLV02Checkpoint,encodeLV02Checkpoint} from "./levels/lv-02.mjs";
 import {CUSTODE,initialCustode,enterCustode,advanceCustode} from "./levels/custode.mjs";
 import {LV03,decodeLV03Checkpoint,encodeLV03Checkpoint,archiveDoorOpen,archiveInteraction} from "./levels/lv-03.mjs";
@@ -55,7 +56,7 @@ export function initialState(saved = null, savedLV02=null, savedLV03=null) {
   const checkpointActive = Boolean(decodeCheckpoint(saved));
   const x = checkpointActive ? 1220 : 48;
   return {
-    phase:"PLAYING", level:"LV-01", x, y:checkpointActive ? 358 : 418,
+    action:initialAction(),phase:"PLAYING", level:"LV-01", x, y:checkpointActive ? 358 : 418,
     vx:0, vy:0, onGround:true, checkpointActive,
     camera:checkpointActive ? 900 : 0, deaths:0, ticks:0,
     coyoteLeft:0, bufferLeft:0, jumpHeld:false, jumpCut:false, supportId:null,currentForce:0
@@ -149,6 +150,10 @@ export function step(state, input = {}, dt = CFG.tick) {
     const fresh=initialLevelState(third?'LV-03':second?'LV-02':'LV-01',saved);
     return {...fresh,deaths:state.deaths+1,ticks:state.ticks+1,jumpHeld:held};
   }
+  const combat=!second&&!third?advanceAction(state.action??initialAction(),
+    {x,y,w:CFG.playerWidth,h:CFG.playerHeight,vy,prevBottom,
+      worldWidth},input,dt,platforms):null;
+  if(combat?.stomp){vy=ACTION_CFG.stompBounce;grounded=false;}
   const camera=Math.max(0,Math.min(worldWidth-CFG.viewport,x-280));
   if(third){
     let doorsPassed=archive.doorsPassed??0;
@@ -174,9 +179,9 @@ export function step(state, input = {}, dt = CFG.tick) {
     });
   const phase=second?(boss.phase==='VICTORY'?'COMPLETED':
     boss.phase==='DEFEAT'?'DEFEATED':'PLAYING'):
-    (x>=CFG.finishX&&grounded?'COMPLETED':'PLAYING');
+    (combat?.action?.health===0?'DEFEATED':x>=CFG.finishX&&grounded?'COMPLETED':'PLAYING');
   return {phase,level:second?'LV-02':'LV-01',x,y,vx,vy,onGround:grounded,
     checkpointActive,camera,deaths:state.deaths,ticks:state.ticks+1,
     coyoteLeft,bufferLeft,jumpHeld:held,jumpCut,supportId,currentForce:flow,
-    ...(second?{boss}:{})};
+    ...(second?{boss}:{}),...(combat?{action:combat.action}:{})};
 }

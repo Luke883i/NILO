@@ -19,11 +19,14 @@
         "web/core.mjs",
         "web/main.mjs",
         "web/index.html",
-        "web/style.css"
+        "web/style.css",
+        "web/action.mjs"
       ],
       "tests": [
         "tests/core.test.mjs",
-        "tests/mutation.test.mjs"
+        "tests/mutation.test.mjs",
+        "tests/action.test.mjs",
+        "tests/action-mutation.test.mjs"
       ]
     },
     {
@@ -169,6 +172,23 @@
         "tests/mutation.test.mjs"
       ],
       "authority": "LOCAL_SOURCE_MUTANT",
+      "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-07",
+      "level": "LV-01",
+      "sources": [
+        "web/action.mjs",
+        "web/core.mjs",
+        "web/main.mjs",
+        "web/art.mjs",
+        "web/index.html"
+      ],
+      "tests": [
+        "tests/action.test.mjs",
+        "tests/action-mutation.test.mjs"
+      ],
+      "authority": "HUMAN_AND_BROWSER_REQUIRED",
       "browser": "NOT_ATTESTED"
     },
     {

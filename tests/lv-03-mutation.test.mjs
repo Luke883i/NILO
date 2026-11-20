@@ -6,7 +6,7 @@ import {join,dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {spawnSync} from 'node:child_process';
 const root=fileURLToPath(new URL('../',import.meta.url));
-const files=['web/core.mjs','web/levels/lv-02.mjs','web/levels/custode.mjs',
+const files=['web/action.mjs','web/core.mjs','web/levels/lv-02.mjs','web/levels/custode.mjs',
  'web/levels/lv-03.mjs','tests/lv-03.test.mjs'];
 const mutants=[
  ['all-gates-fake-open','web/levels/lv-03.mjs','door.mode===mode','true'],
