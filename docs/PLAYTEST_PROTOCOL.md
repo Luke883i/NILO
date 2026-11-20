@@ -55,3 +55,12 @@ Il tester indipendente deve entrare in LV-02, riconoscere un preavviso *prima* d
 ## PR12 external protocol — luce/ombra (not observed)
 
 A novice should complete LV-01, LV-02 and Custode, then independently infer why each LV-03 door blocks movement, discover E at the nearby lamp, identify the switch mode by shape and text beyond colour, distinguish the optional ledger from the main objective, reload CP-03 and complete the third-hour exit. Record exact Git SHA, viewport, browser, observation consent, unassisted completion, wrong toggles and comprehension errors. An automated Chrome replay cannot replace this independent Q07 evidence.
+
+
+## S02 — pre-registration proposal for NILO NEXT, not observed
+
+Before any playtest or redesign promotion, the author must review DA01–DA09 in \`contracts/nilo-semantic-v1.json\` and approve this protocol for the intended target and age audience. The existing minimum of **five independent novice testers** and the existing separate 1–5 rubrics remain provisional; they do not create statistically representative market evidence or replace accessibility qualification.
+
+Add distinct observations, each recorded with source SHA and actual browser/device: (1) identify Nilo/Tica/Perno without labels, on intended display size; (2) discover physical J, distinguish a successful hit from a miss, understand whether automata are defeated or disabled; (3) distinguish visual telegraph, safe window and boss vulnerability before a facilitator explains \`E\`; (4) choose at least one nontrivial reward/alternate path; (5) complete teach/test/twist/master sequences without artificial padding; (6) report comprehension, retry willingness, perceived fairness, visual coherence and audio/visual cue equivalence separately.
+
+Candidate **time budgets** are LV-01 4–6 minutes and subsequent levels 6–12 minutes, measured rather than enforced with idle waiting. No metric average can compensate for a blocking false affordance, involuntary harm, inaccessible input or skipped victory gate. Need an author-preregistered stop threshold and real observed sessions before changing \`Q07\` or \`C2_05\` to an accepted external status. This S02 proposal does not assert any novice has been observed.

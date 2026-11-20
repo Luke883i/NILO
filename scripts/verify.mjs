@@ -99,10 +99,10 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     contract.slice.acceptance_oracles.some(x=>x.type==="REAL_SOURCE_MUTATION"));
   fail("effects",contract?.gameplay?.security?.includes("no telemetry")&&contract?.permissions?.not_allowed?.includes("release"));
   fail("dod-shape",dod?.schema==="nilo.reticular-dod/1"&&dod?.root==="G_CONTRACT_DEMONSTRATED"&&
-    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===68);
+    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===76);
   const ids=(dod?.nodes||[]).map(n=>n.id),nodes=new Map((dod?.nodes||[]).map(n=>[n.id,n]));
   fail("dod-identities",distinct(ids));
-  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===14&&
+  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===15&&
     nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_BETA_RELEASE,G_SUPPLY_CHAIN,G_RELEASE"&&
     nodes.get("G_BETA_RELEASE")?.depends_on?.join(",")==="G_FULL_GAME,Q01,Q02,Q03,Q04,Q05,Q06,Q07"&&
     nodes.get("G_RELEASE")?.depends_on?.join(",")==="R01,R02,R03,G_DELIVERY_PR11"&&
@@ -111,6 +111,7 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     nodes.get("G_RENDER_P1")?.depends_on?.join(",")==="DL05,DL06,DL07,DL08"&&
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_LV03_PR12")&&
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_LV01_ACTION_S01")&&
+    nodes.get("G_FULL_GAME")?.depends_on?.includes("G_CREATIVE_A0_S02")&&
     nodes.get("G_LV03_PR12")?.depends_on?.join(",")==="L3_00,L3_01,L3_02,L3_03,L3_04,L3_05,L3_06,L3_07,L3_08");
   const actionLeafIds=["A7_00","A7_01","A7_02","A7_03","A7_04"];
   fail("s01-action-gate",nodes.get("G_LV01_ACTION_S01")?.kind==="AND"&&
@@ -122,6 +123,75 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     contract?.gameplay?.action_preview?.browser_oracle==="tests/browser-action.py"&&
     contract.gameplay.action_preview?.browser_http==="NOT_ATTESTED"&&
     contract.gameplay.action_preview?.playtest_accepted===false);
+  const a0=contract?.next_a0;
+  const a0Decisions=Array.isArray(a0?.decisions)?a0.decisions:[];
+  const a0Worlds=Array.isArray(a0?.worlds)?a0.worlds:[];
+  const a0Pillars=Array.isArray(a0?.pillars)?a0.pillars:[];
+  const a0Exclusions=Array.isArray(a0?.exclusions)?a0.exclusions:[];
+  fail("s02-a0-identity",a0?.schema==="nilo.creative-a0-candidate/1"&&
+    a0?.id==="S02-NILO-NEXT"&&a0?.scope==="S02_DESIGN_CONTRACT_ONLY"&&
+    a0?.status==="DRAFT_CREATIVE_PROPOSAL_REQUIRES_AUTHOR_REVIEW"&&
+    a0?.owner==="NILO_PRODUCT_AUTHOR"&&
+    a0?.approval?.human_approved===false&&a0.approval.approved_by===null&&
+    a0.approval.approved_at===null&&a0.approval.approval_receipt===null&&
+    contract?.goal?.human_approved===false&&contract?.story?.status==="PROPOSED_NOT_AUTHOR_APPROVED");
+  fail("s02-a0-boundary",a0?.actors?.player==="NOVICE_DESKTOP_KEYBOARD_CANDIDATE"&&
+    a0?.actors?.characters?.join(",")==="CH-NILO,CH-TICA,CH-PERNO"&&
+    a0?.actors?.antagonists?.join(",")==="CH-CUSTODE,CH-ARCHIVISTA,CH-DIRETTORE"&&
+    a0?.actors?.author==="NILO_PRODUCT_AUTHOR"&&
+    a0?.behavior?.genre==="ORIGINAL_NARRATIVE_ACTION_PLATFORMER_2D"&&
+    a0?.behavior?.levels===6&&a0?.behavior?.bosses===3&&
+    ["ATTACK_J","JUMP","CONTEXT_E"].every(x=>a0?.behavior?.actions?.includes(x))&&
+    a0?.behavior?.violence_boundary==="PENDING_AUTHOR_DECISION_DA02"&&
+    a0?.state_data?.checkpoint==="LOCAL_RESUME_NOT_AUTHENTICATED_WIN"&&
+    a0?.state_data?.progression==="PHYSICAL_COMPLETION_NOT_POSITION_ONLY"&&
+    a0?.ux?.gameplay_enjoyment==="BLOCKED_EXTERNAL"&&
+    a0?.ux?.a11y==="EQUIVALENCE_REQUIRES_EXPLICIT_QUALIFICATION"&&
+    a0?.ux?.level_structure?.join(",")==="TEACH,TEST,TWIST,MASTER"&&
+    a0?.effects?.outbound_telemetry===false&&a0.effects.backend===false&&
+    a0?.effects?.original_assets_only_for_SHIPPING===true&&
+    a0?.effects?.third_party_rights==="REVIEW_REQUIRED"&&
+    a0?.effects?.age_rating==="UNASSESSED"&&
+    a0?.effects?.privacy_and_monetization==="PENDING_AUTHOR_DECISION_DA09"&&
+    ["NO_MARIO_CHARACTER_OR_GAME_ASSETS","NO_UNLICENSED_BRAND_APPROPRIATION",
+     "NO_AUTOMATIC_CREATIVE_APPROVAL","NO_SIX_LEVEL_IMPLEMENTED_CLAIM",
+     "NO_RELEASE_OR_DEPLOY_CLAIM"].every(x=>a0Exclusions.includes(x)));
+  const decisionIds=["DA01","DA02","DA03","DA04","DA05","DA06","DA07","DA08","DA09"];
+  fail("s02-a0-decisions",a0Decisions.length===decisionIds.length&&
+    a0Decisions.map(x=>x.id).join(",")===decisionIds.join(",")&&
+    a0Decisions.every(x=>x.topic?.length>4&&x.rationale?.length>15&&
+      x.options?.length>=2&&new Set(x.options).size===x.options.length&&
+      x.options.includes(x.recommended)&&x.selected===null&&
+      x.status==="PENDING_AUTHOR_DECISION"&&x.authority==="NILO_PRODUCT_AUTHOR")&&
+    a0?.review?.decisions_pending===9&&a0.review.creative_conflict_unresolved===true&&
+    a0.review.approval_from_pr_or_ci===false&&a0.review.approval_from_score===false);
+  fail("s02-a0-worlds",a0Worlds.length===levels.length&&
+    a0Worlds.every((w,i)=>w.level_id===levels[i]?.id&&
+      w.boss_id===(levels[i]?.boss??null)&&w.environment_id?.length>8&&
+      w.mechanic_signature?.length>8&&w.implementation_claim==="CANDIDATE_SCOPE_ONLY")&&
+    new Set(a0Worlds.map(w=>w.environment_id)).size===6);
+  fail("s02-a0-pillars",a0Pillars.length===5&&
+    a0Pillars.map(x=>x.problem_id).join(",")==="P1,P2,P3,P4,P5"&&
+    new Set(a0Pillars.map(x=>x.id)).size===5&&
+    a0Pillars.every(x=>x.player_promise?.length>15&&
+      x.acceptance_evidence?.length>15&&x.design_status==="CANDIDATE_NOT_PLAYER_ACCEPTED"));
+  fail("s02-a0-oracle",a0?.acceptance_oracle?.source==="tests/creative-a0-mutation.test.mjs"&&
+    a0?.acceptance_oracle?.runtime==="TARGET_NATIVE_EVIDENCE_REQUIRED_LATER"&&
+    a0?.acceptance_oracle?.external==="AUTHOR_APPROVAL_AND_INDEPENDENT_PLAYER_STUDY_REQUIRED"&&
+    a0?.acceptance_oracle?.min_independent_novices_candidate===5&&
+    a0?.acceptance_oracle?.all_pillars_noncompensatory===true&&
+    a0?.acceptance_oracle?.quality_gate==="Q07"&&
+    a0?.acceptance_oracle?.root_gate===dod?.root);
+  const creativeLeafIds=["C2_00","C2_01","C2_02","C2_03","C2_04","C2_05","C2_06"];
+  fail("s02-a0-gate",nodes.get("G_CREATIVE_A0_S02")?.kind==="AND"&&
+    nodes.get("G_CREATIVE_A0_S02")?.depends_on?.join(",")===creativeLeafIds.join(",")&&
+    nodes.get("G_CREATIVE_A0_S02")?.authorization==="NONE"&&
+    nodes.get("G_CREATIVE_A0_S02")?.baseline_status==="BLOCKED"&&
+    creativeLeafIds.every((id,i)=>nodes.get(id)?.kind==="LEAF"&&
+      nodes.get(id)?.witness===null&&
+      nodes.get(id)?.baseline_status===(i===0?"NOT_VERIFIED":"BLOCKED_EXTERNAL"))&&
+    nodes.get("Q07")?.baseline_status==="BLOCKED_EXTERNAL");
+  fail("s02-a0-document-owner",existsSync(resolve(ROOT,"docs/NILO_NEXT_S02_A0.md")));
   fail("lv03-no-self-approved-gates",["L3_00","L3_01","L3_02","L3_03","L3_04","L3_05","L3_06","L3_07","L3_08"].every(id=>
     nodes.get(id)?.baseline_status==="NOT_VERIFIED"&&nodes.get(id)?.witness===null)&&
     nodes.get("G_LV03_PR12")?.authorization==="NONE");

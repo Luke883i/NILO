@@ -663,5 +663,305 @@
     "beta_authorized": false,
     "release_authorized": false,
     "notes": "Source CI may prove build, local HTTP and Chrome static artifact parity; actual Codespaces forwarded access and remote Render deploy remain independent external witnesses."
+  },
+  "next_a0": {
+    "schema": "nilo.creative-a0-candidate/1",
+    "id": "S02-NILO-NEXT",
+    "status": "DRAFT_CREATIVE_PROPOSAL_REQUIRES_AUTHOR_REVIEW",
+    "owner": "NILO_PRODUCT_AUTHOR",
+    "scope": "S02_DESIGN_CONTRACT_ONLY",
+    "approval": {
+      "human_approved": false,
+      "approved_by": null,
+      "approved_at": null,
+      "approval_receipt": null
+    },
+    "actors": {
+      "player": "NOVICE_DESKTOP_KEYBOARD_CANDIDATE",
+      "characters": [
+        "CH-NILO",
+        "CH-TICA",
+        "CH-PERNO"
+      ],
+      "antagonists": [
+        "CH-CUSTODE",
+        "CH-ARCHIVISTA",
+        "CH-DIRETTORE"
+      ],
+      "author": "NILO_PRODUCT_AUTHOR",
+      "reviewer": "INDEPENDENT_HUMAN"
+    },
+    "behavior": {
+      "genre": "ORIGINAL_NARRATIVE_ACTION_PLATFORMER_2D",
+      "levels": 6,
+      "bosses": 3,
+      "actions": [
+        "MOVE",
+        "JUMP",
+        "ATTACK_J",
+        "CONTEXT_E",
+        "PAUSE_P",
+        "RESTART_R"
+      ],
+      "design_loop": [
+        "EXPLORE",
+        "FIGHT_OR_AVOID",
+        "COLLECT",
+        "LEARN",
+        "CHOOSE",
+        "RESTORE_HOUR"
+      ],
+      "violence_boundary": "PENDING_AUTHOR_DECISION_DA02"
+    },
+    "state_data": {
+      "checkpoint": "LOCAL_RESUME_NOT_AUTHENTICATED_WIN",
+      "rewards": "IDENTITY_TRACKED_NO_DUPLICATES",
+      "progression": "PHYSICAL_COMPLETION_NOT_POSITION_ONLY",
+      "revision": "EXACT_SHA_REQUIRED_FOR_EVIDENCE"
+    },
+    "ux": {
+      "platform": "DESKTOP_KEYBOARD_CANDIDATE",
+      "hd_acceptance": "NATIVE_ASSET_DETAIL_AND_READABILITY_AT_APPROVED_VIEWPORT",
+      "level_structure": [
+        "TEACH",
+        "TEST",
+        "TWIST",
+        "MASTER"
+      ],
+      "boss_telegraphs": "BEFORE_DAMAGE_WITH_NONCOLOUR_CUES",
+      "a11y": "EQUIVALENCE_REQUIRES_EXPLICIT_QUALIFICATION",
+      "gameplay_enjoyment": "BLOCKED_EXTERNAL"
+    },
+    "exclusions": [
+      "NO_MARIO_CHARACTER_OR_GAME_ASSETS",
+      "NO_UNLICENSED_BRAND_APPROPRIATION",
+      "NO_AUTOMATIC_CREATIVE_APPROVAL",
+      "NO_MOBILE_TOUCH_OR_SCREENREADER_CLAIM",
+      "NO_SIX_LEVEL_IMPLEMENTED_CLAIM",
+      "NO_RELEASE_OR_DEPLOY_CLAIM"
+    ],
+    "effects": {
+      "outbound_telemetry": false,
+      "backend": false,
+      "original_assets_only_for_SHIPPING": true,
+      "third_party_rights": "REVIEW_REQUIRED",
+      "age_rating": "UNASSESSED",
+      "privacy_and_monetization": "PENDING_AUTHOR_DECISION_DA09"
+    },
+    "acceptance_oracle": {
+      "source": "tests/creative-a0-mutation.test.mjs",
+      "runtime": "TARGET_NATIVE_EVIDENCE_REQUIRED_LATER",
+      "external": "AUTHOR_APPROVAL_AND_INDEPENDENT_PLAYER_STUDY_REQUIRED",
+      "min_independent_novices_candidate": 5,
+      "all_pillars_noncompensatory": true,
+      "quality_gate": "Q07",
+      "root_gate": "G_CONTRACT_DEMONSTRATED"
+    },
+    "pillars": [
+      {
+        "problem_id": "P1",
+        "id": "ORIGINAL_HD_VISUAL_IDENTITY",
+        "player_promise": "distinct sprites, animation states, layered biomes and semantic cues",
+        "acceptance_evidence": "asset bytes, screenshots and independent silhouette recognition",
+        "design_status": "CANDIDATE_NOT_PLAYER_ACCEPTED"
+      },
+      {
+        "problem_id": "P2",
+        "id": "MEANINGFUL_LEVEL_DEPTH",
+        "player_promise": "teach-test-twist-master sections, optional risks and discoverable route",
+        "acceptance_evidence": "native player runs, observed choices and pacing",
+        "design_status": "CANDIDATE_NOT_PLAYER_ACCEPTED"
+      },
+      {
+        "problem_id": "P3",
+        "id": "PHYSICAL_ACTION_COMBAT",
+        "player_promise": "J projectile, stomp, enemy patterns, readable health and feedback",
+        "acceptance_evidence": "real input, hitbox falsifiers and novice comprehension",
+        "design_status": "CANDIDATE_NOT_PLAYER_ACCEPTED"
+      },
+      {
+        "problem_id": "P4",
+        "id": "LEARNABLE_THREE_BOSSES",
+        "player_promise": "telegraph, vulnerability, response and no position-only victory",
+        "acceptance_evidence": "negative state-machine tests and independent boss discovery",
+        "design_status": "CANDIDATE_NOT_PLAYER_ACCEPTED"
+      },
+      {
+        "problem_id": "P5",
+        "id": "REWARD_EXPLORATION",
+        "player_promise": "shards, optional routes and distinct upgrades with visible effects",
+        "acceptance_evidence": "nonduplicating state and observed reward usefulness",
+        "design_status": "CANDIDATE_NOT_PLAYER_ACCEPTED"
+      }
+    ],
+    "worlds": [
+      {
+        "level_id": "LV-01",
+        "environment_id": "BRASS_COURTYARD",
+        "mechanic_signature": "TEACH_ATTACK_AND_PLATFORMING",
+        "boss_id": null,
+        "implementation_claim": "CANDIDATE_SCOPE_ONLY"
+      },
+      {
+        "level_id": "LV-02",
+        "environment_id": "WATER_CLOCK_CANALS",
+        "mechanic_signature": "MOVING_BRIDGES_AND_CURRENTS",
+        "boss_id": "CH-CUSTODE",
+        "implementation_claim": "CANDIDATE_SCOPE_ONLY"
+      },
+      {
+        "level_id": "LV-03",
+        "environment_id": "LIGHT_SHADOW_ARCHIVE",
+        "mechanic_signature": "TWO_OPPOSING_LIGHT_DOORS",
+        "boss_id": null,
+        "implementation_claim": "CANDIDATE_SCOPE_ONLY"
+      },
+      {
+        "level_id": "LV-04",
+        "environment_id": "SECOND_FOUNDRY",
+        "mechanic_signature": "TIMED_PLATFORMS_AND_RHYTHM",
+        "boss_id": "CH-ARCHIVISTA",
+        "implementation_claim": "CANDIDATE_SCOPE_ONLY"
+      },
+      {
+        "level_id": "LV-05",
+        "environment_id": "BELL_FOREST",
+        "mechanic_signature": "BRANCHING_EXPLORATION",
+        "boss_id": null,
+        "implementation_claim": "CANDIDATE_SCOPE_ONLY"
+      },
+      {
+        "level_id": "LV-06",
+        "environment_id": "FACTORY_HEART",
+        "mechanic_signature": "COMBINED_MECHANICS_AND_FINAL_BOSS",
+        "boss_id": "CH-DIRETTORE",
+        "implementation_claim": "CANDIDATE_SCOPE_ONLY"
+      }
+    ],
+    "decisions": [
+      {
+        "id": "DA01",
+        "topic": "Art direction and HD definition",
+        "options": [
+          "HIGH_DETAIL_ORIGINAL_PIXEL_ART",
+          "ORIGINAL_HAND_PAINTED_2D"
+        ],
+        "recommended": "HIGH_DETAIL_ORIGINAL_PIXEL_ART",
+        "rationale": "1080p presentation must add native detail, silhouettes and animation, not CSS upscaling",
+        "selected": null,
+        "status": "PENDING_AUTHOR_DECISION",
+        "authority": "NILO_PRODUCT_AUTHOR"
+      },
+      {
+        "id": "DA02",
+        "topic": "Combat vocabulary vs repair-oriented story",
+        "options": [
+          "DISABLE_REPAIRABLE_MECHANICAL_ENEMIES",
+          "DEFEAT_ORIGINAL_FANTASY_ENEMIES_NO_GORE"
+        ],
+        "recommended": "DISABLE_REPAIRABLE_MECHANICAL_ENEMIES",
+        "rationale": "Existing source calls kills; player-facing defeat and narrative consequences need accountable author choice",
+        "selected": null,
+        "status": "PENDING_AUTHOR_DECISION",
+        "authority": "NILO_PRODUCT_AUTHOR"
+      },
+      {
+        "id": "DA03",
+        "topic": "Audience and provisional age target",
+        "options": [
+          "FAMILY_FRIENDLY_UNRATED",
+          "TEEN_ORIENTED_UNRATED"
+        ],
+        "recommended": "FAMILY_FRIENDLY_UNRATED",
+        "rationale": "A proposed audience is not a certified age rating",
+        "selected": null,
+        "status": "PENDING_AUTHOR_DECISION",
+        "authority": "NILO_PRODUCT_AUTHOR"
+      },
+      {
+        "id": "DA04",
+        "topic": "Supported initial platform",
+        "options": [
+          "DESKTOP_KEYBOARD_BROWSER_FIRST",
+          "DESKTOP_TOUCH_EQUIVALENCE_REQUIRED"
+        ],
+        "recommended": "DESKTOP_KEYBOARD_BROWSER_FIRST",
+        "rationale": "No unimplemented mobile or assistive equivalence is implied",
+        "selected": null,
+        "status": "PENDING_AUTHOR_DECISION",
+        "authority": "NILO_PRODUCT_AUTHOR"
+      },
+      {
+        "id": "DA05",
+        "topic": "Audio policy",
+        "options": [
+          "ORIGINAL_AUDIO_WITH_VISUAL_EQUIVALENTS",
+          "AUTHOR_APPROVED_SILENT_SCOPE"
+        ],
+        "recommended": "ORIGINAL_AUDIO_WITH_VISUAL_EQUIVALENTS",
+        "rationale": "Original provenance and equivalent cues remain release gates",
+        "selected": null,
+        "status": "PENDING_AUTHOR_DECISION",
+        "authority": "NILO_PRODUCT_AUTHOR"
+      },
+      {
+        "id": "DA06",
+        "topic": "Language scope",
+        "options": [
+          "ITALIAN_FIRST_WITH_LOCALIZATION_PLAN",
+          "ITALIAN_ENGLISH_SIMULTANEOUS"
+        ],
+        "recommended": "ITALIAN_FIRST_WITH_LOCALIZATION_PLAN",
+        "rationale": "Current narrative text is Italian; no unsupported localization promise",
+        "selected": null,
+        "status": "PENDING_AUTHOR_DECISION",
+        "authority": "NILO_PRODUCT_AUTHOR"
+      },
+      {
+        "id": "DA07",
+        "topic": "Visual mood",
+        "options": [
+          "WARM_BRASS_CLOCKWORK_REPAIR",
+          "DARK_INDUSTRIAL_CLOCKWORK"
+        ],
+        "recommended": "WARM_BRASS_CLOCKWORK_REPAIR",
+        "rationale": "Preserve Ramecitta and original character silhouettes unless explicitly reapproved",
+        "selected": null,
+        "status": "PENDING_AUTHOR_DECISION",
+        "authority": "NILO_PRODUCT_AUTHOR"
+      },
+      {
+        "id": "DA08",
+        "topic": "Pacing and level depth",
+        "options": [
+          "LV01_4_6_MIN_OTHER_LEVELS_6_12_MIN_CANDIDATE",
+          "PLAYTEST_DERIVED_NO_FIXED_DURATION"
+        ],
+        "recommended": "LV01_4_6_MIN_OTHER_LEVELS_6_12_MIN_CANDIDATE",
+        "rationale": "Length is validated by meaningful decisions, not extra empty corridor",
+        "selected": null,
+        "status": "PENDING_AUTHOR_DECISION",
+        "authority": "NILO_PRODUCT_AUTHOR"
+      },
+      {
+        "id": "DA09",
+        "topic": "Privacy and monetization",
+        "options": [
+          "NO_TELEMETRY_NO_MONETIZATION_CANDIDATE",
+          "SEPARATE_COMPLIANCE_AND_BUSINESS_REVIEW"
+        ],
+        "recommended": "NO_TELEMETRY_NO_MONETIZATION_CANDIDATE",
+        "rationale": "Do not introduce tracking or commercial rights from a proposal",
+        "selected": null,
+        "status": "PENDING_AUTHOR_DECISION",
+        "authority": "NILO_PRODUCT_AUTHOR"
+      }
+    ],
+    "review": {
+      "decisions_pending": 9,
+      "creative_conflict_unresolved": true,
+      "approval_from_pr_or_ci": false,
+      "approval_from_score": false
+    }
   }
 }

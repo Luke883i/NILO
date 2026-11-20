@@ -45,3 +45,12 @@ The current source implements LV-01 and LV-02 and one candidate boss, Custode de
 ## PR12 — Archivio delle Ombre (implementation candidate)
 
 LV-03 adds two physically collidable light/shadow doors with opposing conditions, one-shot contextual E switches, an optional ledger (not required to win), and a strict CP-03 checkpoint. The third hour lights only after physically crossing both doors and reaching the grounded exit. Checkpoints are local user-controlled resume records, **not** authenticated previous victories. This is a source/browser candidate, not author-approved story, independent novice comprehension, accessible equivalent, live Render proof or beta.
+
+
+## S02 — NILO NEXT A0 candidate (not author-approved)
+
+The original product and PR1–PR12 history above remain valid for their historical scope. After the merged S01 action qualification, the prospective *NILO NEXT* identity is documented in [S02 A0 decision packet](NILO_NEXT_S02_A0.md) and **only** machine-owned by the proposed \`next_a0\` object in [the original semantic contract](../contracts/nilo-semantic-v1.json).
+
+It proposes a distinctly original action-platform with higher-detail HD art, more meaningful level sections, enemy attack/avoid interactions, useful rewards, learnable bosses and all six existing story worlds. This is **not** a claim that any new art, level or boss has been implemented. In particular, killing/disabling automata must be reconciled with the existing repair-oriented, warm narrative by the author; a source \`kills\` field cannot decide an ethical/narrative question.
+
+Nine decisions DA01–DA09 have recommendations but **no selections**. The original product author, not a PR, CI, CORA-METHOD or CORA-ENGINE, must approve the creative target and scope. The seven-leaf \`G_CREATIVE_A0_S02\` gate is a required AND child of \`G_FULL_GAME\`, with external author, rights and novice gates left \`BLOCKED_EXTERNAL\`. Retaining this open gate is correct even when all source tests are green.
