@@ -135,3 +135,21 @@ test("S03a AND-DoD requires catalog source, native witnesses and owner review",(
   d=fresh();d.contract.technical_s03.future_entity_state_generalization="COMPLETE";
   assert(audit(d).includes("s03-catalog-contract"));
 });
+
+test("S03b source-owned entities cannot bypass human or runtime AND leaves",()=>{
+  let d=fresh();
+  d.dod.nodes.find(x=>x.id==="G_FULL_GAME").depends_on=
+    d.dod.nodes.find(x=>x.id==="G_FULL_GAME").depends_on.filter(x=>x!=="G_ACTION_ENTITIES_S03B");
+  assert(audit(d).includes("dod-AND"));
+  d=fresh();d.dod.nodes.find(x=>x.id==="E3_05").baseline_status="PASS";
+  assert(audit(d).includes("s03b-action-gate"));
+  d=fresh();d.dod.nodes.find(x=>x.id==="E3_04").witness="invented-browser";
+  assert(audit(d).includes("s03b-action-gate"));
+  d=fresh();d.dod.nodes.find(x=>x.id==="G_ACTION_ENTITIES_S03B").depends_on.pop();
+  assert(audit(d).includes("s03b-action-gate"));
+  d=fresh();d.contract.technical_s03b.physical_source_mutants=0;
+  assert(audit(d).includes("s03b-entity-contract"));
+  d=fresh();d.contract.technical_s03b.scope="LV01_LV06_ALL_ACTION";
+  assert(audit(d).includes("s03b-entity-contract"));
+});
+

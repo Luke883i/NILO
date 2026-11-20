@@ -16,12 +16,51 @@ const BASE_SHARDS=Object.freeze([
   Object.freeze({id:'shard-02',x:744,y:382}),
   Object.freeze({id:'shard-03',x:1595,y:380})
 ]);
+/** S03b: immutable *declared* LV-01 actor/collectible blueprints.
+ * These are source definitions, not author approval of combat semantics.
+ * No other level is enabled by the presence of this blueprint.
+ */
+export const LV01_ENTITY_BLUEPRINT = Object.freeze({
+  schema:'nilo.action-entity-blueprint/1',level:'LV-01',
+  enemyArchetype:'PATROL_SENTRY',pickupArchetype:'HOUR_SHARD',
+  enemies:BASE_ENEMIES,pickups:BASE_SHARDS
+});
+/** Fail-closed, pure validator for untrusted future level definitions. */
+export function validateActionBlueprint(b,worldWidth=2100){
+  if(!b||typeof b!=='object'||Array.isArray(b)||
+      b.schema!=='nilo.action-entity-blueprint/1'||b.level!=='LV-01'||
+      b.enemyArchetype!=='PATROL_SENTRY'||b.pickupArchetype!=='HOUR_SHARD'||
+      !Number.isFinite(worldWidth)||worldWidth<=0||
+      !Array.isArray(b.enemies)||!Array.isArray(b.pickups)||
+      b.enemies.length===0||b.pickups.length===0)return false;
+  const goodId=id=>typeof id==='string'&&/^[a-z0-9]+(?:-[a-z0-9]+)+$/.test(id);
+  const all=[...b.enemies,...b.pickups];
+  const ids=all.map(e=>e?.id);
+  if(!ids.every(goodId)||new Set(ids).size!==ids.length)return false;
+  const pos=v=>Number.isFinite(v)&&v>=0&&v<worldWidth;
+  return b.enemies.every(e=>e&&pos(e.x)&&pos(e.y)&&
+    pos(e.minX)&&pos(e.maxX)&&e.minX<=e.x&&e.x<=e.maxX&&
+    Number.isFinite(e.speed)&&e.speed>0)&&
+    b.pickups.every(p=>p&&pos(p.x)&&pos(p.y));
+}
+/** Every new game/restart gets independent mutable entity state, never blueprint
+ * aliases; LV02/03 and future design-only worlds remain unimplemented here.
+ */
+export function spawnActionEntities(level='LV-01'){
+  if(level!=='LV-01')return null;
+  if(!validateActionBlueprint(LV01_ENTITY_BLUEPRINT))
+    throw new TypeError('invalid source-owned action blueprint');
+  return {
+    enemies:LV01_ENTITY_BLUEPRINT.enemies.map(e=>({...e,direction:-1,alive:true})),
+    pickups:LV01_ENTITY_BLUEPRINT.pickups.map(p=>({...p,collected:false}))
+  };
+}
 export function initialAction(level='LV-01'){
   if(level!=='LV-01')return null;
+  const entities=spawnActionEntities(level);
   return {health:ACTION_CFG.maxHealth,invulnerable:0,cooldown:0,facing:1,
     shots:[],kills:0,shards:0,
-    enemies:BASE_ENEMIES.map(e=>({...e,direction:-1,alive:true})),
-    pickups:BASE_SHARDS.map(p=>({...p,collected:false}))};
+    enemies:entities.enemies,pickups:entities.pickups};
 }
 const overlap=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 function crossedShot(shot,oldX,enemy){

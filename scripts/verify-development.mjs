@@ -97,6 +97,24 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
       l.find(x=>x.id===id)?.source?.includes("web/levels/catalog.mjs"))&&
     ["LV-04","LV-05","LV-06"].every(id=>
       l.find(x=>x.id===id)?.state==="DESIGN_ONLY"&&l.find(x=>x.id===id).source.length===0));
+  const en=r.find(x=>x.id==="OR-09"),enDecl=contract?.technical_s03b;
+  bad("bridge-action-entities-s03b",
+    enDecl?.source_owner==="web/action.mjs"&&
+    enDecl?.consumer_owner==="web/core.mjs"&&
+    enDecl?.scope==="LV01_ACTION_ENTITIES_ONLY"&&
+    enDecl?.external_author_approval==="BLOCKED_EXTERNAL"&&
+    enDecl?.beta_authorized===false&&
+    en?.level==="LV-01"&&en?.authority==="MODEL_TEST_ONLY"&&
+    en?.browser==="NOT_ATTESTED"&&
+    en?.sources?.includes("web/action.mjs")&&
+    en?.sources?.includes("web/core.mjs")&&
+    ["tests/entity-blueprint.test.mjs","tests/entity-blueprint-mutation.test.mjs"].every(t=>
+      en?.tests?.includes(t)&&lv01?.tests?.includes(t)&&
+      bridge?.repo_tests?.includes(t))&&
+    en?.tests?.includes("tests/action.test.mjs")&&
+    en?.tests?.includes("tests/browser-action.py")&&
+    l.filter(x=>["LV-04","LV-05","LV-06"].includes(x.id))
+      .every(x=>x.state==="DESIGN_ONLY"&&x.source?.length===0&&x.tests?.length===0));
   const delivery=bridge?.delivery,prodDelivery=contract?.delivery;
   bad("bridge-delivery",delivery?.id==="I07-D"&&delivery?.id===prodDelivery?.id&&
     delivery?.authority==="SOURCE_AND_BROWSER_TESTS_NOT_EXTERNAL_ATTESTATION"&&

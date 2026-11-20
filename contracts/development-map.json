@@ -30,7 +30,9 @@
         "tests/action-mutation.test.mjs",
         "tests/browser-action.py",
         "tests/catalog.test.mjs",
-        "tests/catalog-mutation.test.mjs"
+        "tests/catalog-mutation.test.mjs",
+        "tests/entity-blueprint.test.mjs",
+        "tests/entity-blueprint-mutation.test.mjs"
       ]
     },
     {
@@ -437,6 +439,22 @@
       ],
       "authority": "MODEL_TEST_ONLY",
       "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-09",
+      "level": "LV-01",
+      "sources": [
+        "web/action.mjs",
+        "web/core.mjs"
+      ],
+      "tests": [
+        "tests/entity-blueprint.test.mjs",
+        "tests/entity-blueprint-mutation.test.mjs",
+        "tests/action.test.mjs",
+        "tests/browser-action.py"
+      ],
+      "authority": "MODEL_TEST_ONLY",
+      "browser": "NOT_ATTESTED"
     }
   ],
   "narrative_state": "DRAFT_AUTHOR_UNAPPROVED",
@@ -456,7 +474,9 @@
     "tests/lv-03-mutation.test.mjs",
     "tests/browser-action.py",
     "tests/catalog.test.mjs",
-    "tests/catalog-mutation.test.mjs"
+    "tests/catalog-mutation.test.mjs",
+    "tests/entity-blueprint.test.mjs",
+    "tests/entity-blueprint-mutation.test.mjs"
   ],
   "release_gate": "Q06",
   "interfaces": {
