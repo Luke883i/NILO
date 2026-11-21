@@ -132,6 +132,21 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
     golden.tests?.includes("tests/browser-action.py")&&
     ["LV-04","LV-05","LV-06"].every(x=>
       l.find(z=>z.id===x)?.state==="DESIGN_ONLY"));
+  const v1=r.find(x=>x.id==="OR-11"),motion=contract?.golden_motion_v1;
+  bad("bridge-g1v1-animation",motion?.source_owner==="web/golden-minute.mjs"&&
+    motion?.consumer_owner==="web/main.mjs"&&
+    motion?.scope==="LV01_GOLDEN_MINUTE_X_0_750_ONLY"&&
+    motion?.author_art_approval==="BLOCKED_EXTERNAL"&&
+    motion?.beta_authorized===false&&
+    v1?.level==="LV-01"&&v1?.authority==="HUMAN_AND_BROWSER_REQUIRED"&&
+    v1?.browser==="NOT_ATTESTED"&&
+    ["web/golden-minute.mjs","web/main.mjs","web/action.mjs","web/core.mjs"].every(p=>v1?.sources?.includes(p))&&
+    ["tests/golden-motion.test.mjs","tests/golden-motion-mutation.test.mjs",
+     "tests/browser-golden-motion.py"].every(t=>
+       v1?.tests?.includes(t)&&lv01?.tests?.includes(t)&&bridge?.repo_tests?.includes(t))&&
+    ["tests/golden-minute.test.mjs","tests/browser-golden.py","tests/browser-action.py"].every(t=>
+       v1?.tests?.includes(t))&&
+    ["LV-04","LV-05","LV-06"].every(id=>l.find(x=>x.id===id)?.state==="DESIGN_ONLY"));
   const delivery=bridge?.delivery,prodDelivery=contract?.delivery;
   bad("bridge-delivery",delivery?.id==="I07-D"&&delivery?.id===prodDelivery?.id&&
     delivery?.authority==="SOURCE_AND_BROWSER_TESTS_NOT_EXTERNAL_ATTESTATION"&&

@@ -170,3 +170,21 @@ test("G1-V0 native visuals cannot bypass original author or beta gates",()=>{
   assert(audit(d).includes("g1v0-visual-contract"));
 });
 
+test("G1-V1 cannot bypass native predecessor, real browser, author or art-source owner",()=>{
+ let d=fresh();
+ d.dod.nodes.find(x=>x.id==="G_FULL_GAME").depends_on=
+  d.dod.nodes.find(x=>x.id==="G_FULL_GAME").depends_on.filter(x=>x!=="G_GOLDEN_MOTION_V1");
+ assert(audit(d).includes("dod-AND"));
+ d=fresh();d.dod.nodes.find(x=>x.id==="G_GOLDEN_MOTION_V1").depends_on=
+  d.dod.nodes.find(x=>x.id==="G_GOLDEN_MOTION_V1").depends_on.filter(x=>x!=="G_GOLDEN_MINUTE_V0");
+ assert(audit(d).includes("g1v1-motion-gate"));
+ d=fresh();d.dod.nodes.find(x=>x.id==="V1_05").baseline_status="PASS";
+ assert(audit(d).includes("g1v1-motion-gate"));
+ d=fresh();d.dod.nodes.find(x=>x.id==="V1_03").witness="fabricated-browser";
+ assert(audit(d).includes("g1v1-motion-gate"));
+ d=fresh();d.contract.golden_motion_v1.actual_shot_required_for_flare=false;
+ assert(audit(d).includes("g1v1-animation-contract"));
+ d=fresh();d.contract.golden_motion_v1.physical_source_mutants=0;
+ assert(audit(d).includes("g1v1-animation-contract"));
+});
+
