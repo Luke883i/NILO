@@ -72,6 +72,14 @@ jobs:
         run: node --test tests/golden-motion.test.mjs
       - name: G1-V1 nine real-source physical mutation counterexamples
         run: node --test tests/golden-motion-mutation.test.mjs
+      - name: G2-V0 original shard earns one-use gameplay ward in real core
+        run: node --test tests/shard-ward.test.mjs
+      - name: G2-V0 ten physically altered action source modules and counterexamples
+        run: node --test tests/shard-ward-mutation.test.mjs
+      - name: Full S00-S25 roadmap: closure, old edges, gates and source provenance
+        run: node scripts/verify-roadmap.mjs
+      - name: Falsify compressed roadmap with eighteen physically written JSON source masks
+        run: node --test tests/roadmap.test.mjs
       - name: Verify narrative, requirements, DoD, BOM and source boundaries
         run: node scripts/verify.mjs
       - name: Test deterministic playable physics and checkpoint
@@ -236,6 +244,35 @@ jobs:
           assert hashlib.sha256(raw).hexdigest()==f['sha256'] and len(raw)==f['bytes']>1000
           print('PASS_SCOPED_G1V1_NOT_ART_ACCEPTANCE',sha)
           PY_G1V1
+      - name: G2-V0 Chrome physical reward, one-hit block and two web source mutants
+        run: python tests/browser-shard-ward.py --out /tmp/nilo-browser-shard-ward --expected-sha "${{ github.event.pull_request.head.sha || github.sha }}" --physical-mutants
+      - name: G2-V0 independent receipt SHA, real PNG digest and no human acceptance
+        run: |
+          python - <<'PY_G2V0'
+          import json,hashlib,subprocess
+          from pathlib import Path
+          folder=Path('/tmp/nilo-browser-shard-ward')
+          r=json.loads((folder/'ward-receipt.json').read_text())
+          sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          assert r['source_sha']==sha and r['status']=='PASS_SCOPED_G2V0_BROWSER'
+          assert r['browser_executed'] and r['scope']=='G2V0_LV01_PHYSICAL_SHARD_ONE_USE_SHIELD_ONLY'
+          assert not r['independent_players_accepted'] and not r['author_approved']
+          assert not r['rights_cleared'] and not r['beta_authorized'] and not r['release_authorized']
+          for c in ['real_keyboard_pickup_grants_visible_ward',
+                    'real_enemy_contact_spends_ward_no_health_loss',
+                    'pause_preserves_game_owned_ward','restart_and_reload_do_not_forge_reward']:
+              assert r['checks'].get(c)=='PASS_HTTP_OBSERVED',c
+          for c in ['physical_no_grant_mutant_caught_by_keyboard',
+                    'physical_absorption_bypass_caught_by_keyboard']:
+              assert r['checks'].get(c)=='KILLED_BY_BROWSER_ORACLE',c
+          assert len(r['screenshots'])==2
+          for f in r['screenshots']:
+              payload=(folder/f['name']).read_bytes()
+              assert payload.startswith(bytes.fromhex('89504e470d0a1a0a'))
+              assert hashlib.sha256(payload).hexdigest()==f['sha256']
+              assert len(payload)==f['bytes'] and len(payload)>1000
+          print('PASS_SCOPED_G2V0_NOT_AUTHOR_ACCEPTANCE',sha)
+          PY_G2V0
       - name: Input lifecycle - native events, real respawn, pause and physical queue mutant
         run: python tests/browser-e2e.py --stage input-continuity --out /tmp/nilo-input-continuity --physical-mutant
       - name: Full LV01 real-origin E2E including all prior negative oracles
@@ -444,6 +481,7 @@ jobs:
             /tmp/nilo-browser-action/
             /tmp/nilo-browser-golden/
             /tmp/nilo-browser-golden-motion/
+            /tmp/nilo-browser-shard-ward/
             /tmp/nilo-browser-lv02/
             /tmp/nilo-browser-custode/
             /tmp/nilo-render-local/

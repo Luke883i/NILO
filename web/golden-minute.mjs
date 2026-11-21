@@ -292,6 +292,24 @@ function nilo(ctx,state){
    stroke(ctx,x-5,y+10,x+1,y+4,C.coral,2);
  }
 }
+/** G2-V0 read-only depiction of real shard-earned shield charge and block. */
+function shardWardAura(ctx,state){
+ const a=state.action;
+ if(!a||!(a.ward>0||a.wardPulse>0))return;
+ const x=state.x-state.camera+14,y=state.y+20;
+ ctx.save();
+ try{
+  ctx.beginPath();ctx.ellipse(x,y,23,29,0,0,TWO_PI);
+  ctx.strokeStyle=a.ward>0?C.teal:C.gold;ctx.lineWidth=a.ward>0?3:5;
+  ctx.stroke();
+  if(a.wardPulse>0){
+   ctx.beginPath();ctx.ellipse(x,y,27,33,0,0,TWO_PI);
+   ctx.strokeStyle=C.ivory;ctx.lineWidth=2;ctx.stroke();
+   stroke(ctx,x-12,y-13,x+12,y+13,C.gold,2);
+   stroke(ctx,x+12,y-13,x-12,y+13,C.gold,2);
+  }
+ }finally{ctx.restore();}
+}
 function tica(ctx,state){
  const pose=goldenMotionPose(state);
  const x=state.x-state.camera-27,y=state.y-38+
@@ -330,6 +348,7 @@ export function renderGoldenMinute(ctx,state,surfaces,legacy=false){
    sentries(ctx,state);
    impulses(ctx,state);
    nilo(ctx,state);
+   shardWardAura(ctx,state);
    tica(ctx,state);
    cueLabels(ctx,state);
  }finally{ctx.restore();}

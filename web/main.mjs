@@ -41,6 +41,7 @@ Object.defineProperty(window,"__niloReadback",{
     jumpHeld:state.jumpHeld,supportId:state.supportId,currentForce:state.currentForce,
     boss:state.boss?{...state.boss}:null,
     action:state.action?{health:state.action.health,kills:state.action.kills,shards:state.action.shards,shots:state.action.shots.length,enemiesAlive:state.action.enemies.filter(e=>e.alive).length}:null,
+    reward:state.action?{ward:state.action.ward,wardsAbsorbed:state.action.wardsAbsorbed,wardPulse:state.action.wardPulse}:null,
     visual:goldenMinutePlan(state,legacyVisual)?"GOLDEN_MINUTE_CANDIDATE":"LEGACY",
     lightMode:state.lightMode??null,doorsPassed:state.doorsPassed??0,
     archiveLog:Boolean(state.archiveLog),switchesUsed:state.switchesUsed??0})
@@ -149,7 +150,7 @@ function frame(now) {
       "Prologo concluso · premi N per LV-02 · altri tre livelli non disponibili":
     state.checkpointActive?"Prima ora · checkpoint salvato · raggiungi il portale":
     state.x>750?"Segui il segnatempo dorato": "Prima ora · segui la freccia →";
-  const actionTip=state.action?` · VITA ${state.action.health}/3 · FRAMMENTI ${state.action.shards}/3 · J ATTACCA`:'';
+  const actionTip=state.action?` · VITA ${state.action.health}/3 · FRAMMENTI ${state.action.shards}/3 · SCUDO ${state.action.ward}/1${state.action.wardPulse>0?' · PARATA!':''} · J ATTACCA`:'';
   if(lastTip!==tip+actionTip){lastTip=tip+actionTip;hud.textContent="NILO · "+(state.phase==="PAUSED"?"Pausa":tip)+actionTip;}
 
   const cue=sceneCue(state);

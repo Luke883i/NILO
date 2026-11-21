@@ -147,6 +147,23 @@ export function validateBridge({bridge,contract,dod},root=ROOT) {
     ["tests/golden-minute.test.mjs","tests/browser-golden.py","tests/browser-action.py"].every(t=>
        v1?.tests?.includes(t))&&
     ["LV-04","LV-05","LV-06"].every(id=>l.find(x=>x.id===id)?.state==="DESIGN_ONLY"));
+  const ward=r.find(x=>x.id==="OR-12"),wc=contract?.shard_ward_g2v0;
+  bad("bridge-g2v0-shard-ward",wc?.source_owner==="web/action.mjs"&&
+    wc?.consumer_owner==="web/core.mjs"&&
+    wc?.view_owners?.join(",")==="web/main.mjs,web/golden-minute.mjs"&&
+    wc?.max_ward===1&&wc?.physical_source_mutants===10&&
+    wc?.physical_browser_mutants===2&&wc?.roadmap_source_masks===18&&
+    wc?.author_repair_violence_decision==="BLOCKED_EXTERNAL"&&
+    wc?.beta_authorized===false&&
+    ward?.level==="LV-01"&&ward?.authority==="HUMAN_AND_BROWSER_REQUIRED"&&
+    ward?.browser==="NOT_ATTESTED"&&
+    ["web/action.mjs","web/core.mjs","web/main.mjs","web/golden-minute.mjs"].every(f=>ward?.sources?.includes(f))&&
+    ["tests/shard-ward.test.mjs","tests/shard-ward-mutation.test.mjs",
+     "tests/browser-shard-ward.py","tests/roadmap.test.mjs"].every(t=>
+       ward?.tests?.includes(t)&&lv01?.tests?.includes(t)&&bridge?.repo_tests?.includes(t))&&
+    ward?.tests?.includes("tests/action.test.mjs")&&
+    ward?.tests?.includes("tests/browser-action.py")&&
+    ["LV-04","LV-05","LV-06"].every(id=>l.find(x=>x.id===id)?.state==="DESIGN_ONLY"));
   const delivery=bridge?.delivery,prodDelivery=contract?.delivery;
   bad("bridge-delivery",delivery?.id==="I07-D"&&delivery?.id===prodDelivery?.id&&
     delivery?.authority==="SOURCE_AND_BROWSER_TESTS_NOT_EXTERNAL_ATTESTATION"&&

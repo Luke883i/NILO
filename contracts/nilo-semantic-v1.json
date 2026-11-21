@@ -560,6 +560,11 @@
         "id": "OR-11",
         "claim": "G1-V1 LV01 native visuals derive five distinct player poses, real shot and damage responses, Tica wings, sentry gait and shard glints from the existing gameplay state and fixed ticks without changing physics, checkpoint serialization, legacy fallback or other levels.",
         "type": "TARGET_NATIVE_CANVAS_AND_PHYSICAL_SOURCE_MUTATION_AND_BROWSER_EXTERNAL_PENDING"
+      },
+      {
+        "id": "OR-12",
+        "type": "NATIVE_GAMEPLAY_AND_PHYSICAL_MUTANT_AND_ROADMAP_FALSIFICATION",
+        "claim": "In original LV01, collecting genuine hour shards grants at most one one-hit ward; a subsequent real enemy contact consumes it without decreasing HP, with a bounded grace period, source-bound HUD/aura and legitimate restart. The roadmap retains all S00-S25 prerequisites and external vetoes. No author/novice approval asserted."
       }
     ]
   },
@@ -1110,5 +1115,42 @@
     "a0_draft_only": true,
     "beta_authorized": false,
     "release_authorized": false
+  },
+  "shard_ward_g2v0": {
+    "schema": "nilo.shard-ward-g2v0/1",
+    "id": "G2-V0",
+    "status": "SOURCE_GAMEPLAY_CANDIDATE_NOT_AUTHOR_ACCEPTED",
+    "scope": "LV01_ORIGINAL_THREE_FRAGMENTS_AND_TWO_PATROLS_ONLY",
+    "source_owner": "web/action.mjs",
+    "consumer_owner": "web/core.mjs",
+    "view_owners": [
+      "web/main.mjs",
+      "web/golden-minute.mjs"
+    ],
+    "reward_export": "SHARD_WARD",
+    "reducer_export": "resolveShardWard",
+    "max_ward": 1,
+    "protection_consumed_on_enemy_contact": true,
+    "earned_only_by_original_pickups": true,
+    "grant_after_contact_on_same_tick": true,
+    "legacy_action_readback_unchanged": true,
+    "shieldless_contact_damage_unchanged": true,
+    "stomp_damage_unchanged": true,
+    "reset_does_not_persist_ward": true,
+    "checkpoint_schema_unchanged": true,
+    "save_schema_unchanged": true,
+    "source_test": "tests/shard-ward.test.mjs",
+    "source_mutation_test": "tests/shard-ward-mutation.test.mjs",
+    "physical_source_mutants": 10,
+    "native_browser_test": "tests/browser-shard-ward.py",
+    "physical_browser_mutants": 2,
+    "roadmap_contract": "contracts/nilo-roadmap-v3.json",
+    "roadmap_validator": "scripts/verify-roadmap.mjs",
+    "roadmap_mutation_test": "tests/roadmap.test.mjs",
+    "roadmap_source_masks": 18,
+    "author_repair_violence_decision": "BLOCKED_EXTERNAL",
+    "independent_player_acceptance": "BLOCKED_EXTERNAL",
+    "release_authorized": false,
+    "beta_authorized": false
   }
 }

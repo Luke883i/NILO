@@ -39,7 +39,11 @@
         "tests/browser-golden.py",
         "tests/golden-motion.test.mjs",
         "tests/golden-motion-mutation.test.mjs",
-        "tests/browser-golden-motion.py"
+        "tests/browser-golden-motion.py",
+        "tests/shard-ward.test.mjs",
+        "tests/shard-ward-mutation.test.mjs",
+        "tests/browser-shard-ward.py",
+        "tests/roadmap.test.mjs"
       ]
     },
     {
@@ -501,6 +505,26 @@
       ],
       "authority": "HUMAN_AND_BROWSER_REQUIRED",
       "browser": "NOT_ATTESTED"
+    },
+    {
+      "id": "OR-12",
+      "level": "LV-01",
+      "sources": [
+        "web/action.mjs",
+        "web/core.mjs",
+        "web/main.mjs",
+        "web/golden-minute.mjs"
+      ],
+      "tests": [
+        "tests/shard-ward.test.mjs",
+        "tests/shard-ward-mutation.test.mjs",
+        "tests/browser-shard-ward.py",
+        "tests/roadmap.test.mjs",
+        "tests/action.test.mjs",
+        "tests/browser-action.py"
+      ],
+      "authority": "HUMAN_AND_BROWSER_REQUIRED",
+      "browser": "NOT_ATTESTED"
     }
   ],
   "narrative_state": "DRAFT_AUTHOR_UNAPPROVED",
@@ -528,7 +552,11 @@
     "tests/browser-golden.py",
     "tests/golden-motion.test.mjs",
     "tests/golden-motion-mutation.test.mjs",
-    "tests/browser-golden-motion.py"
+    "tests/browser-golden-motion.py",
+    "tests/shard-ward.test.mjs",
+    "tests/shard-ward-mutation.test.mjs",
+    "tests/browser-shard-ward.py",
+    "tests/roadmap.test.mjs"
   ],
   "release_gate": "Q06",
   "interfaces": {
