@@ -76,7 +76,7 @@ jobs:
         run: node --test tests/shard-ward.test.mjs
       - name: G2-V0 ten physically altered action source modules and counterexamples
         run: node --test tests/shard-ward-mutation.test.mjs
-      - name: Full S00-S25 roadmap: closure, old edges, gates and source provenance
+      - name: Full S00-S25 roadmap closure, old edges, gates and source provenance
         run: node scripts/verify-roadmap.mjs
       - name: Falsify compressed roadmap with eighteen physically written JSON source masks
         run: node --test tests/roadmap.test.mjs
