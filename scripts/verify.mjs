@@ -5,7 +5,8 @@ import {fileURLToPath} from "node:url";
 import {validateBridge} from "./verify-development.mjs";
 import {validateIterationHypothesis} from "./semantic-campaign.mjs";
 import {CFG,PLATFORMS} from "../web/core.mjs";
-import {LV01_ENTITY_BLUEPRINT,validateActionBlueprint,spawnActionEntities} from "../web/action.mjs";
+import {LV01_ENTITY_BLUEPRINT,validateActionBlueprint,spawnActionEntities,SHARD_WARD,resolveShardWard,initialAction} from "../web/action.mjs";
+import {auditNiloRoadmap} from "./verify-roadmap.mjs";
 import {GOLDEN_MINUTE,goldenMinutePlan,GOLDEN_MOTION,goldenMotionPose} from "../web/golden-minute.mjs";
 import {describeLevel,IMPLEMENTED_LEVEL_IDS,DESIGN_ONLY_LEVEL_IDS} from "../web/levels/catalog.mjs";
 import {LV02,lv02Surfaces,currentForceAt,decodeLV02Checkpoint} from "../web/levels/lv-02.mjs";
@@ -21,10 +22,11 @@ export const load=()=>({
   refs:raw("standards/references.json"),
   bom:raw("bom/nilo.cdx.json"),
   pkg:raw("package.json"),
-  bridge:raw("contracts/development-map.json")
+  bridge:raw("contracts/development-map.json"),
+  roadmap:raw("contracts/nilo-roadmap-v3.json")
 });
 const distinct=xs=>new Set(xs).size===xs.length;
-export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
+export function audit({contract,dod,chain,refs,bom,pkg,bridge,roadmap}) {
   const errors=[];
   const fail=(id,cond)=>{if(!cond)errors.push(id);};
   fail("contract-schema",contract?.schema==="nilo.semantic-contract/1");
@@ -102,10 +104,10 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     contract.slice.acceptance_oracles.some(x=>x.type==="REAL_SOURCE_MUTATION"));
   fail("effects",contract?.gameplay?.security?.includes("no telemetry")&&contract?.permissions?.not_allowed?.includes("release"));
   fail("dod-shape",dod?.schema==="nilo.reticular-dod/1"&&dod?.root==="G_CONTRACT_DEMONSTRATED"&&
-    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===104);
+    dod?.seed_goal==="G_SEED_SOURCE"&&dod?.beta_goal==="G_BETA_RELEASE"&&dod?.authority==="NONE"&&dod?.nodes?.length===112);
   const ids=(dod?.nodes||[]).map(n=>n.id),nodes=new Map((dod?.nodes||[]).map(n=>[n.id,n]));
   fail("dod-identities",distinct(ids));
-  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===19&&
+  fail("dod-AND",Array.from(nodes.values()).filter(n=>n.kind==="AND").length===20&&
     nodes.get("G_CONTRACT_DEMONSTRATED")?.depends_on?.join(",")==="G_BETA_RELEASE,G_SUPPLY_CHAIN,G_RELEASE"&&
     nodes.get("G_BETA_RELEASE")?.depends_on?.join(",")==="G_FULL_GAME,Q01,Q02,Q03,Q04,Q05,Q06,Q07"&&
     nodes.get("G_RELEASE")?.depends_on?.join(",")==="R01,R02,R03,G_DELIVERY_PR11"&&
@@ -119,6 +121,7 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_ACTION_ENTITIES_S03B")&&
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_GOLDEN_MINUTE_V0")&&
     nodes.get("G_FULL_GAME")?.depends_on?.includes("G_GOLDEN_MOTION_V1")&&
+    nodes.get("G_FULL_GAME")?.depends_on?.includes("G_SHARD_WARD_G2V0")&&
     nodes.get("G_LV03_PR12")?.depends_on?.join(",")==="L3_00,L3_01,L3_02,L3_03,L3_04,L3_05,L3_06,L3_07,L3_08");
   const actionLeafIds=["A7_00","A7_01","A7_02","A7_03","A7_04"];
   fail("s01-action-gate",nodes.get("G_LV01_ACTION_S01")?.kind==="AND"&&
@@ -365,6 +368,57 @@ export function audit({contract,dod,chain,refs,bom,pkg,bridge}) {
       nodes.get(id)?.baseline_status===(i===5?"BLOCKED_EXTERNAL":"NOT_VERIFIED"))&&
     contract?.next_a0?.approval?.human_approved===false&&
     nodes.get("Q07")?.baseline_status==="BLOCKED_EXTERNAL");
+  const reward=contract?.shard_ward_g2v0;
+  fail("g2v0-reward-contract",reward?.schema==="nilo.shard-ward-g2v0/1"&&
+    reward?.id==="G2-V0"&&reward?.status==="SOURCE_GAMEPLAY_CANDIDATE_NOT_AUTHOR_ACCEPTED"&&
+    reward?.scope==="LV01_ORIGINAL_THREE_FRAGMENTS_AND_TWO_PATROLS_ONLY"&&
+    reward?.source_owner==="web/action.mjs"&&reward?.consumer_owner==="web/core.mjs"&&
+    reward?.view_owners?.join(",")==="web/main.mjs,web/golden-minute.mjs"&&
+    reward?.reward_export==="SHARD_WARD"&&reward?.reducer_export==="resolveShardWard"&&
+    reward?.max_ward===1&&reward?.protection_consumed_on_enemy_contact===true&&
+    reward?.earned_only_by_original_pickups===true&&
+    reward?.grant_after_contact_on_same_tick===true&&
+    reward?.legacy_action_readback_unchanged===true&&
+    reward?.shieldless_contact_damage_unchanged===true&&
+    reward?.stomp_damage_unchanged===true&&
+    reward?.reset_does_not_persist_ward===true&&
+    reward?.checkpoint_schema_unchanged===true&&reward?.save_schema_unchanged===true&&
+    reward?.source_test==="tests/shard-ward.test.mjs"&&
+    reward?.source_mutation_test==="tests/shard-ward-mutation.test.mjs"&&
+    reward?.physical_source_mutants===10&&
+    reward?.native_browser_test==="tests/browser-shard-ward.py"&&
+    reward?.physical_browser_mutants===2&&
+    reward?.roadmap_contract==="contracts/nilo-roadmap-v3.json"&&
+    reward?.roadmap_validator==="scripts/verify-roadmap.mjs"&&
+    reward?.roadmap_mutation_test==="tests/roadmap.test.mjs"&&
+    reward?.roadmap_source_masks===18&&
+    reward?.author_repair_violence_decision==="BLOCKED_EXTERNAL"&&
+    reward?.independent_player_acceptance==="BLOCKED_EXTERNAL"&&
+    reward?.release_authorized===false&&reward?.beta_authorized===false);
+  const wardBefore=initialAction();
+  const justCollected=wardBefore.pickups.map((p,i)=>({...p,collected:i===0}));
+  const earned=resolveShardWard(wardBefore,justCollected,false);
+  const spent=resolveShardWard({...wardBefore,ward:1},justCollected,true);
+  fail("g2v0-real-action-source",SHARD_WARD?.schema==="nilo.shard-ward/1"&&
+    SHARD_WARD?.maxCharges===1&&SHARD_WARD?.contactGraceTicks===75&&
+    SHARD_WARD?.approvedByAuthor===false&&SHARD_WARD?.independentPlayersAccepted===false&&
+    Object.isFrozen(SHARD_WARD)&&
+    wardBefore.ward===0&&earned.ward===1&&spent.ward===1&&
+    spent.absorbed===true&&spent.wardsAbsorbed===1&&
+    SHARD_WARD?.pulseTicks===18&&
+    initialAction("LV-02")===null);
+  const wardIds=["W_00","W_01","W_02","W_03","W_04","W_05","W_06"];
+  fail("g2v0-AND-gate",nodes.get("G_SHARD_WARD_G2V0")?.kind==="AND"&&
+    nodes.get("G_SHARD_WARD_G2V0")?.depends_on?.join(",")===
+     ["G_ACTION_ENTITIES_S03B","G_GOLDEN_MOTION_V1",...wardIds].join(",")&&
+    nodes.get("G_SHARD_WARD_G2V0")?.baseline_status==="BLOCKED"&&
+    nodes.get("G_SHARD_WARD_G2V0")?.authorization==="NONE"&&
+    wardIds.every((id,i)=>nodes.get(id)?.kind==="LEAF"&&
+      nodes.get(id)?.witness===null&&
+      nodes.get(id)?.baseline_status===(i===6?"BLOCKED_EXTERNAL":"NOT_VERIFIED"))&&
+    contract?.next_a0?.approval?.human_approved===false&&
+    nodes.get("Q07")?.baseline_status==="BLOCKED_EXTERNAL");
+  fail("g2v0-full-roadmap",auditNiloRoadmap(roadmap,contract).length===0);
   fail("lv03-no-self-approved-gates",["L3_00","L3_01","L3_02","L3_03","L3_04","L3_05","L3_06","L3_07","L3_08"].every(id=>
     nodes.get(id)?.baseline_status==="NOT_VERIFIED"&&nodes.get(id)?.witness===null)&&
     nodes.get("G_LV03_PR12")?.authorization==="NONE");

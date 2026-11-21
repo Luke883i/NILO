@@ -11,6 +11,8 @@ const fixtureFiles=["web/action.mjs","web/core.mjs","web/main.mjs","web/index.ht
   "tests/core.test.mjs","tests/action.test.mjs","tests/action-mutation.test.mjs","tests/entity-blueprint.test.mjs","tests/entity-blueprint-mutation.test.mjs","tests/mutation.test.mjs","tests/contracts.test.mjs",
   "tests/development.test.mjs","tests/art.test.mjs","tests/art-mutation.test.mjs","tests/golden-minute.test.mjs","tests/golden-minute-mutation.test.mjs","tests/browser-golden.py",
   "tests/golden-motion.test.mjs","tests/golden-motion-mutation.test.mjs","tests/browser-golden-motion.py",
+  "tests/shard-ward.test.mjs","tests/shard-ward-mutation.test.mjs","tests/browser-shard-ward.py","tests/roadmap.test.mjs",
+  "contracts/nilo-roadmap-v3.json","scripts/verify-roadmap.mjs",
   "tests/semantic-campaign.test.mjs","tests/experience.test.mjs","tests/feel.test.mjs","tests/browser-e2e.py","tests/browser-action.py",
   "web/levels/catalog.mjs","web/levels/lv-02.mjs","web/levels/lv-03.mjs","web/levels/custode.mjs",
   "tests/lv-03.test.mjs","tests/lv-03-mutation.test.mjs","tests/browser-lv-03.py","tests/catalog.test.mjs","tests/catalog-mutation.test.mjs","tests/lv-02.test.mjs","tests/lv-02-mutation.test.mjs","tests/browser-lv-02.py",
@@ -216,5 +218,20 @@ test("G1-V1 native animation link cannot forge external author or omit actual so
  assert(validateBridge(d).includes("bridge-no-runtime-promotion"));
  d=base();d.contract.golden_motion_v1.author_art_approval="PASS";
  assert(validateBridge(d).includes("bridge-g1v1-animation"));
+});
+
+test("G2-V0 required shard ward and whole-roadmap OR-12 bridge cannot be removed or promoted",()=>{
+ let d=base();
+ d.bridge.requirements.find(x=>x.id==="OR-12").sources=[];
+ assert(validateBridge(d).includes("bridge-g2v0-shard-ward"));
+ d=base();d.bridge.levels.find(x=>x.id==="LV-01").tests=
+  d.bridge.levels.find(x=>x.id==="LV-01").tests.filter(x=>x!=="tests/roadmap.test.mjs");
+ assert(validateBridge(d).includes("bridge-g2v0-shard-ward"));
+ d=base();d.bridge.requirements.find(x=>x.id==="OR-12").browser="PASS";
+ assert(validateBridge(d).includes("bridge-no-runtime-promotion"));
+ d=base();d.contract.shard_ward_g2v0.author_repair_violence_decision="PASS";
+ assert(validateBridge(d).includes("bridge-g2v0-shard-ward"));
+ d=base();d.contract.shard_ward_g2v0.physical_browser_mutants=0;
+ assert(validateBridge(d).includes("bridge-g2v0-shard-ward"));
 });
 

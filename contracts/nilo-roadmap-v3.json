@@ -1,0 +1,440 @@
+{
+  "schema": "nilo.roadmap-coverage/3",
+  "target": "Luke883i/NILO",
+  "base_sha": "5ec13d69d71816232cc72b8c4893b5542ba7391b",
+  "status": "PROPOSED_SOURCE_MAPPING_NOT_TARGET_ACCEPTANCE",
+  "human_creative_approved": false,
+  "independent_playtest_accepted": false,
+  "release_authorized": false,
+  "old_slices": [
+    {
+      "id": "S00",
+      "depends_on": []
+    },
+    {
+      "id": "S01",
+      "depends_on": [
+        "S00"
+      ]
+    },
+    {
+      "id": "S02",
+      "depends_on": [
+        "S01"
+      ]
+    },
+    {
+      "id": "S03",
+      "depends_on": [
+        "S01",
+        "S02"
+      ]
+    },
+    {
+      "id": "S04",
+      "depends_on": [
+        "S02"
+      ]
+    },
+    {
+      "id": "S05",
+      "depends_on": [
+        "S03",
+        "S04"
+      ]
+    },
+    {
+      "id": "S06",
+      "depends_on": [
+        "S03",
+        "S04"
+      ]
+    },
+    {
+      "id": "S07",
+      "depends_on": [
+        "S03",
+        "S01"
+      ]
+    },
+    {
+      "id": "S08",
+      "depends_on": [
+        "S07",
+        "S03"
+      ]
+    },
+    {
+      "id": "S09",
+      "depends_on": [
+        "S05",
+        "S07"
+      ]
+    },
+    {
+      "id": "S10",
+      "depends_on": [
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09"
+      ]
+    },
+    {
+      "id": "S11",
+      "depends_on": [
+        "S10",
+        "S07"
+      ]
+    },
+    {
+      "id": "S12",
+      "depends_on": [
+        "S10",
+        "S11"
+      ]
+    },
+    {
+      "id": "S13",
+      "depends_on": [
+        "S12",
+        "S08"
+      ]
+    },
+    {
+      "id": "S14",
+      "depends_on": [
+        "S03",
+        "S06",
+        "S09",
+        "S13"
+      ]
+    },
+    {
+      "id": "S15",
+      "depends_on": [
+        "S14",
+        "S11"
+      ]
+    },
+    {
+      "id": "S16",
+      "depends_on": [
+        "S13",
+        "S14",
+        "S08"
+      ]
+    },
+    {
+      "id": "S17",
+      "depends_on": [
+        "S15",
+        "S16"
+      ]
+    },
+    {
+      "id": "S18",
+      "depends_on": [
+        "S17",
+        "S15",
+        "S11"
+      ]
+    },
+    {
+      "id": "S19",
+      "depends_on": [
+        "S18",
+        "S02"
+      ]
+    },
+    {
+      "id": "S20",
+      "depends_on": [
+        "S09",
+        "S02"
+      ]
+    },
+    {
+      "id": "S21",
+      "depends_on": [
+        "S05",
+        "S06",
+        "S07",
+        "S20"
+      ]
+    },
+    {
+      "id": "S22",
+      "depends_on": [
+        "S19",
+        "S20",
+        "S06"
+      ]
+    },
+    {
+      "id": "S23",
+      "depends_on": [
+        "S18",
+        "S19",
+        "S20",
+        "S21",
+        "S22"
+      ]
+    },
+    {
+      "id": "S24",
+      "depends_on": [
+        "S23"
+      ]
+    },
+    {
+      "id": "S25",
+      "depends_on": [
+        "S23",
+        "S24",
+        "S22"
+      ]
+    }
+  ],
+  "stages": [
+    {
+      "id": "F0",
+      "depends_on": [],
+      "status": "MERGED_TECH_ONLY",
+      "outcome": "S00-S03 foundations; S02 is not author approved",
+      "original_slices": [
+        "S00",
+        "S01",
+        "S02",
+        "S03"
+      ]
+    },
+    {
+      "id": "G1V0",
+      "depends_on": [
+        "F0"
+      ],
+      "status": "MERGED_TECH_ONLY",
+      "outcome": "native first-minute visual source, quality pending",
+      "original_slices": []
+    },
+    {
+      "id": "G1V1",
+      "depends_on": [
+        "G1V0"
+      ],
+      "status": "MERGED_TECH_ONLY",
+      "outcome": "game-state-driven animation source, quality pending",
+      "original_slices": []
+    },
+    {
+      "id": "HA",
+      "depends_on": [
+        "F0"
+      ],
+      "status": "BLOCKED_EXTERNAL",
+      "outcome": "creative author DA01 DA02 DA07, rights and A0 signoff",
+      "original_slices": []
+    },
+    {
+      "id": "G1V2",
+      "depends_on": [
+        "G1V1",
+        "HA"
+      ],
+      "status": "PLANNED",
+      "outcome": "original author-reviewed art bible and six biome visual grammar",
+      "original_slices": [
+        "S04",
+        "S05",
+        "S06"
+      ]
+    },
+    {
+      "id": "G2V0",
+      "depends_on": [
+        "F0",
+        "G1V1"
+      ],
+      "status": "PR_CANDIDATE",
+      "outcome": "one earned and spent shard shield from existing LV01 pickups",
+      "original_slices": []
+    },
+    {
+      "id": "G2V1",
+      "depends_on": [
+        "G2V0"
+      ],
+      "status": "PLANNED",
+      "outcome": "second genuinely distinct enemy archetype and counterexample",
+      "original_slices": []
+    },
+    {
+      "id": "G2V2",
+      "depends_on": [
+        "G2V1",
+        "G1V2"
+      ],
+      "status": "PLANNED",
+      "outcome": "reward balance and proven game feel, original S07-S09 outcome",
+      "original_slices": [
+        "S07",
+        "S08",
+        "S09"
+      ]
+    },
+    {
+      "id": "H0",
+      "depends_on": [
+        "G2V2"
+      ],
+      "status": "BLOCKED_EXTERNAL",
+      "outcome": "early novice player evidence before scaling level content",
+      "original_slices": []
+    },
+    {
+      "id": "G3",
+      "depends_on": [
+        "G1V2",
+        "G2V2",
+        "H0"
+      ],
+      "status": "PLANNED",
+      "outcome": "four-section LV01 with meaningful depth and pacing",
+      "original_slices": [
+        "S10"
+      ]
+    },
+    {
+      "id": "G4",
+      "depends_on": [
+        "G3"
+      ],
+      "status": "PLANNED",
+      "outcome": "readable Custode and extended LV02",
+      "original_slices": [
+        "S11",
+        "S12"
+      ]
+    },
+    {
+      "id": "G5",
+      "depends_on": [
+        "G4"
+      ],
+      "status": "PLANNED",
+      "outcome": "extended LV03 light/shadow and combat",
+      "original_slices": [
+        "S13"
+      ]
+    },
+    {
+      "id": "G6",
+      "depends_on": [
+        "G5"
+      ],
+      "status": "PLANNED",
+      "outcome": "LV04 original Fonderia + Archivista",
+      "original_slices": [
+        "S14",
+        "S15"
+      ]
+    },
+    {
+      "id": "G7",
+      "depends_on": [
+        "G6",
+        "G5"
+      ],
+      "status": "PLANNED",
+      "outcome": "LV05 original Bosco",
+      "original_slices": [
+        "S16"
+      ]
+    },
+    {
+      "id": "G8",
+      "depends_on": [
+        "G6",
+        "G7"
+      ],
+      "status": "PLANNED",
+      "outcome": "LV06, Direttore three-stage boss, six hours and ending",
+      "original_slices": [
+        "S17",
+        "S18",
+        "S19"
+      ]
+    },
+    {
+      "id": "G9",
+      "depends_on": [
+        "G1V2",
+        "G2V2"
+      ],
+      "status": "PLANNED",
+      "outcome": "progressive audio controls accessibility performance and save migrations",
+      "original_slices": [
+        "S20",
+        "S21"
+      ]
+    },
+    {
+      "id": "G10",
+      "depends_on": [
+        "G8",
+        "G9",
+        "HA"
+      ],
+      "status": "PLANNED",
+      "outcome": "full rights SBOM release candidate and actual browser six-level E2E",
+      "original_slices": [
+        "S22",
+        "S23"
+      ]
+    },
+    {
+      "id": "H1",
+      "depends_on": [
+        "G10"
+      ],
+      "status": "BLOCKED_EXTERNAL",
+      "outcome": "independent full-game player quality and fun",
+      "original_slices": [
+        "S24"
+      ]
+    },
+    {
+      "id": "H2",
+      "depends_on": [
+        "H1",
+        "G10"
+      ],
+      "status": "BLOCKED_EXTERNAL",
+      "outcome": "human publication hosting rollback approval",
+      "original_slices": [
+        "S25"
+      ]
+    }
+  ],
+  "gates": {
+    "creative": "HA",
+    "early_playtest": "H0",
+    "full_playtest": "H1",
+    "release": "H2"
+  },
+  "technical_slice": "G2V0",
+  "technical_oracles": {
+    "source": "tests/shard-ward.test.mjs",
+    "physical_mutants": "tests/shard-ward-mutation.test.mjs",
+    "native_browser": "tests/browser-shard-ward.py",
+    "roadmap_falsification": "tests/roadmap.test.mjs"
+  },
+  "limits": {
+    "G1V2_author_approval": "BLOCKED_EXTERNAL",
+    "G2V0_narrative_approval": "BLOCKED_EXTERNAL",
+    "no_design_only_level_unlock": true,
+    "full_game_done": false
+  }
+}

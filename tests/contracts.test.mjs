@@ -188,3 +188,24 @@ test("G1-V1 cannot bypass native predecessor, real browser, author or art-source
  assert(audit(d).includes("g1v1-animation-contract"));
 });
 
+test("G2-V0 original runtime shield cannot launder absent human DA02 or false browser",()=>{
+ let d=fresh();
+ d.dod.nodes.find(x=>x.id==="G_FULL_GAME").depends_on=
+  d.dod.nodes.find(x=>x.id==="G_FULL_GAME").depends_on.filter(x=>x!=="G_SHARD_WARD_G2V0");
+ assert(audit(d).includes("dod-AND"));
+ d=fresh();d.dod.nodes.find(x=>x.id==="G_SHARD_WARD_G2V0").depends_on.pop();
+ assert(audit(d).includes("g2v0-AND-gate"));
+ d=fresh();d.dod.nodes.find(x=>x.id==="W_06").baseline_status="PASS";
+ assert(audit(d).includes("g2v0-AND-gate"));
+ d=fresh();d.dod.nodes.find(x=>x.id==="W_03").witness="invented-Chrome";
+ assert(audit(d).includes("g2v0-AND-gate"));
+ d=fresh();d.contract.shard_ward_g2v0.physical_source_mutants=0;
+ assert(audit(d).includes("g2v0-reward-contract"));
+ d=fresh();d.roadmap.stages.find(x=>x.id==="H1").status="MERGED_TECH_ONLY";
+ assert(audit(d).includes("g2v0-full-roadmap"));
+ d=fresh();d.roadmap.old_slices.pop();
+ assert(audit(d).includes("g2v0-full-roadmap"));
+ d=fresh();d.contract.shard_ward_g2v0.max_ward=99;
+ assert(audit(d).includes("g2v0-reward-contract"));
+});
+

@@ -7,6 +7,36 @@ export const ACTION_CFG = Object.freeze({
   cooldownTicks:16, invulnerabilityTicks:75, maxProjectiles:4,
   stompBounce:-390, enemyWidth:28, enemyHeight:30
 });
+/** G2-V0 technical candidate: one-hit protective ward earned by authentic
+ * Frammenti d'Ora collection. Not narrative author acceptance of DA02.
+ * Keeps this action module standalone for historical physical-source mutants.
+ */
+export const SHARD_WARD=Object.freeze({
+ schema:'nilo.shard-ward/1',maxCharges:1,contactGraceTicks:75,
+ pulseTicks:18,source:'ORIGINAL_LV01_SPATIAL_PICKUPS',
+ approvedByAuthor:false,independentPlayersAccepted:false
+});
+/** Pure transition: a newly collected original ID grants a charge; an
+ * existing charge (never one gained in the same tick) absorbs one real enemy
+ * contact. No passive regeneration, no extra HP and no level unlocks.
+ */
+export function resolveShardWard(action,pickups,contact){
+ if(!action||!Array.isArray(action.pickups)||!Array.isArray(pickups))
+   throw new TypeError('action/pickup source required');
+ const prior=action.ward??0,absorbedPrior=action.wardsAbsorbed??0;
+ if(!Number.isInteger(prior)||prior<0||prior>SHARD_WARD.maxCharges||
+    !Number.isInteger(absorbedPrior)||absorbedPrior<0)
+   throw new RangeError('invalid ward state');
+ const original=new Set(action.pickups.filter(p=>p.collected).map(p=>p.id));
+ const collectedNow=pickups.filter(p=>p.collected&&!original.has(p.id));
+ const allowed=new Set(BASE_SHARDS.map(p=>p.id));
+ const newRewards=new Set(collectedNow.filter(p=>allowed.has(p.id)).map(p=>p.id));
+ const absorbed=Boolean(contact)&&prior>0;
+ const ward=Math.min(SHARD_WARD.maxCharges,prior-(absorbed?1:0)+(newRewards.size>0?1:0));
+ const pulse=absorbed?SHARD_WARD.pulseTicks:Math.max(0,(action.wardPulse??0)-1);
+ return Object.freeze({ward,absorbed,wardsAbsorbed:absorbedPrior+(absorbed?1:0),
+   wardPulse:pulse,newRewards:newRewards.size});
+}
 const BASE_ENEMIES=Object.freeze([
   Object.freeze({id:'cortile-sentry-01',x:492,y:410,minX:440,maxX:542,speed:34}),
   Object.freeze({id:'cortile-sentry-02',x:1505,y:390,minX:1460,maxX:1615,speed:28})
@@ -59,7 +89,7 @@ export function initialAction(level='LV-01'){
   if(level!=='LV-01')return null;
   const entities=spawnActionEntities(level);
   return {health:ACTION_CFG.maxHealth,invulnerable:0,cooldown:0,facing:1,
-    shots:[],kills:0,shards:0,
+    shots:[],kills:0,shards:0,ward:0,wardsAbsorbed:0,wardPulse:0,
     enemies:entities.enemies,pickups:entities.pickups};
 }
 const overlap=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
@@ -108,13 +138,17 @@ export function advanceAction(action,player,input,dt,platforms){
     if(!enemy.alive||!overlap(hero,{x:enemy.x,y:enemy.y,w:ACTION_CFG.enemyWidth,h:ACTION_CFG.enemyHeight}))continue;
     const downward=player.vy>0&&player.prevBottom<=enemy.y+8;
     if(downward){enemy.alive=false;kills++;stomp=true;continue;}
-    if(invulnerable===0&&!hit){health=Math.max(0,health-1);hit=true;}
+    if(invulnerable===0&&!hit){hit=true;}
   }
   const pickups=action.pickups.map(p=>{
     if(p.collected)return {...p};
     return {...p,collected:overlap(hero,{x:p.x-9,y:p.y-9,w:18,h:18})};
   });
   const shards=pickups.filter(p=>p.collected).length;
+  const reward=resolveShardWard(action,pickups,hit);
+  if(hit&&!reward.absorbed)health=Math.max(0,health-1);
   return {action:{health,invulnerable:hit?ACTION_CFG.invulnerabilityTicks:invulnerable,
-    cooldown,facing,shots:remaining,kills,shards,enemies,pickups},hit,stomp};
+    cooldown,facing,shots:remaining,kills,shards,
+    ward:reward.ward,wardsAbsorbed:reward.wardsAbsorbed,wardPulse:reward.wardPulse,
+    enemies,pickups},hit:hit&&!reward.absorbed,stomp,wardBlocked:reward.absorbed};
 }
